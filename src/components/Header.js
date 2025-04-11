@@ -9,7 +9,7 @@ const Header = () => {
           <Link to="/" className="logo">DineNow</Link>
           <nav className="nav">
             <Link to="/">Trang Chủ</Link>
-            <Link to="/search">Tìm Kiếm</Link>
+            <Link to="/restaurant-search">Tìm Kiếm</Link>
             <Link to="/login">Đăng Nhập</Link>
             <Link to="/register">Đăng Ký</Link>
           </nav>

@@ -8,7 +8,11 @@ import Footer from './components/Footer';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import RestaurantSearch from './pages/Search/RestaurantSearch';
+import TermsAndPolicy from './pages/Term/TermsAndPolicy';
+import RestaurantDetail from './pages/RestaurantDetail/RestaurantDetail';
 
+import Home from './pages/Home/Home';
 
 function App() {
   return (
@@ -17,10 +21,14 @@ function App() {
         <Navbar />
         <main className="main-content">
           <Routes>
+            <Route path='/' element={<Home />}/>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* Bạn có thể thêm các Route khác sau như Home, Profile, Search,... */}
+            <Route path="/restaurant/:id" element={<RestaurantDetail />} />
+            <Route path="/restaurant-search" element={<RestaurantSearch />} />
+            <Route path="/terms-and-policy" element={<TermsAndPolicy />} />
+
           </Routes>
         </main>
         <Footer />
