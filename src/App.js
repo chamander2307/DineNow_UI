@@ -9,8 +9,11 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import RestaurantSearch from './pages/Search/RestaurantSearch';
-import TermsAndPolicy from './pages/Term/TermsAndPolicy';
 import RestaurantDetail from './pages/RestaurantDetail/RestaurantDetail';
+
+import Terms from './pages/Term/Terms';
+import Privacy from './pages/Term/Privacy';
+import Support from './pages/Term/Support';
 
 import Home from './pages/Home/Home';
 
@@ -27,8 +30,9 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/restaurant/:id" element={<RestaurantDetail />} />
             <Route path="/restaurant-search" element={<RestaurantSearch />} />
-            <Route path="/terms-and-policy" element={<TermsAndPolicy />} />
-
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/support" element={<Support />} />
           </Routes>
         </main>
         <Footer />

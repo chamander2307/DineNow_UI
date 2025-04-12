@@ -1,11 +1,10 @@
 .banner {
     position: relative;
-    margin: 20px 0;
   }
   
   .banner img {
     width: 100%;
-    height: auto;
+    height: 750px;
   }
   
   .banner-text {

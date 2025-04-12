@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
 import '../../assets/styles/RestaurantSearch.css';
+
 import restaurant1 from '../../assets/images/restaurant1.jpg';
 import restaurant2 from '../../assets/images/restaurant2.jpg';
 import restaurant3 from '../../assets/images/restaurant3.jpg';
 
 const RestaurantSearch = () => {
   const initialRestaurants = [
-    { id: 1, name: 'Nhà hàng A', description: 'Món ăn ngon, giá cả hợp lý', image: restaurant1, location: 'TP. HCM', style: 'Buffet' },
-    { id: 2, name: 'Nhà hàng B', description: 'Không gian sang trọng', image: restaurant2, location: 'Hà Nội', style: 'Lẩu' },
+    { id: 1, name: 'Nhà hàng A', description: 'Món ăn ngon, giá cả hợp lý', image: restaurant1, location: 'TP. HCM', style: 'Lẩu' },
+    { id: 2, name: 'Nhà hàng B', description: 'Không gian sang trọng', image: restaurant2, location: 'Hà Nội', style: 'Buffet' },
     { id: 3, name: 'Nhà hàng C', description: 'Ẩm thực độc đáo', image: restaurant3, location: 'Đà Nẵng', style: 'Nhật' },
   ];
 

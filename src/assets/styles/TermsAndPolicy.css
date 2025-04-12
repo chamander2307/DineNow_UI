@@ -1,64 +1,104 @@
 .terms-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .terms-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-  }
-  
-  .terms-section {
-    margin-bottom: 30px;
-  }
-  
-  .terms-section h2 {
-    margin-bottom: 15px;
-    color: #007bff;
-  }
-  
-  .terms-section p {
-    margin-bottom: 10px;
-    line-height: 1.6;
-    color: #555;
-  }
-  
-  .terms-section ul {
-    list-style-type: disc;
-    padding-left: 20px;
-  }
-  
-  .terms-section li {
-    margin-bottom: 10px;
-    line-height: 1.6;
-    color: #555;
-  }
-  
-  .terms-section a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .terms-section a:hover {
-    text-decoration: underline;
-  }
-  
-  .back-to-home {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .back-to-home a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .back-to-home a:hover {
-    text-decoration: underline;
-  }
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.terms-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.terms-section {
+  margin-bottom: 30px;
+}
+
+.terms-section h2 {
+  margin-bottom: 15px;
+  color: #007bff;
+}
+
+.terms-section p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.terms-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.terms-section li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.terms-section li strong {
+  color: #333;
+  font-weight: bold;
+}
+
+.terms-section li p {
+  margin-top: 5px;
+  margin-bottom: 0;
+  color: #555;
+}
+
+.terms-section a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.terms-section a:hover {
+  text-decoration: underline;
+}
+
+.back-to-home {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-to-home a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-to-home a:hover {
+  text-decoration: underline;
+}
+
+/* Thêm CSS cho các phần tử cụ thể trong Privacy và Support */
+.support-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.support-contact li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.support-contact li::before {
+  content: "•";
+  color: #007bff;
+  font-size: 20px;
+}
+
+.faq-item {
+  margin-bottom: 15px;
+}
+
+.faq-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}

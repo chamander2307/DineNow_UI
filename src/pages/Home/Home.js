@@ -1,9 +1,8 @@
 import React from 'react';
-import Header from '../../components/Header';
 import Banner from '../../components/Banner';
-import RestaurantList from '../../components/RestaurantList';
 import RestaurantSearch from '../Search/RestaurantSearch';
-import Footer from '../../components/Footer';
+import FeaturedSection from '../../components/FeaturedSection';
+
 import '../../assets/styles/Home.css';
 
 const Home = () => {
@@ -11,6 +10,7 @@ const Home = () => {
     <div className="App">
       <Banner />
       <RestaurantSearch />
+      <FeaturedSection />
     </div>
   );
 };

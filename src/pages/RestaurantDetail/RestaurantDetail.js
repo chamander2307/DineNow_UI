@@ -1,35 +1,36 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import '../../assets/styles/RestaurantDetail.css';
+
 import restaurant1 from '../../assets/images/restaurant1.jpg';
 import restaurant2 from '../../assets/images/restaurant2.jpg';
 import restaurant3 from '../../assets/images/restaurant3.jpg';
 
-const RestaurantDetail = () => {
-  const { id } = useParams(); // Lấy id từ URL
 
-  // Danh mục món ăn (dữ liệu giả lập)
+
+const RestaurantDetail = () => {
+  const { id } = useParams();
   const categories = [
     { name: 'Tất cả' },
-    { name: 'Cơm thố' },
+    { name: 'Cơm' },
     { name: 'Canh' },
     { name: 'Món thêm' },
     { name: 'Nước giải khát' },
   ];
 
-  // Dữ liệu giả lập
-  const restaurants = [
+ const restaurants = [
     {
       id: 1,
       name: 'Nhà hàng A',
       address: '123 Đường Ẩm Thực, TP. HCM',
       location: 'TP. HCM',
-      style: 'Buffet',
+      style: 'Lẩu',
       image: restaurant1,
       menuItems: [
-        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm thố' },
+        { name: 'Lẩu', price: 99000, image: restaurant1, category: 'Cơm' },
+        { name: 'Lẩu 2', price: 37000, image: restaurant1, category: 'Cơm' },
+        { name: 'Lẩu 3', price: 52999, image: restaurant1, category: 'Cơm' },
       ],
       reviews: [
         { user: 'Nguyễn Văn A', comment: 'Đồ ăn rất ngon, không gian thoải mái!', rating: 5 },
@@ -41,12 +42,12 @@ const RestaurantDetail = () => {
       name: 'Nhà hàng B',
       address: '456 Đường Ẩm Thực, TP. HCM',
       location: 'Hà Nội',
-      style: 'Lẩu',
+      style: 'Buffet',
       image: restaurant2,
       menuItems: [
-        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm thố' },
+        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
+        { name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm' },
+        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm' },
         { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
         { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
         { name: 'Canh chua', price: 11000, image: restaurant1, category: 'Canh' },
@@ -65,9 +66,9 @@ const RestaurantDetail = () => {
       style: 'Nhật',
       image: restaurant3,
       menuItems: [
-        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà + Ớp La', price: 37000, image: restaurant1, category: 'Cơm thố' },
-        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm thố' },
+        { name: 'Cơm Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
+        { name: 'Sushi', price: 37000, image: restaurant1, category: 'Cơm' },
+        { name: 'Súp Misho', price: 52999, image: restaurant1, category: 'Canh' },
         { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
         { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
       ],
@@ -77,51 +78,25 @@ const RestaurantDetail = () => {
     },
   ];
 
-  // Tìm nhà hàng theo id
   const restaurant = restaurants.find((r) => r.id === parseInt(id)) || {};
 
-  // State để quản lý ô tìm kiếm và danh mục được chọn
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(categories[0]?.name || '');
 
-  // Tạo refs cho từng danh mục
-  const categoryRefs = useRef({});
-
-  // Lọc danh sách món ăn dựa trên ô tìm kiếm (bỏ lọc theo danh mục)
   const filteredMenuItems = restaurant.menuItems
-    ? restaurant.menuItems.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? restaurant.menuItems.filter((item) => {
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === 'Tất cả' ? true : item.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      })
     : [];
-
-  // Nhóm món ăn theo danh mục
-  const groupedMenuItems = categories
-    .filter((category) => category.name !== 'Tất cả') // Bỏ qua danh mục "Tất cả" trong danh sách món
-    .map((category) => ({
-      category: category.name,
-      items: filteredMenuItems.filter((item) => item.category === category.name),
-    }))
-    .filter((group) => group.items.length > 0); // Chỉ hiển thị danh mục có món ăn
-
-  // Xử lý khi nhấp vào danh mục
-  const handleCategoryClick = (categoryName) => {
-    setSelectedCategory(categoryName);
-    if (categoryName === 'Tất cả') {
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên đầu trang nếu chọn "Tất cả"
-    } else {
-      const categoryRef = categoryRefs.current[categoryName];
-      if (categoryRef) {
-        categoryRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
 
   return (
     <div className="restaurant-detail">
       {/* Thông tin nhà hàng */}
       <div className="restaurant-info">
-        <img src={restaurant.image} alt={restaurant.name} className="restaurant-image" />
-        <div className="restaurant-details">
+        <img src={restaurant.image} alt={restaurant.name} className="restaurant-image1" />
+        <div className="restaurant-details1">
           <h1>{restaurant.name}</h1>
           <p className="location">Vị trí: {restaurant.location}</p>
           <p className="style">Kiểu nhà hàng: {restaurant.style}</p>
@@ -140,7 +115,7 @@ const RestaurantDetail = () => {
               <li
                 key={index}
                 className={`category-item ${selectedCategory === category.name ? 'active' : ''}`}
-                onClick={() => handleCategoryClick(category.name)}
+                onClick={() => setSelectedCategory(category.name)}
               >
                 {category.name}
               </li>
@@ -160,25 +135,15 @@ const RestaurantDetail = () => {
             />
           </div>
           <div className="menu-items">
-            {groupedMenuItems.length > 0 ? (
-              groupedMenuItems.map((group, index) => (
-                <div key={index} className="menu-category">
-                  <h3
-                    ref={(el) => (categoryRefs.current[group.category] = el)}
-                    className="category-title"
-                  >
-                    {group.category}
-                  </h3>
-                  {group.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="menu-item">
-                      <img src={item.image} alt={item.name} className="menu-item-image" />
-                      <div className="menu-item-details">
-                        <p className="menu-item-name">{item.name}</p>
-                        <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
-                        <button className="add-btn">+</button>
-                      </div>
-                    </div>
-                  ))}
+            {filteredMenuItems.length > 0 ? (
+              filteredMenuItems.map((item, index) => (
+                <div key={index} className="menu-item">
+                  <img src={item.image} alt={item.name} className="menu-item-image" />
+                  <div className="menu-item-details">
+                    <p className="menu-item-name">{item.name}</p>
+                    <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
+                    {/*<button className="add-btn">+</button>*/}
+                  </div>
                 </div>
               ))
             ) : (

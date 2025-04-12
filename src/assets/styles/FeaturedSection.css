@@ -1,0 +1,147 @@
+.featured-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Món ăn đặc sắc */
+  .featured-dishes {
+    margin-bottom: 40px;
+    align-items: center;
+  }
+  
+  .featured-dishes h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .dishes-list {
+    display:inline-flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .dish-item {
+    flex: 0 0 auto;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s;
+  }
+  
+  .dish-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .dish-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+  }
+  
+  .dish-details {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .dish-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .dish-price {
+    font-size: 14px;
+    color: #e74c3c;
+    margin-bottom: 10px;
+  }
+  
+  .add-btn {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .add-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  /* Nhà hàng đặc sắc */
+  .featured-restaurants h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .restaurants-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .restaurant-item {
+    flex: 1;
+    min-width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s;
+  }
+  
+  .restaurant-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .restaurant-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+  
+  .restaurant-details {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .restaurant-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .restaurant-location {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  .restaurant-rating {
+    font-size: 14px;
+    color: #f39c12;
+    margin-bottom: 10px;
+  }
+  
+  .view-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .view-btn:hover {
+    background-color: #218838;
+  }
