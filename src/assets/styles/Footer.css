@@ -1,6 +1,6 @@
 .footer {
-    background-color: #f3f4f6;
-    color: #4b5563;
+    background-color: #f75959;
+    color: #070d17;
     margin-top: 40px;
     padding: 32px 16px;
   }
@@ -20,6 +20,7 @@
   }
   
   .footer__text {
+    color: #070a0f;
     font-size: 0.875rem;
     margin: 4px 0;
   }
@@ -32,7 +33,7 @@
   
   .footer__link {
     font-size: 0.875rem;
-    color: #4b5563;
+    color: #03060a;
     text-decoration: none;
     display: block;
     margin-bottom: 4px;

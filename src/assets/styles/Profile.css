@@ -1,0 +1,158 @@
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #fff, #f2f2f2);
+  }
+  
+  .profile-layout {
+    display: flex;
+    width: 80%;
+    margin: 3rem auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .profile-sidebar {
+    width: 240px;
+    background: #fafafa;
+    border-right: 1px solid #eee;
+    padding: 2rem 1.5rem;
+    transition: all 0.3s;
+  }
+  
+  .profile-user {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-avatar {
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+  }
+  
+  .profile-avatar:hover {
+    transform: scale(1.05);
+  }
+  
+  .profile-user p {
+    margin-top: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .profile-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .profile-sidebar li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 4px;
+  }
+  
+  .profile-sidebar li:hover,
+  .profile-sidebar li.active {
+    background-color: hsl(36, 86%, 81%);
+    color: #ea5443;
+    font-weight: bold;
+  }
+  
+  .profile-content {
+    flex: 1;
+    padding: 2.5rem;
+    animation: slideIn 0.5s ease;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .profile-content h2 {
+    color: #f7796b;
+    margin-bottom: 0.25rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+  
+  .profile-content p {
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-form {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .profile-left {
+    flex: 1;
+  }
+  
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="date"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border 0.3s;
+  }
+  
+  .form-group input:focus {
+    border-color: #f7796b;
+    background-color: #fce2e0;
+    outline: none;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .radio-group label {
+    font-weight: normal;
+  }
+  
+  .save-btn {
+    background: #f7796b;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .save-btn:hover {
+    background: #bd2211;
+  }
+  

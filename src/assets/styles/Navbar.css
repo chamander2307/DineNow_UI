@@ -1,33 +1,63 @@
+/* ===== Header chính ===== */
 .header {
-    background-color: #ff6347;
-    padding: 1rem 0;
-    color: white;
-  }
-  
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    text-decoration: none;
-    color: white;
-  }
-  
-  .nav a {
-    margin-left: 1.5rem;
-    text-decoration: none;
-    color: white;
-    font-size: 1rem;
-    transition: color 0.3s;
-  }
-  
-  .nav a:hover {
-    color: #fdd;
-  }
+  background-color: #f7796b;
+  padding: 1rem 0;
+  height: 60px; 
+  overflow: hidden;
+}
+
+/* ===== Container chứa logo + menu ===== */
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ===== Logo (ảnh + chữ) ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white; /* chữ logo là trắng */
+}
+
+.logo-img {
+  max-height: 48px;
+  width: auto;
+  margin-right: 8px;
+  object-fit: contain;
+  position: relative;
+  transform: scale(2);
+  transform-origin:left-center;
+}
+
+.logo-text {
+  padding-left: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgb(255, 255, 255); /* hoặc inherit cũng được */
+}
+
+/* ===== Menu ===== */
+.nav{
+  display:flex;
+  align-items:center;
+  height: 60px;
+}
+.nav a {
+  margin-left: 1.5rem;
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center; /* 👈 căn giữa từng link nếu cần */
+  height: 100%;
+}
+
+.nav a:hover {
+  color: rgb(160, 20, 20);
+}
