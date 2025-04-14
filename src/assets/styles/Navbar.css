@@ -1,63 +1,171 @@
-/* ===== Header chính ===== */
+/* ===== Header ===== */
 .header {
   background-color: #f7796b;
-  padding: 1rem 0;
-  height: 60px; 
-  overflow: hidden;
-}
-
-/* ===== Container chứa logo + menu ===== */
-.container {
+  height: 64px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 1rem;
+  justify-content: center;
+  position: relative;
+  z-index: 999;
+  padding: 0 16px;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1140px; /* hoặc 960px nếu bạn muốn co lại nữa */
+}
+/* ===== Logo + Menu ===== */
+.container.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* giãn cách giữa logo và menu */
 }
 
-/* ===== Logo (ảnh + chữ) ===== */
+/* ===== Logo ===== */
 .logo {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: white; /* chữ logo là trắng */
+  color: white;
 }
 
 .logo-img {
-  max-height: 48px;
+  height: 64px;
   width: auto;
-  margin-right: 8px;
-  object-fit: contain;
-  position: relative;
-  transform: scale(2);
-  transform-origin:left-center;
+  margin-right: 10px;
 }
 
 .logo-text {
-  padding-left: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  color: rgb(255, 255, 255); /* hoặc inherit cũng được */
-}
-
-/* ===== Menu ===== */
-.nav{
-  display:flex;
-  align-items:center;
-  height: 60px;
-}
-.nav a {
-  margin-left: 1.5rem;
-  text-decoration: none;
   color: white;
-  font-size: 1rem;
-  transition: color 0.3s;
-  display: flex;
-  align-items: center; /* 👈 căn giữa từng link nếu cần */
-  height: 100%;
 }
 
-.nav a:hover {
-  color: rgb(160, 20, 20);
+/* ===== Menu: Gần Bạn + Ăn Uống ===== */
+.nav-combined {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* giãn cách từng mục */
+  position: relative;
+}
+
+.nav-item,
+.dropdown-toggle {
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.nav-item:hover,
+.dropdown-toggle:hover {
+  color: #f4b4a8;
+}
+
+/* ===== Dropdown Ngang (Ăn Uống) ===== */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 6px 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  gap: 12px; /* giãn cách giữa các item */
+}
+
+.dropdown-menu a {
+  padding: 6px 10px;
+  text-decoration: none;
+  color: #333;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.dropdown-menu a:hover {
+  background-color: #fecccc;
+  border-radius: 4px;
+}
+
+/* ===== Khu vực Tài khoản bên phải ===== */
+.account-area {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* dãn đều các nút */
+  margin-left: auto;
+}
+
+.auth-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 12px;
+  transition: color 0.2s;
+}
+
+.auth-links a:hover {
+  color: #f7a394;
+}
+
+/* ===== User Info Dropdown ===== */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.username {
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ===== Dropdown bên phải (Tài khoản) ===== */
+.dropdown-menu.right {
+  top: 100%;
+  right: 0;
+  left: auto;
+  min-width: 160px;
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.dropdown-menu.right a,
+.dropdown-menu.right button {
+  text-align: left;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  width: 100%;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dropdown-menu.right a:hover,
+.dropdown-menu.right button:hover {
+  background-color: #f1abab;
 }
