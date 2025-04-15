@@ -50,8 +50,8 @@ const restaurants = [
 const RestaurantList = () => {
   return (
     <div>
-      <FilterBar />
       <LocationSearchBar />
+      <FilterBar />
       <div className="restaurant-page">
         <h1 className="restaurant-title">Danh Sách Nhà Hàng</h1>
 
