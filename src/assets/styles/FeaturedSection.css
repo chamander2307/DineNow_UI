@@ -12,7 +12,7 @@
   .highlight-slide {
     position: relative;
     width: 100%;
-    padding-top: 37.5%; /* 2/3 của tỉ lệ 16:9 */
+    padding-top: 50%; /* 2/3 của tỉ lệ 16:9 */
     overflow: hidden;
     border-radius: 16px;
   }
@@ -158,5 +158,23 @@
   
   .slick-next {
     right: -45px;
+  }
+  .restaurant-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  
+  .star-icons {
+    display: flex;
+    gap: 2px;
+    font-size: 16px;
+  }
+  
+  .visit-count {
+    font-size: 14px;
+    color: #777;
+    white-space: nowrap;
   }
   

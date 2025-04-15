@@ -6,6 +6,7 @@ import "../assets/styles/FeaturedSection.css";
 import restaurant1 from "../assets/img/restaurant1.jpg";
 import restaurant2 from "../assets/img/restaurant2.jpg";
 import restaurant3 from "../assets/img/restaurant3.jpg";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const FeaturedSection = () => {
   const sliderSettings = {
@@ -20,6 +21,33 @@ const FeaturedSection = () => {
       { breakpoint: 768, settings: { slidesToShow: 2 } },
       { breakpoint: 480, settings: { slidesToShow: 1 } },
     ],
+  };
+  const formatNumber = (num) => {
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
+    return num.toString();
+  };
+  
+  // ⭐ Render icon sao như PasGo
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const stars = [];
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} color="#f4c150" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<FaStarHalfAlt key="half" color="#f4c150" />);
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<FaRegStar key={`empty-${i}`} color="#ccc" />);
+    }
+
+    return <div className="star-icons">{stars}</div>;
   };
 
   const highlightImages = [
@@ -72,12 +100,48 @@ const FeaturedSection = () => {
   ];
 
   const featuredRestaurants = [
-    { id: 1, name: "Lẩu Nướng Hàn Quốc", score: 22, image: restaurant1 },
-    { id: 2, name: "Nhà hàng Việt hiện đại", score: 20, image: restaurant2 },
-    { id: 3, name: "Ẩm thực chay An Lạc", score: 8, image: restaurant3 },
-    { id: 4, name: "Pizza & Pasta Ý", score: 16, image: restaurant2 },
-    { id: 5, name: "Nhà hàng Nhật Sushi Go", score: 18, image: restaurant1 },
-    { id: 6, name: "Món Hoa Đại Phát", score: 25, image: restaurant3 },
+    {
+      id: 1,
+      name: "Lẩu Nướng Hàn Quốc",
+      rating: 4.5,
+      visits: 1250,
+      image: restaurant1,
+    },
+    {
+      id: 2,
+      name: "Nhà hàng Việt hiện đại",
+      rating: 4.0,
+      visits: 17455,
+      image: restaurant2,
+    },
+    {
+      id: 3,
+      name: "Ẩm thực chay An Lạc",
+      rating: 2.0,
+      visits: 8909,
+      image: restaurant3,
+    },
+    {
+      id: 4,
+      name: "Pizza & Pasta Ý",
+      rating: 3.5,
+      visits: 1120,
+      image: restaurant2,
+    },
+    {
+      id: 5,
+      name: "Nhà hàng Nhật Sushi Go",
+      rating: 3.0,
+      visits: 146,
+      image: restaurant1,
+    },
+    {
+      id: 6,
+      name: "Món Hoa Đại Phát",
+      rating: 5.0,
+      visits: 300,
+      image: restaurant3,
+    },
   ];
 
   return (
@@ -149,9 +213,11 @@ const FeaturedSection = () => {
               />
               <div className="restaurant-details">
                 <h3>{res.name}</h3>
-                <p className="score">
-                  Số điểm đến: <strong>{res.score}</strong>
-                </p>
+                <div className="restaurant-meta">
+                  {renderStars(res.rating)}
+                  <span className="visit-count">{formatNumber(res.visits)} lượt đến</span>
+
+                </div>
               </div>
             </div>
           </div>
