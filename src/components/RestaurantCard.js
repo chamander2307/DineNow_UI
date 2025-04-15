@@ -1,5 +1,6 @@
 import React from "react";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import "../assets/styles/RestaurantCard.css";
 
 const renderStars = (rating) => {
@@ -21,7 +22,7 @@ const formatNumber = (num) => {
   return num.toString();
 };
 
-const RestaurantCard = ({ image, name, rating, priceLevel, address, visits }) => {
+const RestaurantCard = ({ id, image, name, rating, priceLevel, address, visits }) => {
   return (
     <div className="restaurant-card">
       <img src={image} alt={name} className="rc-image" />
@@ -32,7 +33,10 @@ const RestaurantCard = ({ image, name, rating, priceLevel, address, visits }) =>
           <span className="rc-visits">{formatNumber(visits)} lượt đến</span>
         </div>
         <p className="rc-address">{address}</p>
-        <button className="rc-button">Đặt bàn giữ chỗ</button>
+        {/*<button className="rc-button">Đặt bàn giữ chỗ</button>*/}
+        <Link to={`/restaurant/${id}`}>
+          <button className="rc-button">Đặt bàn giữ chỗ</button>
+        </Link>
       </div>
     </div>
   );

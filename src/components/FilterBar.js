@@ -26,6 +26,7 @@ const FilterBar = () => {
         <option value="lau">Lẩu</option>
         <option value="nuong">Nướng</option>
       </select>
+      
       <select>
         <option value="">Phù hợp</option>
         <option value="cap-doi">Cặp đôi</option>

@@ -83,4 +83,18 @@
   .rc-button:hover {
     background-color: #c0392b;
   }
+
+  .rc-detail-button {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .rc-detail-button:hover {
+    background-color: #218838;
+  }
   

@@ -3,9 +3,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../assets/styles/FeaturedSection.css";
+
 import restaurant1 from "../assets/img/restaurant1.jpg";
 import restaurant2 from "../assets/img/restaurant2.jpg";
 import restaurant3 from "../assets/img/restaurant3.jpg";
+
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const FeaturedSection = () => {
@@ -220,6 +222,7 @@ const FeaturedSection = () => {
                 </div>
               </div>
             </div>
+            
           </div>
         ))}
       </Slider>

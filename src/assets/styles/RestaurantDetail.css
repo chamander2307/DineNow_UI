@@ -1,0 +1,218 @@
+.restaurant-detail {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.restaurant-info {
+  display: flex;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.restaurant-image1 {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.restaurant-details1 {
+  flex: 0.6;
+}
+
+.restaurant-details1 h1 {
+  margin-bottom: 10px;
+}
+
+.restaurant-details1 .location,
+.restaurant-details1 .style,
+.restaurant-details1 .address {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.book-btn {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.book-btn:hover {
+  background-color: #218838;
+}
+
+/* Phần Danh mục, Thực đơn và Đánh giá */
+.menu-and-reviews {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Danh mục món ăn */
+.categories-section {
+  flex: 1;
+  max-width: 200px;
+}
+
+.categories-section h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.categories-list {
+  list-style: none;
+  padding: 0;
+}
+
+.category-item {
+  padding: 10px 0;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+
+.category-item:hover {
+  color: #e74c3c;
+}
+
+.category-item.active {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Thực đơn */
+.menu-section {
+  flex: 2;
+}
+
+.menu-section h2 {
+  margin-bottom: 15px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: #999;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-category {
+  margin-bottom: 20px;
+}
+
+.category-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.menu-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.menu-item-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-item-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.menu-item-price {
+  font-size: 16px;
+  color: #e74c3c;
+  margin: 0;
+}
+
+.add-btn {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Phần Đánh giá */
+.reviews-section {
+  flex: 1;
+  max-width: 300px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.reviews-section h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.review {
+  margin-bottom: 15px;
+}
+
+.review .user {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.review .comment {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.review .rating {
+  color: #f39c12;
+  font-size: 14px;
+}
