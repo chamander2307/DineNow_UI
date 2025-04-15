@@ -1,16 +1,21 @@
 import React from 'react';
-import Banner from '../../components/Banner';
-import RestaurantSearch from '../Search/RestaurantSearch';
+
 import FeaturedSection from '../../components/FeaturedSection';
+import FilterBar from '../../components/FilterBar';
+import FoodCategoryList from '../../components/FoodCategoryList';
+import LocationSearchBar from '../../components/LocationSearchBar';
+import Banner from '../../components/Banner';
+import RelatedArticles from '../../components/RelatedArticles';
 
 import '../../assets/styles/Home.css';
-
 const Home = () => {
   return (
     <div className="App">
       <Banner />
-      <RestaurantSearch />
+      <LocationSearchBar />
+      <FilterBar />
       <FeaturedSection />
+      <RelatedArticles />
     </div>
   );
 };

@@ -1,0 +1,110 @@
+.related-articles {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  
+  .related-articles h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 24px;
+  }
+  
+  .article-card {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .article-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+  
+  .article-card:hover .article-image {
+    transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
+  }
+  
+  .article-content {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .article-content h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .article-content p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  .read-more {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .read-more:hover {
+    text-decoration: underline;
+  }
+  
+  /* Tùy chỉnh dots của slider */
+  .slick-dots li button:before {
+    font-size: 12px;
+    color: #ccc;
+  }
+  
+  .slick-dots li.slick-active button:before {
+    color: #007bff;
+  }
+  
+  /* Tùy chỉnh nút điều hướng (mũi tên trái/phải) */
+  .slick-prev,
+  .slick-next {
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    z-index: 1;
+    transition: background 0.3s ease;
+  }
+  
+  .slick-prev:hover,
+  .slick-next:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 20px;
+    color: #fff;
+  }
+  
+  .slick-prev {
+    left: 10px;
+  }
+  
+  .slick-next {
+    right: 10px;
+  }
+  
+  /* Tùy chỉnh khoảng cách giữa các slide */
+  .slick-slide {
+    padding: 0 10px;
+  }
