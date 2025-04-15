@@ -1,25 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/Navbar.css";
 import LogoIcon from "../assets/img/DineNow_2.svg";
+import { UserContext } from "../contexts/UserContext";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [userName, setUserName] = useState("");
   const dropdownRef = useRef();
   const userRef = useRef();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const name = localStorage.getItem("userName");
-    if (token && name) {
-      setIsLogin(true);
-      setUserName(name);
-    }
-  }, []);
+  const { isLogin, user, logout } = useContext(UserContext);
+  const userName = user?.fullName || user?.email || "Người dùng";
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -35,9 +28,7 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userName");
-    setIsLogin(false);
+    logout(); // gọi từ context
     navigate("/login");
   };
 
@@ -45,29 +36,20 @@ const Header = () => {
     <header className="header">
       <div className="header-inner">
         <div className="container header-left">
-          {/* Logo */}
           <Link to="/" className="logo">
             <img src={LogoIcon} alt="Logo" className="logo-img" />
             <span className="logo-text">DineNow</span>
           </Link>
 
-          {/* Menu */}
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">
-              Gần Bạn
-            </Link>
-
-            <Link to="/restaurant-types" className="nav-item">
-              Các Nhà Hàng
-            </Link>
-
+            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
+            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
             >
               Ăn Uống ▾
             </span>
-
             {showDropdown && (
               <div className="dropdown-menu">
                 <Link to="/food/pho">Phở</Link>
@@ -88,28 +70,23 @@ const Header = () => {
           </nav>
         </div>
 
-        {/* Khu vực bên phải - Đăng nhập/đăng ký hoặc Tài khoản */}
-        <div className="account-area" ref={userRef}>
+        <div className="account-area">
           {isLogin ? (
             <div className="user-menu">
               <div
-                className="user-info"
+                className="user-info username-hover"
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
+                ref={userRef}
               >
-                <img
-                  src="https://i.pravatar.cc/150?img=13"
-                  alt="avatar"
-                  className="avatar"
-                />
                 <span className="username">{userName}</span>
+                {showUserDropdown && (
+                  <div className="dropdown-menu user-dropdown">
+                    <Link to="/profile">Tài Khoản</Link>
+                    <Link to="/orders">Đơn Đặt</Link>
+                    <button onClick={handleLogout}>Đăng Xuất</button>
+                  </div>
+                )}
               </div>
-              {showUserDropdown && (
-                <div className="dropdown-menu right">
-                  <Link to="/profile">Tài Khoản</Link>
-                  <Link to="/orders">Đơn Đặt</Link>
-                  <button onClick={handleLogout}>Đăng Xuất</button>
-                </div>
-              )}
             </div>
           ) : (
             <div className="auth-links">
@@ -122,4 +99,5 @@ const Header = () => {
     </header>
   );
 };
+
 export default Header;

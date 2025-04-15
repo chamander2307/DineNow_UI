@@ -13,6 +13,7 @@ const httpStatusMessages = {
     410: 'Dữ liệu đầu vào không hợp lệ',
     411: 'OTP không hợp lệ',
     412: 'Yêu cầu đổi mật khẩu không hợp lệ hoặc đã hết hạn',
+    418: 'Tài khoản chưa được xác thực',
     500: 'Lỗi máy chủ nội bộ',
   };
   

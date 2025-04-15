@@ -10,6 +10,8 @@ import Register from './pages/Auth/Register/Register';
 import ResetPasswordFlow from './pages/Auth/ForgotPassword/ForgotPassword';
 import Profile from './pages/Profile/Profile';
 import PolicyPage from './pages/Policy/PolicyPage';
+import RestaurantList from './pages/RestaurantList/RestaurantList';
+import VerifyEmail from './pages/Auth/VerifyEmail/VerifyEmail'; 
 
 function AppContent() {
 
@@ -24,6 +26,8 @@ function AppContent() {
           <Route path="/forgot-password" element={<ResetPasswordFlow />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/policy" element={<PolicyPage />} />
+          <Route path="/restaurant-list" element={<RestaurantList />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
         </Routes>
       </main>
      <Footer />

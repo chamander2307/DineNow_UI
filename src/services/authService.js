@@ -9,7 +9,7 @@ export const register = async (userData) => {
 // 2. Đăng nhập
 export const login = async (credentials) => {
   const res = await axios.post('/auth/login', credentials);
-  return res.data.data; // trả về { accessToken }
+  return res.data; // ✅ Trả cả status, message, data
 };
 
 // 3. Đăng xuất
@@ -25,9 +25,9 @@ export const refreshToken = async () => {
 };
 
 // 5. Gửi OTP xác thực tài khoản
-export const sendVerifyOTP = async (email) => {
+export const sendVerifyOTP = async ({ email }) => {
   const res = await axios.post('/auth/send-verification-otp', { email });
-  return res.data.data; // true hoặc false
+  return res.data.data;
 };
 
 // 6. Gửi OTP đổi mật khẩu

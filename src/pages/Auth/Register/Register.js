@@ -36,11 +36,12 @@ const Register = () => {
 
     try {
       await register({ fullName, email, password, phone });
-      alert('Đăng ký thành công');
-      navigate('/login');
+      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`); // ✅ Chuyển đến trang xác thực
     } catch (err) {
-      alert('Đăng ký thất bại');
-      console.error(err);
+      const errorMessage = err?.response?.data?.message || 'Đăng ký thất bại';
+      alert(errorMessage);
+      console.error('Lỗi đăng ký:', err);
     }
   };
 

@@ -9,18 +9,20 @@
   z-index: 999;
   padding: 0 16px;
 }
+
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1140px; /* hoặc 960px nếu bạn muốn co lại nữa */
+  max-width: 1140px;
 }
+
 /* ===== Logo + Menu ===== */
 .container.header-left {
   display: flex;
   align-items: center;
-  gap: 40px; /* giãn cách giữa logo và menu */
+  gap: 40px;
 }
 
 /* ===== Logo ===== */
@@ -43,11 +45,11 @@
   color: white;
 }
 
-/* ===== Menu: Gần Bạn + Ăn Uống ===== */
+/* ===== Menu ===== */
 .nav-combined {
   display: flex;
   align-items: center;
-  gap: 32px; /* giãn cách từng mục */
+  gap: 32px;
   position: relative;
 }
 
@@ -59,15 +61,17 @@
   text-decoration: none;
   padding: 8px 12px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 6px;
 }
 
 .nav-item:hover,
 .dropdown-toggle:hover {
-  color: #f4b4a8;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* ===== Dropdown Ngang (Ăn Uống) ===== */
+/* ===== Dropdown ngang (Ăn uống) ===== */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -75,12 +79,12 @@
   background-color: white;
   display: flex;
   flex-direction: row;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 8px 10px;
   white-space: nowrap;
   z-index: 1000;
-  gap: 12px; /* giãn cách giữa các item */
+  gap: 12px;
 }
 
 .dropdown-menu a {
@@ -89,18 +93,21 @@
   color: #333;
   font-size: 15px;
   white-space: nowrap;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
 .dropdown-menu a:hover {
-  background-color: #fecccc;
-  border-radius: 4px;
+  background-color: #f7796b;
+  color: white;
+  font-weight: 500;
 }
 
-/* ===== Khu vực Tài khoản bên phải ===== */
+/* ===== Khu vực tài khoản ===== */
 .account-area {
   display: flex;
   align-items: center;
-  gap: 20px; /* dãn đều các nút */
+  gap: 20px;
   margin-left: auto;
 }
 
@@ -117,43 +124,45 @@
   color: #f7a394;
 }
 
-/* ===== User Info Dropdown ===== */
-.user-info {
+/* ===== User Info ===== */
+.user-info.username-hover {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  cursor: pointer;
 }
 
 .username {
   color: white;
   font-size: 15px;
   font-weight: 500;
+  transition: color 0.2s, text-decoration 0.2s;
 }
 
-/* ===== Dropdown bên phải (Tài khoản) ===== */
-.dropdown-menu.right {
+.username-hover:hover .username {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ===== Dropdown tài khoản (bên phải, gọn đẹp) ===== */
+.dropdown-menu.user-dropdown {
+  position: absolute;
   top: 100%;
   right: 0;
-  left: auto;
-  min-width: 160px;
-  position: absolute;
+  margin-top: 8px;
   background-color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  padding: 6px 0;
+  border-radius: 8px;
+  padding: 8px 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   z-index: 999;
+  min-width: 180px;
+  overflow: hidden;
 }
 
-.dropdown-menu.right a,
-.dropdown-menu.right button {
+.dropdown-menu.user-dropdown a,
+.dropdown-menu.user-dropdown button {
   text-align: left;
   padding: 10px 16px;
   background: none;
@@ -163,9 +172,12 @@
   font-size: 14px;
   cursor: pointer;
   text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.dropdown-menu.right a:hover,
-.dropdown-menu.right button:hover {
-  background-color: #f1abab;
+.dropdown-menu.user-dropdown a:hover,
+.dropdown-menu.user-dropdown button:hover {
+  background-color: #f7796b;
+  color: white;
+  font-weight: 500;
 }
