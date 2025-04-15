@@ -93,45 +93,6 @@ const Profile = () => {
                   onChange={handleChange}
                 />
               </div>
-
-              {/* Nếu muốn giữ giới tính/ngày sinh */}
-              <div className="form-group">
-                <label>Giới tính</label>
-                <div className="radio-group">
-                  <label>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="male"
-                      checked={formData.gender === 'male'}
-                      onChange={handleChange}
-                      disabled
-                    /> Nam
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="female"
-                      checked={formData.gender === 'female'}
-                      onChange={handleChange}
-                      disabled
-                    /> Nữ
-                  </label>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Ngày sinh</label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  disabled
-                />
-              </div>
-
               <button className="save-btn" onClick={handleSubmit}>Lưu</button>
             </div>
           </div>

@@ -4,6 +4,8 @@ import "../../../assets/styles/Login.css";
 import Logo from "../../../components/Logo";
 import OtpInput from "../../../components/auth/OTPinput";
 import { verifyAccountOTP, sendVerifyOTP } from "../../../services/authService";
+import { useEffect } from "react";
+
 
 const VerifyEmail = () => {
   const location = useLocation();
@@ -13,6 +15,18 @@ const VerifyEmail = () => {
   const [otp, setOtp] = useState("");
   const [resendSuccess, setResendSuccess] = useState(false);
 
+   useEffect (() => {
+    const sendOTP = async () => {
+        if (email)
+            try {
+        await sendVerifyOTP({ email }); // ✅ Gửi mã OTP
+        } catch (err) {
+        alert("Có lỗi xảy ra khi gửi mã OTP.");
+        console.error(err);
+        }
+    };
+    sendOTP();
+   }, [email]);
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
@@ -39,7 +53,7 @@ const VerifyEmail = () => {
       console.error(err);
     }
   };
-
+  
   return (
     <div className="auth auth--split">
       <div className="auth__left">

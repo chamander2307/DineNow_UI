@@ -5,6 +5,9 @@ import Logo from "../../../components/Logo";
 import { login } from "../../../services/authService";
 import { getUserProfile } from "../../../services/userService";
 import { UserContext } from "../../../contexts/UserContext";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from 'jwt-decode';
+import { googleLogin } from "../../../services/authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -100,11 +103,40 @@ const Login = () => {
               />
             </div>
             <button type="submit">Đăng nhập</button>
+            <div style={{ marginTop: "15px" }}>
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    const { credential } = credentialResponse;
+                    const decoded = jwtDecode(credential); // chứa email, name, sub...
+
+                    const res = await googleLogin({ token: credential });
+                    const accessToken = res?.data?.accessToken;
+
+                    if (!accessToken) throw new Error("Google login failed");
+
+                    localStorage.setItem("accessToken", accessToken);
+                    const profile = await getUserProfile();
+                    setUser(profile);
+                    setIsLogin(true);
+                    navigate("/");
+                  } catch (err) {
+                    console.error("Google login failed:", err);
+                    setError("Đăng nhập Google thất bại.");
+                  }
+                }}
+                onError={() => {
+                  console.log("Google Login Failed");
+                  setError("Đăng nhập Google thất bại.");
+                }}
+              />
+            </div>
             <div className="auth__extra">
               <Link to="/forgot-password">Quên mật khẩu?</Link>
               <span> | </span>
               <Link to="/register">Đăng ký</Link>
             </div>
+            
           </form>
         </div>
       </div>

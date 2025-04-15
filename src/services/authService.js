@@ -53,3 +53,8 @@ export const resetPassword = async ({ email, newPassword }) => {
   const res = await axios.post('/auth/reset-password', { email, newPassword });
   return res.data.data;
 };
+// 10. Đăng nhập bằng Google
+export const googleLogin = async ({ token }) => {
+  const res = await axios.post('/auth/google-login', { token });
+  return res.data; // { status, message, data: { accessToken } }
+};
