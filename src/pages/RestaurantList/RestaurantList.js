@@ -4,7 +4,6 @@ import RestaurantCard from "../../components/RestaurantCard";
 import FilterBar from "../../components/FilterBar";
 import LocationSearchBar from "../../components/LocationSearchBar";
 import "../../assets/styles/RestaurantList.css";
-
 import restaurant1 from "../../assets/img/restaurant1.jpg";
 import restaurant2 from "../../assets/img/restaurant2.jpg";
 import restaurant3 from "../../assets/img/restaurant3.jpg";
