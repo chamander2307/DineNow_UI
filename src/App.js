@@ -10,6 +10,7 @@ import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import RestaurantSearch from './pages/Search/RestaurantSearch';
 import RestaurantDetail from './pages/RestaurantDetail/RestaurantDetail';
+import RestaurantReviewForm from './components/RestaurantReviewForm';
 
 import Home from './pages/Home/Home';
 
@@ -26,6 +27,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/restaurant/:id" element={<RestaurantDetail />} />
             <Route path="/restaurant-search" element={<RestaurantSearch />} />
+            <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
           </Routes>
         </main>
         <Footer />

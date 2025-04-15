@@ -7,7 +7,7 @@ import restaurant1 from '../../assets/images/restaurant1.jpg';
 import restaurant2 from '../../assets/images/restaurant2.jpg';
 import restaurant3 from '../../assets/images/restaurant3.jpg';
 
-
+import RestaurantReviewForm from '../../components/RestaurantReviewForm';
 
 const RestaurantDetail = () => {
   const { id } = useParams();
@@ -55,7 +55,7 @@ const RestaurantDetail = () => {
       ],
       reviews: [
         { user: 'Lê Văn C', comment: 'Không gian sang trọng, rất thích!', rating: 5 },
-        { user: 'Lê Văn a', comment: 'Không gian sang trọng, rất thích!', rating: 4 },
+        { user: 'Lê Văn A', comment: 'Không gian sang trọng, rất thích!', rating: 4 },
       ],
     },
     {
@@ -154,18 +154,7 @@ const RestaurantDetail = () => {
 
         {/* Đánh giá */}
         <div className="reviews-section">
-          <h2>Đánh giá</h2>
-          {restaurant.reviews && restaurant.reviews.length > 0 ? (
-            restaurant.reviews.map((review, index) => (
-              <div key={index} className="review">
-                <p className="user">{review.user}</p>
-                <p className="comment">{review.comment}</p>
-                <p className="rating">Đánh giá: {review.rating}/5</p>
-              </div>
-            ))
-          ) : (
-            <p>Chưa có đánh giá nào.</p>
-          )}
+          <RestaurantReviewForm restaurantId={restaurant.id} existingReviews={restaurant.reviews} />
         </div>
       </div>
     </div>
