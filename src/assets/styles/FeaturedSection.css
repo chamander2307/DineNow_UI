@@ -1,147 +1,180 @@
-.featured-section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+.featured-section-pg {
+    padding: 60px 30px;
+    background-color: #fff5f3;
   }
   
-  /* Món ăn đặc sắc */
-  .featured-dishes {
-    margin-bottom: 40px;
-    align-items: center;
+  /* Slider món ăn nổi bật */
+  .highlight-slider-wrapper {
+    width: 66.66%;
+    margin: 0 auto 40px auto;
   }
   
-  .featured-dishes h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .dishes-list {
-    display:inline-flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-  }
-  
-  .dish-item {
-    flex: 0 0 auto;
-    width: 200px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #fff;
-    transition: transform 0.2s;
-  }
-  
-  .dish-item:hover {
-    transform: translateY(-5px);
-  }
-  
-  .dish-image {
+  .highlight-slide {
+    position: relative;
     width: 100%;
-    height: 120px;
+    padding-top: 50%; /* 2/3 của tỉ lệ 16:9 */
+    overflow: hidden;
+    border-radius: 16px;
+  }
+    .highlight-header {
+    text-align: center !important;
+    margin-bottom: 24px;
+  }
+  
+  
+  .highlight-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    border-radius: 16px;
   }
   
-  .dish-details {
-    padding: 10px;
-    text-align: center;
+  .section-header {
+    margin-bottom: 16px;
+    text-align: left;
+    padding: 0 12px;
   }
   
-  .dish-name {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
+  .section-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 4px;
+    font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   }
   
-  .dish-price {
-    font-size: 14px;
-    color: #e74c3c;
-    margin-bottom: 10px;
+  .section-sub {
+    font-size: 15px;
+    color: #666;
   }
   
-  .add-btn {
-    padding: 5px 10px;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
+  .horizontal-slider {
+    margin-bottom: 60px;
   }
   
-  .add-btn:hover {
-    background-color: #c0392b;
+  .slider-item {
+    padding: 0 8px;
+    box-sizing: border-box;
   }
   
-  /* Nhà hàng đặc sắc */
-  .featured-restaurants h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .restaurants-list {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
+  .dish-item,
   .restaurant-item {
-    flex: 1;
-    min-width: 300px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #fff;
-    transition: transform 0.2s;
-  }
-  
-  .restaurant-item:hover {
-    transform: translateY(-5px);
-  }
-  
-  .restaurant-image {
     width: 100%;
-    height: 150px;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease;
+  }
+  
+  .dish-item:hover,
+  .restaurant-item:hover {
+    transform: translateY(-6px);
+  }
+  
+  .dish-image,
+  .restaurant-image {
+    height: 180px;
+    width: 100%;
     object-fit: cover;
+    display: block;
   }
   
+  .dish-details,
   .restaurant-details {
-    padding: 15px;
-    text-align: center;
+    padding: 10px;
+    text-align: left;
   }
   
-  .restaurant-name {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
+  .dish-details h3,
+  .restaurant-details h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
     color: #333;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   
-  .restaurant-location {
+  .price,
+  .score {
+    font-size: 12.5px;
+    color: #e74c3c;
+    font-weight: bold;
+  }
+  
+  /* Dots */
+  .slick-dots {
+    bottom: -25px;
+  }
+  
+  .slick-dots li button:before {
+    font-size: 10px;
+    color: #999;
+    opacity: 0.8;
+  }
+  
+  .slick-dots li.slick-active button:before {
+    color: #e74c3c;
+    opacity: 1;
+  }
+  
+  /* Mũi tên */
+  .slick-prev,
+  .slick-next {
+    z-index: 10;
+    width: 60px;
+    height: 60px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .slick-prev:hover,
+  .slick-next:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 35px;
+    color: #ffffff;
+    font-weight: bold;
+    opacity: 1;
+  }
+  
+  .slick-prev {
+    left: -45px;
+  }
+  
+  .slick-next {
+    right: -45px;
+  }
+  .restaurant-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  
+  .star-icons {
+    display: flex;
+    gap: 2px;
+    font-size: 16px;
+  }
+  
+  .visit-count {
     font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
+    color: #777;
+    white-space: nowrap;
   }
   
-  .restaurant-rating {
-    font-size: 14px;
-    color: #f39c12;
-    margin-bottom: 10px;
-  }
-  
-  .view-btn {
-    display: inline-block;
-    padding: 8px 15px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .view-btn:hover {
-    background-color: #218838;
-  }

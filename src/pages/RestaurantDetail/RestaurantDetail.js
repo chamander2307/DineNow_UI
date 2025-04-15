@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 
 import '../../assets/styles/RestaurantDetail.css';
 
-import restaurant1 from '../../assets/images/restaurant1.jpg';
-import restaurant2 from '../../assets/images/restaurant2.jpg';
-import restaurant3 from '../../assets/images/restaurant3.jpg';
+import restaurant1 from '../../assets/img/restaurant1.jpg';
+import restaurant2 from '../../assets/img/restaurant2.jpg';
+import restaurant3 from '../../assets/img/restaurant3.jpg';
 
 import RestaurantReviewForm from '../../components/RestaurantReviewForm';
 

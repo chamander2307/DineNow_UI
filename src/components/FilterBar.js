@@ -10,22 +10,26 @@ const FilterBar = () => {
         <option value="quan3">Quận 3</option>
         <option value="binhthanh">Bình Thạnh</option>
       </select>
+
       <select>
         <option value="">Chọn nhà hàng</option>
         <option value="nha-hang-a">Nhà Hàng A</option>
         <option value="nha-hang-b">Nhà Hàng B</option>
       </select>
+
       <select>
         <option value="">Giá trung bình</option>
         <option value="duoi-100">Dưới 100k</option>
         <option value="100-200">100k - 200k</option>
         <option value="tren-200">Trên 200k</option>
       </select>
+
       <select>
         <option value="">Đồ ăn chính</option>
         <option value="lau">Lẩu</option>
         <option value="nuong">Nướng</option>
       </select>
+      
       <select>
         <option value="">Phù hợp</option>
         <option value="cap-doi">Cặp đôi</option>
