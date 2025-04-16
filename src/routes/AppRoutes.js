@@ -8,7 +8,9 @@ import PolicyPage from "../pages/Policy/PolicyPage";
 import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
 import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
-
+import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
+import RestaurantReviewForm from "../pages/RestaurantDetail/RestaurantReviewForm";
+import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -21,6 +23,10 @@ const AppRoutes = () => {
       <Route path="/restaurant-list" element={<RestaurantList />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+
+      <Route path="/restaurant/:id" element={<RestaurantDetail />} />
+      <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
+      <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
     </Routes>
   );
 };

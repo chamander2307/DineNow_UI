@@ -108,14 +108,13 @@ const Login = () => {
                 onSuccess={async (credentialResponse) => {
                   try {
                     const { credential } = credentialResponse;
-                    const decoded = jwtDecode(credential); // chứa email, name, sub...
-
-                    const res = await googleLogin({ token: credential });
+                    const decoded = jwtDecode(credential);
+                    const res = await googleLogin({ idToken: credential });
+                    console.log("Google login googleID:", credential);
                     const accessToken = res?.data?.accessToken;
-
-                    if (!accessToken) throw new Error("Google login failed");
-
                     localStorage.setItem("accessToken", accessToken);
+                    console.log("Google login accessToken:", res,accessToken);
+                    if (!accessToken) throw new Error("Google login failed");
                     const profile = await getUserProfile();
                     setUser(profile);
                     setIsLogin(true);
