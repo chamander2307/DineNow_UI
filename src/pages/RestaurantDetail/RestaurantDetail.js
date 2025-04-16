@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import '../../assets/styles/RestaurantDetail.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
@@ -11,6 +11,24 @@ import RestaurantReviewForm from '../../components/RestaurantReviewForm';
 
 const RestaurantDetail = () => {
   const { id } = useParams();
+
+  // Khởi tạo isLiked từ localStorage
+  const [isLiked, setIsLiked] = useState(() => {
+    const likedRestaurants = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    return likedRestaurants[id] || false;
+  });
+
+  // Cập nhật localStorage khi isLiked thay đổi
+  useEffect(() => {
+    const likedRestaurants = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    likedRestaurants[id] = isLiked;
+    localStorage.setItem('likedRestaurants', JSON.stringify(likedRestaurants));
+  }, [isLiked, id]);
+
+  const toggleLike = () => {
+    setIsLiked(!isLiked);
+  };
+
   const categories = [
     { name: 'Tất cả' },
     { name: 'Cơm' },
@@ -19,7 +37,7 @@ const RestaurantDetail = () => {
     { name: 'Nước giải khát' },
   ];
 
- const restaurants = [
+  const restaurants = [
     {
       id: 1,
       name: 'Nhà hàng A',
@@ -97,7 +115,12 @@ const RestaurantDetail = () => {
       <div className="restaurant-info">
         <img src={restaurant.image} alt={restaurant.name} className="restaurant-image1" />
         <div className="restaurant-details1">
-          <h1>{restaurant.name}</h1>
+          <div className="restaurant-header">
+            <h1>{restaurant.name}</h1>
+            <button className="heart" onClick={toggleLike}>
+              {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
+            </button>
+          </div>
           <p className="location">Vị trí: {restaurant.location}</p>
           <p className="style">Kiểu nhà hàng: {restaurant.style}</p>
           <p className="address">Địa chỉ: {restaurant.address}</p>
@@ -142,7 +165,6 @@ const RestaurantDetail = () => {
                   <div className="menu-item-details">
                     <p className="menu-item-name">{item.name}</p>
                     <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
-                    {/*<button className="add-btn">+</button>*/}
                   </div>
                 </div>
               ))
