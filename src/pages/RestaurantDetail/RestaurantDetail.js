@@ -117,14 +117,14 @@ const RestaurantDetail = () => {
         <div className="restaurant-details1">
           <div className="restaurant-header">
             <h1>{restaurant.name}</h1>
-            <button className="heart" onClick={toggleLike}>
-              {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
-            </button>
           </div>
           <p className="location">Vị trí: {restaurant.location}</p>
           <p className="style">Kiểu nhà hàng: {restaurant.style}</p>
           <p className="address">Địa chỉ: {restaurant.address}</p>
           <button className="book-btn">Đặt bàn ngay</button>
+          <button className="heart" onClick={toggleLike}>
+            {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
+          </button>
         </div>
       </div>
 

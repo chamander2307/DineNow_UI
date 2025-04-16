@@ -13,6 +13,8 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 
+import Page404 from "../components/Page404";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -30,8 +32,7 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
 
-      {/* Đường dẫn không hợp lệ */}
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route path="*" element={<Page404/>} />
     </Routes>
   );
 };

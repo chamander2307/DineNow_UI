@@ -2,9 +2,10 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; // Import CSS của slick
 import 'slick-carousel/slick/slick-theme.css'; // Import theme CSS của slick
+
 import '../assets/styles/RelatedArticles.css'; // Import CSS tùy chỉnh
 
-import default1 from '../assets/images/default.jpg';
+import default1 from '../assets/img/default.jpg';
 const RelatedArticles = () => {
   // Dữ liệu giả lập cho các bài viết liên quan
   const articles = [
