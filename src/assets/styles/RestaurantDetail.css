@@ -216,3 +216,17 @@
   color: #f39c12;
   font-size: 14px;
 }
+
+/* Style cho nút trái tim */
+.heart {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.heart:hover {
+  transform: scale(1.2);
+}

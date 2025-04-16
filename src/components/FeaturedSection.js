@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../assets/styles/FeaturedSection.css";
+
+import FavoriteButton from "./FavoriteButton"; // ✅ dùng component riêng
 
 import restaurant1 from "../assets/img/restaurant1.jpg";
 import restaurant2 from "../assets/img/restaurant2.jpg";
 import restaurant3 from "../assets/img/restaurant3.jpg";
 
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { addFavoriteRestaurant } from "../services/userService";
+import { UserContext } from "../contexts/UserContext";
 
 const FeaturedSection = () => {
+  const { isLogin } = useContext(UserContext);
+  const [favorites, setFavorites] = useState([]);
+
   const sliderSettings = {
     dots: true,
     infinite: false,
@@ -24,13 +31,13 @@ const FeaturedSection = () => {
       { breakpoint: 480, settings: { slidesToShow: 1 } },
     ],
   };
+
   const formatNumber = (num) => {
-    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(2) + "k";
     return num.toString();
   };
-  
-  // ⭐ Render icon sao như PasGo
+
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
@@ -52,98 +59,45 @@ const FeaturedSection = () => {
     return <div className="star-icons">{stars}</div>;
   };
 
+  const handleFavoriteClick = async (restaurantId) => {
+    if (!isLogin) {
+      alert("Vui lòng đăng nhập để thêm vào yêu thích.");
+      return;
+    }
+
+    try {
+      await addFavoriteRestaurant(restaurantId);
+      setFavorites((prev) => [...prev, restaurantId]);
+    } catch (err) {
+      console.error("❌ Lỗi khi thêm yêu thích:", err);
+      alert("Không thể thêm vào yêu thích.");
+    }
+  };
+
   const highlightImages = [
-    {
-      id: 1,
-      image: require("../assets/img/haisan.png"),
-      alt: "Hải sản tươi ngon",
-    },
+    { id: 1, image: require("../assets/img/haisan.png"), alt: "Hải sản tươi ngon" },
     { id: 2, image: require("../assets/img/lau.png"), alt: "Lẩu thơm nức mũi" },
-    {
-      id: 3,
-      image: require("../assets/img/buffet.png"),
-      alt: "Buffet đa dạng",
-    },
+    { id: 3, image: require("../assets/img/buffet.png"), alt: "Buffet đa dạng" },
     { id: 4, image: require("../assets/img/han.png"), alt: "Ẩm thực Hàn Quốc" },
-    {
-      id: 5,
-      image: require("../assets/img/nhat.png"),
-      alt: "Sushi chuẩn Nhật",
-    },
+    { id: 5, image: require("../assets/img/nhat.png"), alt: "Sushi chuẩn Nhật" },
   ];
 
   const featuredDishes = [
-    {
-      id: 1,
-      name: "Cơm Thố Heo Giòn Teriyaki",
-      price: 99000,
-      image: restaurant1,
-    },
-    {
-      id: 2,
-      name: "Cơm Thố Gà Nướng BBQ Hàn",
-      price: 52999,
-      image: restaurant2,
-    },
-    {
-      id: 3,
-      name: "Cơm Thố Gà Nướng + Ớp La",
-      price: 60999,
-      image: restaurant3,
-    },
-    {
-      id: 4,
-      name: "Bún Bò Huế Cay Đặc Biệt",
-      price: 69999,
-      image: restaurant1,
-    },
+    { id: 1, name: "Cơm Thố Heo Giòn Teriyaki", price: 99000, image: restaurant1 },
+    { id: 2, name: "Cơm Thố Gà Nướng BBQ Hàn", price: 52999, image: restaurant2 },
+    { id: 3, name: "Cơm Thố Gà Nướng + Ớp La", price: 60999, image: restaurant3 },
+    { id: 4, name: "Bún Bò Huế Cay Đặc Biệt", price: 69999, image: restaurant1 },
     { id: 5, name: "Hủ Tiếu Nam Vang", price: 45999, image: restaurant2 },
     { id: 6, name: "Phở Gà Tái Trứng", price: 49999, image: restaurant3 },
   ];
 
   const featuredRestaurants = [
-    {
-      id: 1,
-      name: "Lẩu Nướng Hàn Quốc",
-      rating: 4.5,
-      visits: 1250,
-      image: restaurant1,
-    },
-    {
-      id: 2,
-      name: "Nhà hàng Việt hiện đại",
-      rating: 4.0,
-      visits: 17455,
-      image: restaurant2,
-    },
-    {
-      id: 3,
-      name: "Ẩm thực chay An Lạc",
-      rating: 2.0,
-      visits: 8909,
-      image: restaurant3,
-    },
-    {
-      id: 4,
-      name: "Pizza & Pasta Ý",
-      rating: 3.5,
-      visits: 1120,
-      image: restaurant2,
-    },
-    {
-      id: 5,
-      name: "Nhà hàng Nhật Sushi Go",
-      rating: 3.0,
-      visits: 146,
-      image: restaurant1,
-    },
-    {
-      id: 6,
-      name: "Món Hoa Đại Phát",
-      rating: 5.0,
-      visits: 300,
-      image: restaurant3,
-    },
+    { id: 1, name: "Lẩu Nướng Hàn Quốc", rating: 4.5, visits: 1250, image: restaurant1 },
+    { id: 2, name: "Nhà hàng Việt hiện đại", rating: 4.0, visits: 17455, image: restaurant2 },
+    { id: 3, name: "Ẩm thực chay An Lạc", rating: 2.0, visits: 8909, image: restaurant3 },
+    { id: 4, name: "Pizza & Pasta Ý", rating: 3.5, visits: 1120, image: restaurant2 },
+    { id: 5, name: "Nhà hàng Nhật Sushi Go", rating: 3.0, visits: 146, image: restaurant1 },
+    { id: 6, name: "Món Hoa Đại Phát", rating: 5.0, visits: 300, image: restaurant3 },
   ];
 
   return (
@@ -166,11 +120,7 @@ const FeaturedSection = () => {
         >
           {highlightImages.map((item) => (
             <div key={item.id} className="highlight-slide">
-              <img
-                src={item.image}
-                alt={item.alt}
-                className="highlight-image"
-              />
+              <img src={item.image} alt={item.alt} className="highlight-image" />
             </div>
           ))}
         </Slider>
@@ -179,9 +129,7 @@ const FeaturedSection = () => {
       {/* Món ăn */}
       <div className="section-header">
         <h2 className="section-title">Món Ăn Hot</h2>
-        <p className="section-sub">
-          Khám phá những món ăn đang được yêu thích nhất
-        </p>
+        <p className="section-sub">Khám phá những món ăn đang được yêu thích nhất</p>
       </div>
       <Slider {...sliderSettings} className="horizontal-slider">
         {featuredDishes.map((dish) => (
@@ -200,29 +148,28 @@ const FeaturedSection = () => {
       {/* Nhà hàng */}
       <div className="section-header">
         <h2 className="section-title">Top Nhà Hàng Hot</h2>
-        <p className="section-sub">
-          Khám phá những Nhà hàng đang có ưu đãi hấp dẫn ngay
-        </p>
+        <p className="section-sub">Khám phá những Nhà hàng đang có ưu đãi hấp dẫn ngay</p>
       </div>
       <Slider {...sliderSettings} className="horizontal-slider">
         {featuredRestaurants.map((res) => (
           <div key={res.id} className="slider-item">
             <div className="restaurant-item">
-              <img
-                src={res.image}
-                alt={res.name}
-                className="restaurant-image"
+              {/* ❤️ Trái tim */}
+              <FavoriteButton
+                restaurantId={res.id}
+                isActive={favorites.includes(res.id)}
+                onClick={() => handleFavoriteClick(res.id)}
               />
+
+              <img src={res.image} alt={res.name} className="restaurant-image" />
               <div className="restaurant-details">
                 <h3>{res.name}</h3>
                 <div className="restaurant-meta">
                   {renderStars(res.rating)}
                   <span className="visit-count">{formatNumber(res.visits)} lượt đến</span>
-
                 </div>
               </div>
             </div>
-            
           </div>
         ))}
       </Slider>

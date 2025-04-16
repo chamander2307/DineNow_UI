@@ -1,80 +1,68 @@
-import React from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css'; // Import CSS của slick
-import 'slick-carousel/slick/slick-theme.css'; // Import theme CSS của slick
-import '../assets/styles/RelatedArticles.css'; // Import CSS tùy chỉnh
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../assets/styles/RelatedArticles.css";
 
-import default1 from '../assets/images/default.jpg';
+import article1 from "../assets/img/lau.png";
+import article2 from "../assets/img/nhat.png";
+import article3 from "../assets/img/chay.png";
+
 const RelatedArticles = () => {
-  // Dữ liệu giả lập cho các bài viết liên quan
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    arrows: false,
+    centerMode: false,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 768, settings: { slidesToShow: 1 } }
+    ]
+  };
+  
+
   const articles = [
     {
       id: 1,
-      title: 'Top 5 nhà hàng lẩu ngon nhất TP. HCM',
-      description: 'Khám phá những nhà hàng lẩu nổi tiếng với hương vị đậm đà, không gian ấm cúng tại TP. HCM.',
-      image: default1,
+      title: "Top nhà hàng Nhật Bản chính gốc",
+      description: "Khám phá hương vị Nhật truyền thống tại các nhà hàng được đánh giá cao nhất.",
+      image: article1,
+      link: "/article/1",
     },
     {
       id: 2,
-      title: 'Buffet hải sản – Trải nghiệm ẩm thực đẳng cấp',
-      description: 'Thưởng thức hải sản tươi sống với giá cả hợp lý tại các nhà hàng buffet hàng đầu.',
-      image: default1,
+      title: "Buffet cuối tuần giá tốt",
+      description: "Tổng hợp các địa điểm buffet sang chảnh mà giá vẫn hợp túi tiền.",
+      image: article2,
+      link: "/article/2",
     },
     {
       id: 3,
-      title: 'Ẩm thực Nhật Bản – Sushi và hơn thế nữa',
-      description: 'Đến với thế giới ẩm thực Nhật Bản qua những món sushi tươi ngon và sashimi chuẩn vị.',
-      image: default1,
-    },
-    {
-      id: 4,
-      title: 'Nhà hàng gia đình – Không gian ấm cúng',
-      description: 'Lựa chọn hoàn hảo cho bữa ăn gia đình với thực đơn đa dạng và không gian thân thiện.',
-      image: default1,
+      title: "Lẩu nướng phong cách Hàn",
+      description: "Địa điểm lý tưởng để thưởng thức lẩu nướng chuẩn vị Hàn Quốc tại TP.HCM.",
+      image: article3,
+      link: "/article/3",
     },
   ];
-
-  // Cấu hình cho slider
-  const settings = {
-    dots: true, // Hiển thị các chấm điều hướng
-    infinite: true, // Vòng lặp vô hạn
-    speed: 500, // Tốc độ chuyển slide (ms)
-    slidesToShow: 3, // Số bài viết hiển thị cùng lúc
-    slidesToScroll: 1, // Số bài viết cuộn mỗi lần
-    autoplay: true, // Tự động chạy
-    autoplaySpeed: 3000, // Thời gian giữa các lần chạy (ms)
-    arrows: true, // Bật nút điều hướng (mũi tên trái/phải)
-    responsive: [
-      {
-        breakpoint: 1024, // Dưới 1024px
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 600, // Dưới 600px
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
 
   return (
     <div className="related-articles">
       <h2>Bài viết liên quan</h2>
       <Slider {...settings}>
         {articles.map((article) => (
-          <div key={article.id} className="article-card">
-            <img src={article.image} alt={article.title} className="article-image" />
-            <div className="article-content">
-              <h3>{article.title}</h3>
-              <p>{article.description}</p>
-              <a href="#" className="read-more">
-                Đọc thêm
-              </a>
+          <div className="slider-item" key={article.id}>
+            <div className="article-card">
+              <img src={article.image} alt={article.title} className="article-image" />
+              <div className="article-content">
+                <h3>{article.title}</h3>
+                <p>{article.description}</p>
+                <a href={article.link} className="read-more">
+                  Xem thêm →
+                </a>
+              </div>
             </div>
           </div>
         ))}

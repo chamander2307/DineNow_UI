@@ -4,6 +4,7 @@ import FilterBar from '../../components/FilterBar';
 import FoodCategoryList from '../../components/FoodCategoryList';
 import '../../assets/styles/Home.css';
 import LocationSearchBar from '../../components/LocationSearchBar';
+import RelatedArticles from '../../components/RelatedArticles';
 const Home = () => {
   return (
     <div className="App">
@@ -11,6 +12,7 @@ const Home = () => {
       <FilterBar />
       <FoodCategoryList />
       <FeaturedSection />
+      <RelatedArticles />
     </div>
   );
 };

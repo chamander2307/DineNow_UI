@@ -11,7 +11,7 @@ const instance = axios.create({
   withCredentials: true,
 });
 
-// ✅ Thêm log rõ ràng khi gửi request
+// ✅ Gắn accessToken nếu có trước khi gửi request
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
@@ -23,7 +23,7 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Log toàn bộ phản hồi lỗi nếu có
+// ✅ Xử lý khi gặp lỗi phản hồi
 instance.interceptors.response.use(
   (res) => res,
   async (err) => {
@@ -36,27 +36,32 @@ instance.interceptors.response.use(
     }
 
     const status = err.response.status;
-    console.warn(`⚠️ Response Error: ${status}`);
-    console.log("➡️ Lý do:", err.response?.data?.message);
+    const message = err.response?.data?.message || "Không rõ nguyên nhân";
+
+    console.warn(`⚠️ Response Error ${status}: ${message}`);
     console.log("➡️ Request headers:", originalRequest.headers);
 
-    if (status === 401 && !originalRequest._retry) {
+    // ✅ Nếu accessToken hết hạn → gọi refreshToken (bắt cả 401 & 403)
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
+        console.log("🔄 Bắt đầu gọi refreshToken()");
         const data = await refreshToken();
         const newAccessToken = data.accessToken;
         localStorage.setItem("accessToken", newAccessToken);
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         console.log("✅ Đã refresh accessToken:", newAccessToken);
-        return instance(originalRequest);
+        return instance(originalRequest); // retry request gốc
       } catch (e) {
-        console.error("❌ Refresh token thất bại:", e);
+        console.error("❌ Refresh token thất bại:", e.response?.data || e.message);
         localStorage.removeItem("accessToken");
         window.location.href = "/login";
+        return Promise.reject(e);
       }
     }
 
-    alert(httpStatusMessages[status] || "Đã xảy ra lỗi không xác định.");
+    // ✅ Hiển thị lỗi dựa trên mã lỗi đã định nghĩa
+    alert(httpStatusMessages[status] || `Lỗi ${status}: ${message}`);
     return Promise.reject(err);
   }
 );

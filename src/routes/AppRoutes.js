@@ -9,7 +9,7 @@ import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
 import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
 import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
-import RestaurantReviewForm from "../pages/RestaurantDetail/RestaurantReviewForm";
+import RestaurantReviewForm from "../components/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 const AppRoutes = () => {
   return (
@@ -27,6 +27,8 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
+      {/* Đường dẫn không hợp lệ */}
+      <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
 };

@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/Navbar.css";
 import LogoIcon from "../assets/img/DineNow_2.svg";
 import { UserContext } from "../contexts/UserContext";
+import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
+import { FaHeart } from "react-icons/fa";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -11,7 +13,7 @@ const Header = () => {
   const userRef = useRef();
   const navigate = useNavigate();
 
-  const { isLogin, user, logout } = useContext(UserContext);
+  const { isLogin, user, logout, loading } = useContext(UserContext);
   const userName = user?.fullName || user?.email || "Người dùng";
 
   useEffect(() => {
@@ -28,9 +30,12 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    logout(); // gọi từ context
+    logout();
     navigate("/login");
   };
+
+  // ✅ Nếu đang loading thì chưa render Header
+  if (loading) return null;
 
   return (
     <header className="header">
@@ -42,8 +47,12 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
-            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
+            <Link to="/nearby" className="nav-item">
+              Gần Bạn
+            </Link>
+            <Link to="/restaurant-list" className="nav-item">
+              Các Nhà Hàng
+            </Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -66,6 +75,12 @@ const Header = () => {
                 <Link to="/food/goi-cuon">Gỏi cuốn</Link>
                 <Link to="/food/tra-sua">Trà sữa</Link>
               </div>
+            )}
+            {isLogin && (
+              <Link to="/favorite-restaurants" className="nav-item">
+                <FaHeart style={{ marginRight: 6 }} />
+                Yêu Thích
+              </Link>
             )}
           </nav>
         </div>

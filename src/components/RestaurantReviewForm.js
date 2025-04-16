@@ -17,7 +17,7 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
     }
 
     const newReview = {
-      user: 'Người dùng', // Tạm thời giả lập, có thể thay bằng thông tin người dùng thực tế
+      user: 'Người dùng',
       rating,
       comment,
       date: new Date().toLocaleDateString(), // Ngày gửi đánh giá
