@@ -17,7 +17,7 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
     }
 
     const newReview = {
-      user: 'Người dùng', // Tạm thời giả lập, có thể thay bằng thông tin người dùng thực tế
+      user: 'Người dùng',
       rating,
       comment,
       date: new Date().toLocaleDateString(), // Ngày gửi đánh giá
@@ -32,20 +32,20 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
   };
 
   return (
-    <div className="review-form-container">
+    <div className="rest-review-form-container">
       <h2>Đánh giá nhà hàng</h2>
 
       {/* Form nhập đánh giá */}
-      <form onSubmit={handleSubmit} className="review-form">
-        <div className="rating-input">
+      <form onSubmit={handleSubmit} className="rest-review-form">
+        <div className="rest-rating-input">
           <label>Đánh giá của bạn:</label>
-          <div className="stars">
+          <div className="rest-stars">
             {[...Array(5)].map((_, index) => {
               const starValue = index + 1;
               return (
                 <span
                   key={index}
-                  className={`star ${starValue <= (hoverRating || rating) ? 'filled' : ''}`}
+                  className={`rest-star ${starValue <= (hoverRating || rating) ? 'filled' : ''}`}
                   onClick={() => setRating(starValue)}
                   onMouseEnter={() => setHoverRating(starValue)}
                   onMouseLeave={() => setHoverRating(0)}
@@ -57,7 +57,7 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
           </div>
         </div>
 
-        <div className="comment-input">
+        <div className="rest-comment-input">
           <label>Bình luận:</label>
           <textarea
             value={comment}
@@ -67,29 +67,29 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
             required
           />
         </div>
-        <button type="submit" className="submit-btn">
+        <button type="submit" className="rest-submit-btn">
           Gửi đánh giá
         </button>
       </form>
 
       {/* Hiển thị danh sách đánh giá */}
-      <div className="reviews-list">
+      <div className="rest-reviews-list">
         <h3>Các đánh giá ({reviews.length})</h3>
         {reviews.length > 0 ? (
           reviews.map((review, index) => (
-            <div key={index} className="review-item">
-              <div className="review-header">
-                <span className="review-user">{review.user}</span>
-                <span className="review-date">{review.date}</span>
+            <div key={index} className="rest-review-item">
+              <div className="rest-review-header">
+                <span className="rest-review-user">{review.user}</span>
+                <span className="rest-review-date">{review.date}</span>
               </div>
-              <div className="review-rating">
+              <div className="rest-review-rating">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className={`star ${i < review.rating ? 'filled' : ''}`}>
+                  <span key={i} className={`rest-star ${i < review.rating ? 'filled' : ''}`}>
                     ★
                   </span>
                 ))}
               </div>
-              <p className="review-comment">{review.comment}</p>
+              <p className="rest-review-comment">{review.comment}</p>
             </div>
           ))
         ) : (

@@ -5,7 +5,7 @@ import FeaturedSection from '../../components/FeaturedSection';
 import FilterBar from '../../components/FilterBar';
 import FoodCategoryList from '../../components/FoodCategoryList';
 import LocationSearchBar from '../../components/LocationSearchBar';
-
+import RelatedArticles from '../../components/RelatedArticles';
 const Home = () => {
   return (
     <div className="App">
@@ -13,6 +13,7 @@ const Home = () => {
       <FilterBar />
       <FoodCategoryList />
       <FeaturedSection />
+      <RelatedArticles />
     </div>
   );
 };

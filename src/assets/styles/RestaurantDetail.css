@@ -230,3 +230,8 @@
 .heart:hover {
   transform: scale(1.2);
 }
+
+.menu-item-link {
+  text-decoration: none;
+  color: inherit;
+}

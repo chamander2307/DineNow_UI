@@ -6,10 +6,12 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ⏳ tránh flash
+  const [loading, setLoading] = useState(true); // Tránh flash hoặc gọi API khi chưa xác định
 
   const fetchUser = async () => {
     const token = localStorage.getItem("accessToken");
+
+    // ✅ Nếu không có token thì không gọi API
     if (!token) {
       setIsLogin(false);
       setUser(null);
@@ -18,11 +20,12 @@ export const UserProvider = ({ children }) => {
     }
 
     try {
-      const userData = await getUserProfile();
+      const userData = await getUserProfile(); // Gọi API lấy thông tin người dùng
       setUser(userData);
       setIsLogin(true);
     } catch (err) {
-      console.error("❌ Lỗi lấy thông tin user:", err);
+      console.warn("⚠️ Không thể lấy thông tin người dùng:", err.message);
+      // ❗ Không xoá token ở đây — để axios tự xử lý refresh nếu cần
       setUser(null);
       setIsLogin(false);
     } finally {
@@ -37,7 +40,7 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchUser(); // ✅ Gọi sau khi mount
   }, []);
 
   return (

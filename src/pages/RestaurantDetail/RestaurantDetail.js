@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import '../../assets/styles/RestaurantDetail.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
@@ -46,9 +47,9 @@ const RestaurantDetail = () => {
       style: 'Lẩu',
       image: restaurant1,
       menuItems: [
-        { name: 'Lẩu', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Lẩu 2', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Lẩu 3', price: 52999, image: restaurant1, category: 'Cơm' },
+        { id: '1', name: 'Lẩu', price: 99000, image: restaurant1, category: 'Cơm' },
+        { id: '2', name: 'Lẩu 2', price: 37000, image: restaurant1, category: 'Cơm' },
+        { id: '3', name: 'Lẩu 3', price: 52999, image: restaurant1, category: 'Cơm' },
       ],
       reviews: [
         { user: 'Nguyễn Văn A', comment: 'Đồ ăn rất ngon, không gian thoải mái!', rating: 5 },
@@ -63,13 +64,13 @@ const RestaurantDetail = () => {
       style: 'Buffet',
       image: restaurant2,
       menuItems: [
-        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm' },
-        { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Canh chua', price: 11000, image: restaurant1, category: 'Canh' },
-        { name: 'Canh bí', price: 11000, image: restaurant1, category: 'Canh' },
+        { id: '4', name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
+        { id: '5', name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm' },
+        { id: '6', name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm' },
+        { id: '7', name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
+        { id: '8', name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
+        { id: '9', name: 'Canh chua', price: 11000, image: restaurant1, category: 'Canh' },
+        { id: '10', name: 'Canh bí', price: 11000, image: restaurant1, category: 'Canh' },
       ],
       reviews: [
         { user: 'Lê Văn C', comment: 'Không gian sang trọng, rất thích!', rating: 5 },
@@ -84,11 +85,11 @@ const RestaurantDetail = () => {
       style: 'Nhật',
       image: restaurant3,
       menuItems: [
-        { name: 'Cơm Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Sushi', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Súp Misho', price: 52999, image: restaurant1, category: 'Canh' },
-        { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
+        { id: '11', name: 'Cơm Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
+        { id: '12', name: 'Sushi', price: 37000, image: restaurant1, category: 'Cơm' },
+        { id: '13', name: 'Súp Misho', price: 52999, image: restaurant1, category: 'Canh' },
+        { id: '14', name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
+        { id: '15', name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
       ],
       reviews: [
         { user: 'Phạm Thị D', comment: 'Ẩm thực độc đáo, đáng thử!', rating: 4 },
@@ -158,20 +159,22 @@ const RestaurantDetail = () => {
             />
           </div>
           <div className="menu-items">
-            {filteredMenuItems.length > 0 ? (
-              filteredMenuItems.map((item, index) => (
-                <div key={index} className="menu-item">
-                  <img src={item.image} alt={item.name} className="menu-item-image" />
-                  <div className="menu-item-details">
-                    <p className="menu-item-name">{item.name}</p>
-                    <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>Không tìm thấy món ăn nào.</p>
-            )}
-          </div>
+              {filteredMenuItems.length > 0 ? (
+                filteredMenuItems.map((item, index) => (
+                  <Link to={`/dish/${item.id}`} key={index} className="menu-item-link">
+                    <div className="menu-item">
+                      <img src={item.image} alt={item.name} className="menu-item-image" />
+                      <div className="menu-item-details">
+                        <p className="menu-item-name">{item.name}</p>
+                        <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p>Không tìm thấy món ăn nào.</p>
+              )}
+            </div>
         </div>
 
         {/* Đánh giá */}

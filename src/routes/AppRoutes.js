@@ -8,11 +8,10 @@ import PolicyPage from "../pages/Policy/PolicyPage";
 import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
 import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
-
 import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
-
+import DishDetail from "../pages/DishDetail/DishDetail";
 import Page404 from "../components/Page404";
 
 const AppRoutes = () => {
@@ -32,6 +31,9 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
 
+      <Route path="/dish/:id" element={<DishDetail />} />
+
+      {/* Các route khác */}
       <Route path="*" element={<Page404/>} />
     </Routes>
   );

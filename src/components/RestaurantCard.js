@@ -2,6 +2,9 @@ import React from "react";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../assets/styles/RestaurantCard.css";
+import { addFavoriteRestaurant } from "../services/userService";
+import { UserContext } from "../contexts/UserContext";
+import FavoriteButton from "./FeaturedSection";
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -21,11 +24,22 @@ const formatNumber = (num) => {
   if (num >= 1e3) return (num / 1e3).toFixed(2) + "k";
   return num.toString();
 };
-
 const RestaurantCard = ({ id, image, name, rating, priceLevel, address, visits }) => {
+  const { isLogin } = React.useContext(UserContext);
+  const [isFavorite, setIsFavorite] = React.useState(false);
+  const handleFavoriteClick = () => {
+    if (!isLogin) {
+      alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
+      return;
+    }
+    setIsFavorite(!isFavorite);
+    addFavoriteRestaurant(id);
+  };
   return (
     <div className="restaurant-card">
+      <favoriteButton isActive={isFavorite} onClick={handleFavoriteClick} />
       <img src={image} alt={name} className="rc-image" />
+
       <div className="rc-content">
         <h3 className="rc-name">{name}</h3>
         <div className="rc-meta">
