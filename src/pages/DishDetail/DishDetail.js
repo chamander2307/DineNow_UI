@@ -106,7 +106,7 @@ const DishDetail = () => {
     <div className="dish-detail">
       <h1 className="dish-title">{dish.name}</h1>
       <div className="dish-content">
-        <img src={dish.image} alt={dish.name} className="dish-image" />
+        <img src={dish.image} alt={dish.name} className="dish-images" />
         <div className="dish-info">
           <p className="dish-description">{dish.description}</p>
           <p className="dish-price">Giá: {dish.price.toLocaleString('vi-VN')} VNĐ</p>

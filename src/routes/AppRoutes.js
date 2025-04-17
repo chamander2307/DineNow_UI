@@ -12,6 +12,8 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 import DishDetail from "../pages/DishDetail/DishDetail";
+
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import Page404 from "../components/Page404";
 
 const AppRoutes = () => {
@@ -33,7 +35,8 @@ const AppRoutes = () => {
 
       <Route path="/dish/:id" element={<DishDetail />} />
 
-      {/* Các route khác */}
+      <Route path="/payment" element={<PaymentPage />} />
+      
       <Route path="*" element={<Page404/>} />
     </Routes>
   );
