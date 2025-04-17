@@ -98,6 +98,7 @@
 
 .search-bar {
   margin-bottom: 20px;
+  margin-right: 20px;
 }
 
 .search-bar input {
@@ -135,38 +136,53 @@
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.menu-item-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
 }
 
 .menu-item-image {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 8px;
+  margin-right: 16px;
 }
 
 .menu-item-details {
-  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex: 1;
 }
 
 .menu-item-name {
-  font-size: 16px;
   font-weight: bold;
-  margin: 0;
+  font-size: 16px;
 }
 
 .menu-item-price {
-  font-size: 16px;
   color: #e74c3c;
-  margin: 0;
+  font-weight: bold;
+  font-size: 16px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.add-item-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .add-btn {
@@ -181,6 +197,32 @@
 
 .add-btn:hover {
   background-color: #c0392b;
+}
+
+.remove-btn {
+  padding: 5px 10px;
+  background-color: #ccc;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.remove-btn:hover {
+  background-color: #999;
+}
+
+.item-quantity {
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
 }
 
 /* Phần Đánh giá */
@@ -234,4 +276,5 @@
 .menu-item-link {
   text-decoration: none;
   color: inherit;
+  flex: 1;
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+
 import '../../assets/styles/RestaurantDetail.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
@@ -12,12 +13,16 @@ import RestaurantReviewForm from '../../components/RestaurantReviewForm';
 
 const RestaurantDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Khởi tạo isLiked từ localStorage
   const [isLiked, setIsLiked] = useState(() => {
     const likedRestaurants = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
     return likedRestaurants[id] || false;
   });
+
+  // State để quản lý danh sách món ăn đã chọn
+  const [selectedItems, setSelectedItems] = useState([]);
 
   // Cập nhật localStorage khi isLiked thay đổi
   useEffect(() => {
@@ -110,6 +115,47 @@ const RestaurantDetail = () => {
       })
     : [];
 
+  // Hàm xử lý khi nhấn nút dấu cộng
+  const handleAddItem = (item) => {
+    const existingItem = selectedItems.find((selected) => selected.id === item.id);
+    if (existingItem) {
+      // Nếu món đã có, tăng số lượng
+      setSelectedItems(
+        selectedItems.map((selected) =>
+          selected.id === item.id ? { ...selected, quantity: selected.quantity + 1 } : selected
+        )
+      );
+    } else {
+      // Nếu món chưa có, thêm mới với số lượng 1
+      setSelectedItems([...selectedItems, { ...item, quantity: 1 }]);
+    }
+  };
+
+  // Hàm xử lý khi nhấn nút dấu trừ (xóa hoặc giảm số lượng)
+  const handleRemoveItem = (item) => {
+    const existingItem = selectedItems.find((selected) => selected.id === item.id);
+    if (existingItem.quantity > 1) {
+      // Nếu số lượng > 1, giảm số lượng
+      setSelectedItems(
+        selectedItems.map((selected) =>
+          selected.id === item.id ? { ...selected, quantity: selected.quantity - 1 } : selected
+        )
+      );
+    } else {
+      // Nếu số lượng = 1, xóa món khỏi danh sách
+      setSelectedItems(selectedItems.filter((selected) => selected.id !== item.id));
+    }
+  };
+
+  // Hàm xử lý khi nhấn "Đặt bàn ngay"
+  const handleBookNow = () => {
+    if (selectedItems.length === 0) {
+      alert('Vui lòng chọn ít nhất một món ăn trước khi đặt bàn!');
+      return;
+    }
+    navigate('/payment', { state: { restaurant, selectedItems } });
+  };
+    
   return (
     <div className="restaurant-detail">
       {/* Thông tin nhà hàng */}
@@ -122,7 +168,7 @@ const RestaurantDetail = () => {
           <p className="location">Vị trí: {restaurant.location}</p>
           <p className="style">Kiểu nhà hàng: {restaurant.style}</p>
           <p className="address">Địa chỉ: {restaurant.address}</p>
-          <button className="book-btn">Đặt bàn ngay</button>
+          <button className="book-btn" onClick={handleBookNow}>Đặt bàn ngay</button>
           <button className="heart" onClick={toggleLike}>
             {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
           </button>
@@ -159,22 +205,34 @@ const RestaurantDetail = () => {
             />
           </div>
           <div className="menu-items">
-              {filteredMenuItems.length > 0 ? (
-                filteredMenuItems.map((item, index) => (
-                  <Link to={`/dish/${item.id}`} key={index} className="menu-item-link">
-                    <div className="menu-item">
+            {filteredMenuItems.length > 0 ? (
+              filteredMenuItems.map((item, index) => {
+                const itemQuantity = selectedItems.find((selected) => selected.id === item.id)?.quantity || 0;
+                return (
+                  <div key={index} className="menu-item">
+                    <Link to={`/dish/${item.id}`} className="menu-item-link">
                       <img src={item.image} alt={item.name} className="menu-item-image" />
                       <div className="menu-item-details">
                         <p className="menu-item-name">{item.name}</p>
                         <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
                       </div>
+                    </Link>
+                    <div className="add-item-container">
+                      {itemQuantity > 0 && (
+                        <>
+                          <button className="remove-btn" onClick={() => handleRemoveItem(item)}>-</button>
+                          <span className="item-quantity">{itemQuantity}</span>
+                        </>
+                      )}
+                      <button className="add-btn" onClick={() => handleAddItem(item)}>+</button>
                     </div>
-                  </Link>
-                ))
-              ) : (
-                <p>Không tìm thấy món ăn nào.</p>
-              )}
-            </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p>Không tìm thấy món ăn nào.</p>
+            )}
+          </div>
         </div>
 
         {/* Đánh giá */}

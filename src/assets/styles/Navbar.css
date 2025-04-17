@@ -111,6 +111,34 @@
   margin-left: auto;
 }
 
+/* Nút hình trái tim dẫn đến FavoriteRestaurants */
+.favorite-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.favorite-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+/* Nút giỏ hàng dẫn đến Cart */
+.cart-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.cart-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
 .auth-links a {
   color: white;
   text-decoration: none;

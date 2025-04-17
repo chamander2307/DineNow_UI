@@ -79,6 +79,12 @@
   border-color: #007bff;
 }
 
+.rest-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
 .rest-submit-btn {
   padding: 10px 20px;
   background-color: #007bff;
@@ -87,11 +93,24 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  align-self: center;
 }
 
 .rest-submit-btn:hover {
   background-color: #0056b3;
+}
+
+.rest-cancel-btn {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.rest-cancel-btn:hover {
+  background-color: #5a6268;
 }
 
 /* Danh sách đánh giá */
@@ -106,6 +125,7 @@
   border-radius: 5px;
   margin-bottom: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .rest-review-header {
@@ -132,4 +152,43 @@
   font-size: 14px;
   color: #555;
   line-height: 1.5;
+  margin-bottom: 10px; /* Thêm khoảng cách để nút không bị sát nội dung */
+}
+
+.rest-review-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.rest-edit-btn {
+  padding: 5px 10px;
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.rest-edit-btn:hover {
+  background-color: #e67e22;
+}
+
+.rest-delete-btn {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.rest-delete-btn:hover {
+  background-color: #c0392b;
 }

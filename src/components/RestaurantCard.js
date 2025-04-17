@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import "../assets/styles/RestaurantCard.css";
 import { addFavoriteRestaurant } from "../services/userService";
 import { UserContext } from "../contexts/UserContext";
-import FavoriteButton from "./FeaturedSection";
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -18,7 +17,6 @@ const renderStars = (rating) => {
 
   return <div className="rc-stars">{stars}</div>;
 };
-
 const formatNumber = (num) => {
   if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
   if (num >= 1e3) return (num / 1e3).toFixed(2) + "k";
