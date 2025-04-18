@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../../assets/styles/Login.css'; 
-import Logo from '../../../components/Logo';
+import Logo from '../../../components/basicComponents/Logo';
 import { register } from '../../../services/authService';
 
 const Register = () => {

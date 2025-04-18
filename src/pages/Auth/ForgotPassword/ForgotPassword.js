@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../../../components/AuthLayout";
+import AuthLayout from "../../../components/auth/AuthLayout";
 import "../../../assets/styles/Login.css";
 import {sendForgotOTP,resetPassword,verifyResetOTP} from "../../../services/authService";
 const ResetPasswordFlow = () => {

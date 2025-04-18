@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../assets/styles/Login.css";
-import Logo from "../../../components/Logo";
+import Logo from "../../../components/basicComponents/Logo";
 import { login } from "../../../services/authService";
 import { getUserProfile } from "../../../services/userService";
 import { UserContext } from "../../../contexts/UserContext";

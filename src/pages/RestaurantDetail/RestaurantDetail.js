@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../assets/styles/RestaurantDetail.css';
 import { restaurants } from '../../data/restaurants';
-import RestaurantReviewForm from '../../components/RestaurantReviewForm';
+import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -82,17 +82,30 @@ const RestaurantDetail = () => {
 
       <div className="restaurant-info">
         <div className="restaurant-details1">
-          <h1>{restaurant.name}</h1>
-          <div className="rating-display">
-            {renderStars(restaurant.rating)} <span className="rating-number">({restaurant.rating})</span>
+          <h1 className="rd-name">{restaurant.name}</h1>
+
+          <div className="rd-meta">
+            <div className="rd-rating">
+              {renderStars(restaurant.rating)}
+              <span className="rd-rating-number">({restaurant.rating})</span>
+            </div>
+            <div className="rd-visits">
+              {restaurant.visits?.toLocaleString()} lượt xem
+            </div>
           </div>
-          <p className="location">Vị trí: {restaurant.location}</p>
-          <p className="style">Kiểu: {restaurant.style}</p>
-          <p className="address">{restaurant.address}</p>
-          <button className="book-btn">Đặt bàn ngay</button>
-          <button className="heart" onClick={toggleLike}>
-            {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
-          </button>
+
+          <div className="rd-tags">
+            <span className="rd-location">📍 {restaurant.location}</span>
+            <span className="rd-style">🍽 {restaurant.style}</span>
+            <span className="rd-address">🏠 {restaurant.address}</span>
+          </div>
+
+          <div className="rd-actions">
+            <button className="book-btn">Đặt bàn ngay</button>
+            <button className="heart" onClick={toggleLike}>
+              {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
+            </button>
+          </div>
         </div>
       </div>
 

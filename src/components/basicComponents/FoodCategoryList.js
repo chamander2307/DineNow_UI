@@ -1,14 +1,14 @@
 import React from "react";
-import "../assets/styles/FilterBar.css"; // dùng chung CSS
-import buffet from "../assets/img/buffet.png";
-import lau from "../assets/img/lau.png";
-import nuong from "../assets/img/nuong.png";
-import haisan from "../assets/img/haisan.png";
-import quannhau from "../assets/img/quannhau.png";
-import nhat from "../assets/img/nhat.png";
-import viet from "../assets/img/viet.png";
-import han from "../assets/img/han.png";
-import chay from "../assets/img/chay.png";
+import "../../assets/styles/FilterBar.css"; // dùng chung CSS
+import buffet from "../../assets/img/buffet.png";
+import lau from "../../assets/img/lau.png";
+import nuong from "../../assets/img/nuong.png";
+import haisan from "../../assets/img/haisan.png";
+import quannhau from "../../assets/img/quannhau.png";
+import nhat from "../../assets/img/nhat.png";
+import viet from "../../assets/img/viet.png";
+import han from "../../assets/img/han.png";
+import chay from "../../assets/img/chay.png";
 
 const foodTypes = [
   { icon: buffet, label: "Buffet" },

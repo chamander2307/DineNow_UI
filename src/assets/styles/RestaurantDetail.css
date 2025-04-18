@@ -159,6 +159,18 @@
   font-weight: bold;
 }
 
+.price-filter {
+  margin-bottom: 20px;
+}
+
+.price-filter select {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* === Tìm kiếm === */
 .search-bar {
   margin-bottom: 20px;
 }
@@ -176,6 +188,7 @@
   color: #999;
 }
 
+/* === Món ăn dạng lưới ngang === */
 .horizontal-dishes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -213,10 +226,6 @@
 .dish-details {
   flex: 1;
   padding: 10px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .dish-details h3 {
@@ -256,7 +265,53 @@
   background-color: #d35400;
 }
 
-/* === Phần đánh giá === */
+/* === Số lượng món === */
+.add-item-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.add-btn,
+.remove-btn {
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  border: none;
+}
+
+.add-btn {
+  background-color: #e74c3c;
+}
+
+.add-btn:hover {
+  background-color: #c0392b;
+}
+
+.remove-btn {
+  background-color: #ccc;
+}
+
+.remove-btn:hover {
+  background-color: #999;
+}
+
+.item-quantity {
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* === Đánh giá === */
 .reviews-section-full {
   margin-top: 60px;
   padding: 30px 20px;
@@ -269,7 +324,7 @@
   font-size: 22px;
 }
 
-/* === Hiển thị sao đánh giá (nếu dùng) === */
+/* === Hiển thị sao === */
 .star-rating {
   display: flex;
   gap: 2px;
@@ -277,6 +332,7 @@
   color: #f4c150;
   margin-top: 6px;
 }
+
 .rating-display {
   display: flex;
   align-items: center;
@@ -288,4 +344,49 @@
 .rating-number {
   color: #f4c150;
   font-weight: bold;
+}
+.rd-name {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.rd-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.rd-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #f4c150;
+}
+
+.rd-rating-number {
+  font-weight: bold;
+  color: #f4c150;
+}
+
+.rd-visits {
+  font-size: 13px;
+  color: #888;
+}
+
+.rd-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.rd-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }

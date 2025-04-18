@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../../../assets/styles/Login.css";
-import Logo from "../../../components/Logo";
+import Logo from "../../../components/basicComponents/Logo";
 import OtpInput from "../../../components/auth/OTPinput";
 import { verifyAccountOTP, sendVerifyOTP } from "../../../services/authService";
 import { useEffect } from "react";

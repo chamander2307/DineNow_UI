@@ -1,9 +1,10 @@
 import React from 'react';
-import FeaturedSection from '../../components/FeaturedSection';
-import FilterBar from '../../components/FilterBar';
-import FoodCategoryList from '../../components/FoodCategoryList';
 import '../../assets/styles/Home.css';
-import LocationSearchBar from '../../components/LocationSearchBar';
+
+import FeaturedSection from '../../components/FeaturedSection';
+import FilterBar from '../../components/basicComponents/FilterBar';
+import FoodCategoryList from '../../components/basicComponents/FoodCategoryList';
+import LocationSearchBar from '../../components/basicComponents/LocationSearchBar';
 import RelatedArticles from '../../components/RelatedArticles';
 const Home = () => {
   return (

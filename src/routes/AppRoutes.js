@@ -9,8 +9,13 @@ import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
 import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
 import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
-import RestaurantReviewForm from "../components/RestaurantReviewForm";
+import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
+import DishDetail from "../pages/DishDetail/DishDetail";
+
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
+import Page404 from "../components/basicComponents/Page404";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -27,8 +32,12 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
-      {/* Đường dẫn không hợp lệ */}
-      <Route path="*" element={<div>404 Not Found</div>} />
+
+      <Route path="/dish/:id" element={<DishDetail />} />
+
+      <Route path="/payment" element={<PaymentPage />} />
+      
+      <Route path="*" element={<Page404/>} />
     </Routes>
   );
 };

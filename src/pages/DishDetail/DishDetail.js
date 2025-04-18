@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import DishReviews from '../../components/DishReviews';
+import DishReviews from '../../components/Dish/DishReviews';
 import '../../assets/styles/DishDetail.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';

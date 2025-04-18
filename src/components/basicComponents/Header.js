@@ -1,10 +1,12 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../assets/styles/Navbar.css";
-import LogoIcon from "../assets/img/DineNow_2.svg";
-import { UserContext } from "../contexts/UserContext";
-import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
-import { FaHeart } from "react-icons/fa";
+import LogoIcon from "../../assets/img/DineNow_2.svg";
+import { UserContext } from "../../contexts/UserContext";
+import { FaHeart, FaShoppingCart } from "react-icons/fa";
+
+import "../../assets/styles/Navbar.css";
+
+import FavoriteRestaurants from "../../pages/FavoriteRestaurants/FavoriteRestaurants";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -86,6 +88,16 @@ const Header = () => {
         </div>
 
         <div className="account-area">
+          {/* Nút hình trái tim dẫn đến FavoriteRestaurants */}
+          <Link to="/favorite-restaurants" className="favorite-link">
+            <FaHeart style={{ fontSize: "18px", color: "white" }} />
+          </Link>
+
+          {/* Nút giỏ hàng dẫn đến Cart */}
+          <Link to="/cart" className="cart-link">
+            <FaShoppingCart style={{ fontSize: "18px", color: "white" }} />
+          </Link>
+
           {isLogin ? (
             <div className="user-menu">
               <div

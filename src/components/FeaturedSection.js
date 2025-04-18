@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../assets/styles/FeaturedSection.css";
 
-import FavoriteButton from "./FavoriteButton"; // ✅ dùng component riêng
+import FavoriteButton from "./basicComponents/FavoriteButton"; // ✅ dùng component riêng
 
 import restaurant1 from "../assets/img/restaurant1.jpg";
 import restaurant2 from "../assets/img/restaurant2.jpg";

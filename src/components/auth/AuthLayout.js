@@ -1,7 +1,7 @@
 // src/components/AuthLayout.js
 import React from "react";
-import "../assets/styles/Login.css"; // Dùng chung CSS login layout
-import Logo from "./Logo"; // Import Logo component
+import "../../assets/styles/Login.css"; // Dùng chung CSS login layout
+import Logo from "../basicComponents/Logo"; // Import Logo component
 
 const AuthLayout = ({ children, title, image }) => {
   return (

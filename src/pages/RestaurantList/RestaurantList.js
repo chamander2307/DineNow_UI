@@ -1,8 +1,8 @@
 // src/pages/RestaurantList.js
 import React from "react";
-import RestaurantCard from "../../components/RestaurantCard";
-import FilterBar from "../../components/FilterBar";
-import LocationSearchBar from "../../components/LocationSearchBar";
+import RestaurantCard from "../../components/Restaurants/RestaurantCard";
+import FilterBar from "../../components/basicComponents/FilterBar";
+import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
 import "../../assets/styles/RestaurantList.css";
 import { restaurants } from "../../data/restaurants";
 
