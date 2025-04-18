@@ -22,15 +22,9 @@ const FilterBar = () => {
         <option value="tren-200">Trên 200k</option>
       </select>
       <select>
-        <option value="">Đồ ăn chính</option>
+        <option value="">Loại món ăn</option>
         <option value="lau">Lẩu</option>
         <option value="nuong">Nướng</option>
-      </select>
-      
-      <select>
-        <option value="">Phù hợp</option>
-        <option value="cap-doi">Cặp đôi</option>
-        <option value="gia-dinh">Gia đình</option>
       </select>
       <button className="filter-button">Lọc</button>
     </div>

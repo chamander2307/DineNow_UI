@@ -23,7 +23,7 @@ const LocationSearchBar = () => {
       </div>
       <input
         type="text"
-        placeholder="Bạn muốn đặt chỗ đến đâu"
+        placeholder="Nhập nhà hàng bạn muốn đến..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />

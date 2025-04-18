@@ -1,183 +1,177 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useParams, Link } from 'react-router-dom';
+import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import '../../assets/styles/RestaurantDetail.css';
-
-import restaurant1 from '../../assets/img/restaurant1.jpg';
-import restaurant2 from '../../assets/img/restaurant2.jpg';
-import restaurant3 from '../../assets/img/restaurant3.jpg';
-
+import { restaurants } from '../../data/restaurants';
 import RestaurantReviewForm from '../../components/RestaurantReviewForm';
+
+const renderStars = (rating) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 !== 0;
+  const empty = 5 - full - (half ? 1 : 0);
+  const stars = [];
+  for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} />);
+  if (half) stars.push(<FaStarHalfAlt key="half" />);
+  for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} />);
+  return <div className="star-rating">{stars}</div>;
+};
+
+const priceRanges = [
+  { label: 'Tất cả', value: '' },
+  { label: 'Dưới 50K', value: 'under50' },
+  { label: '50K - 100K', value: '50to100' },
+  { label: 'Trên 100K', value: 'over100' },
+];
 
 const RestaurantDetail = () => {
   const { id } = useParams();
-
-  // Khởi tạo isLiked từ localStorage
+  const restaurant = restaurants.find(r => r.id === parseInt(id)) || {};
   const [isLiked, setIsLiked] = useState(() => {
-    const likedRestaurants = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
-    return likedRestaurants[id] || false;
+    const liked = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    return liked[id] || false;
   });
 
-  // Cập nhật localStorage khi isLiked thay đổi
   useEffect(() => {
-    const likedRestaurants = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
-    likedRestaurants[id] = isLiked;
-    localStorage.setItem('likedRestaurants', JSON.stringify(likedRestaurants));
+    const liked = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    liked[id] = isLiked;
+    localStorage.setItem('likedRestaurants', JSON.stringify(liked));
   }, [isLiked, id]);
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const categories = [
-    { name: 'Tất cả' },
-    { name: 'Cơm' },
-    { name: 'Canh' },
-    { name: 'Món thêm' },
-    { name: 'Nước giải khát' },
-  ];
-
-  const restaurants = [
-    {
-      id: 1,
-      name: 'Nhà hàng A',
-      address: '123 Đường Ẩm Thực, TP. HCM',
-      location: 'TP. HCM',
-      style: 'Lẩu',
-      image: restaurant1,
-      menuItems: [
-        { name: 'Lẩu', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Lẩu 2', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Lẩu 3', price: 52999, image: restaurant1, category: 'Cơm' },
-      ],
-      reviews: [
-        { user: 'Nguyễn Văn A', comment: 'Đồ ăn rất ngon, không gian thoải mái!', rating: 5 },
-        { user: 'Trần Thị B', comment: 'Phục vụ tốt nhưng giá hơi cao.', rating: 4 },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Nhà hàng B',
-      address: '456 Đường Ẩm Thực, TP. HCM',
-      location: 'Hà Nội',
-      style: 'Buffet',
-      image: restaurant2,
-      menuItems: [
-        { name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Cơm Thố Gà + Ốp La', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Cơm Thố Gà Nướng BBQ Hàn', price: 52999, image: restaurant1, category: 'Cơm' },
-        { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Canh chua', price: 11000, image: restaurant1, category: 'Canh' },
-        { name: 'Canh bí', price: 11000, image: restaurant1, category: 'Canh' },
-      ],
-      reviews: [
-        { user: 'Lê Văn C', comment: 'Không gian sang trọng, rất thích!', rating: 5 },
-        { user: 'Lê Văn A', comment: 'Không gian sang trọng, rất thích!', rating: 4 },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Nhà hàng C',
-      address: '789 Đường Ẩm Thực, TP. HCM',
-      location: 'Đà Nẵng',
-      style: 'Nhật',
-      image: restaurant3,
-      menuItems: [
-        { name: 'Cơm Heo Giòn Teriyaki', price: 99000, image: restaurant1, category: 'Cơm' },
-        { name: 'Sushi', price: 37000, image: restaurant1, category: 'Cơm' },
-        { name: 'Súp Misho', price: 52999, image: restaurant1, category: 'Canh' },
-        { name: 'Coca Cola', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-        { name: 'Pepsi', price: 11000, image: restaurant1, category: 'Nước giải khát' },
-      ],
-      reviews: [
-        { user: 'Phạm Thị D', comment: 'Ẩm thực độc đáo, đáng thử!', rating: 4 },
-      ],
-    },
-  ];
-
-  const restaurant = restaurants.find((r) => r.id === parseInt(id)) || {};
+  const toggleLike = () => setIsLiked(!isLiked);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]?.name || '');
+  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [selectedPrice, setSelectedPrice] = useState('');
 
-  const filteredMenuItems = restaurant.menuItems
-    ? restaurant.menuItems.filter((item) => {
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === 'Tất cả' ? true : item.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-      })
-    : [];
+  const categories = ['Tất cả', ...new Set(restaurant.menuItems?.map(item => item.category))];
+
+  const filteredMenu = restaurant.menuItems?.filter(item => {
+    const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCategory = selectedCategory === 'Tất cả' || item.category === selectedCategory;
+    const matchPrice =
+      selectedPrice === '' ||
+      (selectedPrice === 'under50' && item.price < 50000) ||
+      (selectedPrice === '50to100' && item.price >= 50000 && item.price <= 100000) ||
+      (selectedPrice === 'over100' && item.price > 100000);
+    return matchSearch && matchCategory && matchPrice;
+  }) || [];
+
+  const sliderSettings = {
+    dots: true,
+    arrows: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+  };
 
   return (
     <div className="restaurant-detail">
-      {/* Thông tin nhà hàng */}
+      <div className="restaurant-slider">
+        <Slider {...sliderSettings}>
+          {restaurant.images?.map((img, i) => (
+            <img key={i} src={img} alt={`slide-${i}`} className="slider-image" />
+          ))}
+        </Slider>
+      </div>
+
       <div className="restaurant-info">
-        <img src={restaurant.image} alt={restaurant.name} className="restaurant-image1" />
         <div className="restaurant-details1">
-          <div className="restaurant-header">
-            <h1>{restaurant.name}</h1>
-            <button className="heart" onClick={toggleLike}>
-              {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
-            </button>
+          <h1>{restaurant.name}</h1>
+          <div className="rating-display">
+            {renderStars(restaurant.rating)} <span className="rating-number">({restaurant.rating})</span>
           </div>
           <p className="location">Vị trí: {restaurant.location}</p>
-          <p className="style">Kiểu nhà hàng: {restaurant.style}</p>
-          <p className="address">Địa chỉ: {restaurant.address}</p>
+          <p className="style">Kiểu: {restaurant.style}</p>
+          <p className="address">{restaurant.address}</p>
           <button className="book-btn">Đặt bàn ngay</button>
+          <button className="heart" onClick={toggleLike}>
+            {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
+          </button>
         </div>
       </div>
 
-      {/* Danh mục, Thực đơn và Đánh giá */}
-      <div className="menu-and-reviews">
-        {/* Danh mục món ăn */}
-        <div className="categories-section">
-          <h2>Thực đơn</h2>
-          <ul className="categories-list">
-            {categories.map((category, index) => (
-              <li
-                key={index}
-                className={`category-item ${selectedCategory === category.name ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category.name)}
-              >
-                {category.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Thực đơn */}
-        <div className="menu-section">
-          {/* Ô tìm kiếm */}
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Tìm món..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="menu-items">
-            {filteredMenuItems.length > 0 ? (
-              filteredMenuItems.map((item, index) => (
-                <div key={index} className="menu-item">
-                  <img src={item.image} alt={item.name} className="menu-item-image" />
-                  <div className="menu-item-details">
-                    <p className="menu-item-name">{item.name}</p>
-                    <p className="menu-item-price">{item.price.toLocaleString()}đ</p>
+      {restaurant.menuItems && restaurant.menuItems.length > 0 && (
+        <div className="highlight-slider-wrapper">
+          <h2 className="highlight-title">Món ăn nổi bật</h2>
+          <Slider {...sliderSettings}>
+            {restaurant.menuItems.slice(0, 5).map((item) => (
+              <div key={item.id} className="highlight-slide">
+                <img src={item.image} alt={item.name} className="highlight-image" />
+                <div className="highlight-info">
+                  <h3>{item.name}</h3>
+                  <div className="rating-display">
+                    {renderStars(item.rating)} <span className="rating-number">({item.rating})</span>
                   </div>
+                  <p className="price">{item.price.toLocaleString()}đ</p>
                 </div>
-              ))
-            ) : (
-              <p>Không tìm thấy món ăn nào.</p>
-            )}
-          </div>
+              </div>
+            ))}
+          </Slider>
+        </div>
+      )}
+
+      <div className="menu-section-full">
+        <h2>Thực đơn</h2>
+        <ul className="categories-list-horizontal">
+          {categories.map((cat, i) => (
+            <li
+              key={i}
+              className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </li>
+          ))}
+        </ul>
+
+        <div className="price-filter">
+          <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
+            {priceRanges.map((range, idx) => (
+              <option key={idx} value={range.value}>{range.label}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Đánh giá */}
-        <div className="reviews-section">
-          <RestaurantReviewForm restaurantId={restaurant.id} existingReviews={restaurant.reviews} />
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Tìm món..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
+
+        <div className="horizontal-dishes">
+          {filteredMenu.map(dish => (
+            <Link to={`/dish/${dish.id}`} key={dish.id} className="slider-item">
+              <div className="dish-item">
+                <img src={dish.image} alt={dish.name} className="dish-image" />
+                <div className="dish-details">
+                  <h3>{dish.name}</h3>
+                  <div className="rating-display">
+                    {renderStars(dish.rating)} <span className="rating-number">({dish.rating})</span>
+                  </div>
+                  <p className="price">{dish.price.toLocaleString()}đ</p>
+                </div>
+                <button className="add-to-cart">Thêm</button>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="reviews-section-full">
+        <h2>Đánh giá</h2>
+        <RestaurantReviewForm
+          restaurantId={restaurant.id}
+          existingReviews={restaurant.reviews?.slice(0, 3)}
+        />
       </div>
     </div>
   );

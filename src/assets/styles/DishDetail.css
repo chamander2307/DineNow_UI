@@ -1,0 +1,41 @@
+.dish-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .dish-title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .dish-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .dish-images {
+    width: 50%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .dish-info {
+    width: 50%;
+  }
+  
+  .dish-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+  
+  .dish-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e74c3c;
+  }
