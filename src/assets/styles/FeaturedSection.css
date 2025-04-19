@@ -1,134 +1,33 @@
-.featured-section-pg {
-  padding: 60px 30px;
-  background-color: #fff5f3;
-}
 
-/* Slider món ăn nổi bật */
-.highlight-slider-wrapper {
-  width: 66.66%;
-  margin: 0 auto 40px auto;
-}
-
-.highlight-slide {
-  position: relative;       /* 🔧 thiếu dòng này gây lỗi */
-  width: 100%;
-  padding-top: 56.25%;      /* tương đương tỉ lệ 16:9 */
-  overflow: hidden;
-  border-radius: 16px;
-}
-  .highlight-header {
-  text-align: center !important;
-  margin-bottom: 24px;
-}
-
-
-.highlight-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-.section-header {
-  margin-bottom: 16px;
-  text-align: left;
+/* =========================
+   1. SLIDER STYLES (chia 4 thẻ card, KHÔNG áp dụng highlight)
+========================= */
+.slider-card-item {
+  width: 300px;
+  max-width: 300px;
+  min-width: 300px;
   padding: 0 12px;
+  box-sizing: border-box;
 }
 
-.section-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #222;
-  margin-bottom: 4px;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+.horizontal-slider .horizontal-slider .horizontal-slider .slick-track {
+  display: flex !important;
 }
 
-.section-sub {
-  font-size: 15px;
-  color: #666;
+.horizontal-slider .horizontal-slider .slick-slide {
+  float: none !important;
+  display: flex !important;
 }
 
 .horizontal-slider {
   margin-bottom: 60px;
+  padding: 0 16px;
 }
 
-.slider-item {
-  padding: 0 8px;
-  box-sizing: border-box;
-}
-
-.dish-item,
-.restaurant-item {
-  min-height: 240px;
-  width: 100%;
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
-  transition: transform 0.3s ease;
-}
-
-.dish-item:hover,
-.restaurant-item:hover {
-  transform: translateY(-6px);
-}
-
-.dish-image,
-.restaurant-image {
-  height: 180px;
-  width: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.dish-details,
-.restaurant-details {
-  padding: 10px;
-  text-align: left;
-}
-
-.dish-details h3,
-.restaurant-details h3 {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  color: #333;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.price,
-.score {
-  font-size: 12.5px;
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-/* Dots */
-.slick-dots {
-  bottom: -25px;
-}
-
-.slick-dots li button:before {
-  font-size: 10px;
-  color: #999;
-  opacity: 0.8;
-}
-
-.slick-dots li.slick-active button:before {
-  color: #e74c3c;
-  opacity: 1;
-}
-
-/* Mũi tên */
 .slick-prev,
 .slick-next {
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 10;
   width: 60px;
   height: 60px;
@@ -139,6 +38,9 @@
   align-items: center;
   transition: background-color 0.3s ease;
 }
+
+.slick-prev { left: 12px; }
+.slick-next { right: 12px; }
 
 .slick-prev:hover,
 .slick-next:hover {
@@ -153,13 +55,109 @@
   opacity: 1;
 }
 
-.slick-prev {
-  left: -45px;
+.slick-dots {
+  bottom: -25px;
+}
+.slick-dots li button:before {
+  font-size: 10px;
+  color: #999;
+  opacity: 0.8;
+}
+.slick-dots li.slick-active button:before {
+  color: #e74c3c;
+  opacity: 1;
 }
 
-.slick-next {
-  right: -45px;
+/* =========================
+   2. DISH CARD
+========================= */
+.dish-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
+
+.dish-item {
+  background-color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+  transition: transform 0.3s ease;
+}
+
+.dish-item:hover {
+  transform: translateY(-6px);
+}
+
+.dish-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.dish-details {
+  padding: 10px;
+  text-align: left;
+}
+
+.dish-details h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #333;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price {
+  font-size: 14px;
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* =========================
+   3. RESTAURANT CARD
+========================= */
+.restaurant-item {
+  background-color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+  transition: transform 0.3s ease;
+}
+
+.restaurant-item:hover {
+  transform: translateY(-6px);
+}
+
+.restaurant-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.restaurant-details {
+  padding: 10px;
+  text-align: left;
+}
+
+.restaurant-details h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #333;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .restaurant-meta {
   display: flex;
   justify-content: space-between;
@@ -178,28 +176,99 @@
   color: #777;
   white-space: nowrap;
 }
+
+.rc-button {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.rc-button:hover {
+  background-color: #cf3e2e;
+}
+
 .favorite-icon {
   position: absolute;
   top: 12px;
-  right: 12px;                          /* chuyển sang phải cho hiện đại hơn */
+  right: 12px;
   width: 36px;
   height: 36px;
-  background-color: rgba(255, 255, 255, 0.95); /* nền trắng nhẹ */
+  background-color: rgba(255, 255, 255, 0.95);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);   /* bóng nhẹ */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .favorite-icon:hover {
   transform: scale(1.1);
-  background-color: #ffecec;           /* hiệu ứng hover nền nhẹ */
+  background-color: #ffecec;
 }
 
 .favorite-icon svg {
   font-size: 18px;
   color: #e74c3c;
+}
+
+/* =========================
+   4. SECTION HEADER & HIGHLIGHT SLIDER
+========================= */
+.section-header {
+  margin-bottom: 16px;
+  text-align: left;
+  padding: 0 12px;
+}
+
+.section-header.center {
+  text-align: center;
+}
+
+.section-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 4px;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+}
+
+.section-sub {
+  font-size: 15px;
+  color: #666;
+}
+
+.highlight-header {
+  text-align: center !important;
+  margin-bottom: 24px;
+}
+
+.highlight-slider-wrapper {
+  width: 66.66%;
+  margin: 0 auto 40px auto;
+}
+
+.highlight-slide {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.highlight-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
 }

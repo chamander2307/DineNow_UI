@@ -30,7 +30,7 @@ const VerifyEmail = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
-      await verifyAccountOTP({ email, otp }); // ✅ Gọi đúng API xác thực
+      await verifyAccountOTP({ email, otp });
       alert("✅ Xác thực thành công! Mời bạn đăng nhập.");
       navigate("/login");
     } catch (err) {
@@ -41,7 +41,7 @@ const VerifyEmail = () => {
 
   const handleResendOTP = async () => {
     try {
-      const success = await sendVerifyOTP({ email }); // ✅ Gửi lại mã OTP
+      const success = await sendVerifyOTP({ email });
       if (success) {
         setResendSuccess(true);
         setTimeout(() => setResendSuccess(false), 3000);

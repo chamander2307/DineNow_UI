@@ -1,16 +1,19 @@
 import React from "react";
-import "../../assets/styles/FeaturedSection.css";
+import "../../assets/styles/AllDishes.css";
 import featuredDishes from "../../data/featuredDishes";
-import DishCard from "../../components/DishCard"; // ✅ import component
+import DishCard from "../../components/Dish/DishCard";
 
 const AllDishes = () => {
   return (
-    <div className="featured-section-pg">
-      <div className="section-header">
+    <div className="all-dishes-page full-width">
+      <div className="section-header center">
         <h2 className="section-title">Tất Cả Món Ăn</h2>
-        <p className="section-sub">Khám phá hàng loạt món ăn ngon hấp dẫn</p>
+        <p className="section-sub">
+          Khám phá hàng loạt món ăn ngon hấp dẫn mỗi ngày
+        </p>
       </div>
-      <div className="dish-grid">
+
+      <div className="dishes-grid">
         {featuredDishes.map((dish) => (
           <DishCard key={dish.id} dish={dish} />
         ))}

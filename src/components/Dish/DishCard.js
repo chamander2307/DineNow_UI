@@ -1,15 +1,18 @@
 import React from "react";
-import "../assets/styles/FeaturedSection.css";
+import { Link } from "react-router-dom";
+import "../../assets/styles/FeaturedSection.css";
 
 const DishCard = ({ dish }) => {
   return (
-    <div className="dish-item">
-      <img src={dish.image} alt={dish.name} className="dish-image" />
-      <div className="dish-details">
-        <h3>{dish.name}</h3>
-        <p className="price">{dish.price.toLocaleString()}đ</p>
+    <Link to={`/dish/${dish.id}`} className="dish-link">
+      <div className="dish-item">
+        <img src={dish.image} alt={dish.name} className="dish-image" />
+        <div className="dish-details">
+          <h3 className="dish-name">{dish.name}</h3>
+          <p className="price">{dish.price.toLocaleString()}đ</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -63,6 +63,7 @@ const Header = () => {
             </span>
             {showDropdown && (
               <div className="dropdown-menu">
+                <Link to="/all-dishes">Tất cả món ăn</Link>
                 <Link to="/food/pho">Phở</Link>
                 <Link to="/food/bun-bo-hue">Bún bò Huế</Link>
                 <Link to="/food/hu-tieu">Hủ tiếu</Link>
@@ -88,11 +89,6 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          {/* Nút hình trái tim dẫn đến FavoriteRestaurants */}
-          <Link to="/favorite-restaurants" className="favorite-link">
-            <FaHeart style={{ fontSize: "18px", color: "white" }} />
-          </Link>
-
           {/* Nút giỏ hàng dẫn đến Cart */}
           <Link to="/cart" className="cart-link">
             <FaShoppingCart style={{ fontSize: "18px", color: "white" }} />

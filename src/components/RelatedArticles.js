@@ -19,30 +19,32 @@ const RelatedArticles = () => {
     centerMode: false,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } }
-    ]
+      { breakpoint: 768, settings: { slidesToShow: 1 } },
+    ],
   };
-  
 
   const articles = [
     {
       id: 1,
       title: "Top nhà hàng Nhật Bản chính gốc",
-      description: "Khám phá hương vị Nhật truyền thống tại các nhà hàng được đánh giá cao nhất.",
+      description:
+        "Khám phá hương vị Nhật truyền thống tại các nhà hàng được đánh giá cao nhất.",
       image: article1,
       link: "/article/1",
     },
     {
       id: 2,
       title: "Buffet cuối tuần giá tốt",
-      description: "Tổng hợp các địa điểm buffet sang chảnh mà giá vẫn hợp túi tiền.",
+      description:
+        "Tổng hợp các địa điểm buffet sang chảnh mà giá vẫn hợp túi tiền.",
       image: article2,
       link: "/article/2",
     },
     {
       id: 3,
       title: "Lẩu nướng phong cách Hàn",
-      description: "Địa điểm lý tưởng để thưởng thức lẩu nướng chuẩn vị Hàn Quốc tại TP.HCM.",
+      description:
+        "Địa điểm lý tưởng để thưởng thức lẩu nướng chuẩn vị Hàn Quốc tại TP.HCM.",
       image: article3,
       link: "/article/3",
     },
@@ -50,12 +52,17 @@ const RelatedArticles = () => {
 
   return (
     <div className="related-articles">
-      <h2>Bài viết liên quan</h2>
+      <h2 className="section-title">Tin Tức Mới Nhất</h2>
+      <p className="section-sub">Cập nhật thông tin mới nhất về ẩm thực</p>
       <Slider {...settings}>
         {articles.map((article) => (
           <div className="slider-item" key={article.id}>
             <div className="article-card">
-              <img src={article.image} alt={article.title} className="article-image" />
+              <img
+                src={article.image}
+                alt={article.title}
+                className="article-image"
+              />
               <div className="article-content">
                 <h3>{article.title}</h3>
                 <p>{article.description}</p>

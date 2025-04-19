@@ -12,10 +12,9 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 import DishDetail from "../pages/DishDetail/DishDetail";
-
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import Page404 from "../components/basicComponents/Page404";
-
+import AllDishes from "../pages/AllDishes/AllDishes";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -28,15 +27,12 @@ const AppRoutes = () => {
       <Route path="/restaurant-list" element={<RestaurantList />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
-
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
-
       <Route path="/dish/:id" element={<DishDetail />} />
-
       <Route path="/payment" element={<PaymentPage />} />
-      
+      <Route path="/all-dishes" element={<AllDishes />} />  
       <Route path="*" element={<Page404/>} />
     </Routes>
   );
