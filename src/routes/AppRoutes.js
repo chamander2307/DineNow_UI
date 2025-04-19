@@ -12,6 +12,7 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
 import DishDetail from "../pages/DishDetail/DishDetail";
+import ReservationHistory from "../pages/ReservationHistory/ReservationHistory";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import Page404 from "../components/basicComponents/Page404";
 import AllDishes from "../pages/AllDishes/AllDishes";
@@ -33,6 +34,8 @@ const AppRoutes = () => {
       <Route path="/dish/:id" element={<DishDetail />} />
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/all-dishes" element={<AllDishes />} />  
+      <Route path="/reservation-history" element={<ReservationHistory />} />
+
       <Route path="*" element={<Page404/>} />
     </Routes>
   );

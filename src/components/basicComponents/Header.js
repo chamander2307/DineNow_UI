@@ -2,11 +2,8 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/img/DineNow_2.svg";
 import { UserContext } from "../../contexts/UserContext";
-import { FaHeart, FaShoppingCart } from "react-icons/fa";
-
+import { FaHeart, FaShoppingBag } from "react-icons/fa";
 import "../../assets/styles/Navbar.css";
-
-import FavoriteRestaurants from "../../pages/FavoriteRestaurants/FavoriteRestaurants";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -36,7 +33,6 @@ const Header = () => {
     navigate("/login");
   };
 
-  // ✅ Nếu đang loading thì chưa render Header
   if (loading) return null;
 
   return (
@@ -49,12 +45,8 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">
-              Gần Bạn
-            </Link>
-            <Link to="/restaurant-list" className="nav-item">
-              Các Nhà Hàng
-            </Link>
+            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
+            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -89,9 +81,8 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          {/* Nút giỏ hàng dẫn đến Cart */}
-          <Link to="/cart" className="cart-link">
-            <FaShoppingCart style={{ fontSize: "18px", color: "white" }} />
+          <Link to="/reservation-history" className="cart-link">
+            <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
           </Link>
 
           {isLogin ? (
@@ -105,7 +96,7 @@ const Header = () => {
                 {showUserDropdown && (
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
-                    <Link to="/orders">Đơn Đặt</Link>
+                    <Link to="/reservation-history">Đơn Đặt</Link>
                     <button onClick={handleLogout}>Đăng Xuất</button>
                   </div>
                 )}
