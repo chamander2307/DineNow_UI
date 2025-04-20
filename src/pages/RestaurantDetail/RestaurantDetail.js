@@ -34,11 +34,23 @@ const RestaurantDetail = () => {
     return liked[id] || false;
   });
 
+  // State để quản lý giỏ hàng
+  const [cart, setCart] = useState(() => {
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || {};
+    return savedCart[id] || {};
+  });
+
   useEffect(() => {
     const liked = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
     liked[id] = isLiked;
     localStorage.setItem('likedRestaurants', JSON.stringify(liked));
   }, [isLiked, id]);
+
+  useEffect(() => {
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || {};
+    savedCart[id] = cart;
+    localStorage.setItem('cart', JSON.stringify(savedCart));
+  }, [cart, id]);
 
   const toggleLike = () => setIsLiked(!isLiked);
 
@@ -69,6 +81,48 @@ const RestaurantDetail = () => {
     autoplay: true,
     autoplaySpeed: 4000,
   };
+
+  // Hàm thêm món vào giỏ hàng
+  const addToCart = (dishId) => {
+    setCart(prevCart => ({
+      ...prevCart,
+      [dishId]: (prevCart[dishId] || 0) + 1,
+    }));
+  };
+
+  // Hàm tăng số lượng món
+  const increaseQuantity = (dishId) => {
+    setCart(prevCart => ({
+      ...prevCart,
+      [dishId]: prevCart[dishId] + 1,
+    }));
+  };
+
+  // Hàm giảm số lượng món
+  const decreaseQuantity = (dishId) => {
+    setCart(prevCart => {
+      const newQuantity = prevCart[dishId] - 1;
+      if (newQuantity <= 0) {
+        const { [dishId]: _, ...rest } = prevCart;
+        return rest;
+      }
+      return {
+        ...prevCart,
+        [dishId]: newQuantity,
+      };
+    });
+  };
+
+  // Chuyển đổi cart thành selectedItems để truyền sang PaymentPage
+  const selectedItems = Object.keys(cart).map((dishId) => {
+    const dish = restaurant.menuItems.find(item => item.id === dishId);
+    return {
+      id: dish.id,
+      name: dish.name,
+      price: dish.price,
+      quantity: cart[dishId],
+    };
+  });
 
   return (
     <div className="restaurant-detail">
@@ -101,7 +155,22 @@ const RestaurantDetail = () => {
           </div>
 
           <div className="rd-actions">
-            <button className="book-btn">Đặt bàn ngay</button>
+            <Link
+              to={{
+                pathname: '/payment',
+                state: {
+                  restaurant: {
+                    name: restaurant.name,
+                    address: restaurant.address,
+                    image: restaurant.image,
+                  },
+                  selectedItems: selectedItems.length > 0 ? selectedItems : [],
+                },
+              }}
+              className="book-btn"
+            >
+              Đặt bàn ngay
+            </Link>
             <button className="heart" onClick={toggleLike}>
               {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
             </button>
@@ -172,7 +241,21 @@ const RestaurantDetail = () => {
                   </div>
                   <p className="price">{dish.price.toLocaleString()}đ</p>
                 </div>
-                <button className="add-to-cart">Thêm</button>
+                {cart[dish.id] ? (
+                  <div className="add-item-container">
+                    <button className="remove-btn" onClick={(e) => { e.preventDefault(); decreaseQuantity(dish.id); }}>
+                      −
+                    </button>
+                    <span className="item-quantity">{cart[dish.id]}</span>
+                    <button className="add-btn" onClick={(e) => { e.preventDefault(); increaseQuantity(dish.id); }}>
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button className="add-to-cart" onClick={(e) => { e.preventDefault(); addToCart(dish.id); }}>
+                    Thêm
+                  </button>
+                )}
               </div>
             </Link>
           ))}

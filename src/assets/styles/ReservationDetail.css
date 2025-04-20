@@ -1,0 +1,170 @@
+.reservation-detail-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-detail-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+/* Thông tin nhà hàng */
+.restaurant-info {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.restaurant-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.restaurant-details h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 20px;
+}
+
+.restaurant-details p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Danh sách món ăn */
+.dishes-section {
+  margin-bottom: 30px;
+}
+
+.dishes-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 20px;
+}
+
+.dishes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dishes-table th,
+.dishes-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.dishes-table th {
+  background-color: #f7796b;
+  color: white;
+  font-weight: bold;
+}
+
+.dish-imagess {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Thông tin thanh toán */
+.payment-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.payment-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 20px;
+}
+
+.payment-section p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.payment-status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 5px;
+}
+
+.payment-status.thành-công {
+  background-color: #28a745;
+  color: white;
+}
+
+.payment-status.đang-chờ {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.payment-status.thất-bại {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Nút quay lại */
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .restaurant-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .restaurant-thumbnail {
+    width: 120px;
+    height: 120px;
+  }
+
+  .dishes-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .dishes-table th,
+  .dishes-table td {
+    min-width: 100px;
+  }
+
+  .dish-image {
+    width: 60px;
+    height: 60px;
+  }
+}

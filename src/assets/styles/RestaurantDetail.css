@@ -51,6 +51,7 @@
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+  text-decoration: none; /* Để Link không có gạch chân */
 }
 
 .book-btn:hover {
@@ -267,10 +268,12 @@
 
 /* === Số lượng món === */
 .add-item-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 8px;
 }
 
 .add-btn,
@@ -345,6 +348,7 @@
   color: #f4c150;
   font-weight: bold;
 }
+
 .rd-name {
   font-size: 28px;
   font-weight: bold;
