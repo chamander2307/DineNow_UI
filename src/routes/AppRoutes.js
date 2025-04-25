@@ -15,6 +15,7 @@ import DishDetail from "../pages/DishDetail/DishDetail";
 import ReservationHistory from "../pages/ReservationHistory/ReservationHistory";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import Page404 from "../components/basicComponents/Page404";
+import ReservationDetail from "../pages/ReservationDetail/ReservationDetail";
 import AllDishes from "../pages/AllDishes/AllDishes";
 import RestaurantManager from "../pages/Admin/RestaurantManager";
 import RestaurantMyList from "../pages/Owner/RestaurantMyList";
@@ -41,7 +42,7 @@ const AppRoutes = () => {
       <Route path="/admin/restaurants" element={<RestaurantManager />} />
       <Route path="/owner/restaurants" element={<RestaurantMyList />} />
       <Route path="/owner/menu-items" element={<MenuItemMyList />} />
-      <Route path="*" element={<Page404/>} />
+      <Route path="/reservation/:id" element={<ReservationDetail />} />
     </Routes>
   );
 };
