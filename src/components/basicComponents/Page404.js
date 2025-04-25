@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../assets/styles/Page404.css'; // Nhập file CSS cho trang 404
+import '../../assets/styles/home/Page404.css'; // Nhập file CSS cho trang 404
 
 const Page404 = () => {
   return (

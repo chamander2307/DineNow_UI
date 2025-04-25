@@ -1,0 +1,65 @@
+.page-404 {
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'Arvo', serif;
+  padding: 40px 0;
+}
+
+.page-404 .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.page-404 .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+.page-404 .col {
+  width: 100%;
+  max-width: 83.333333%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 15px;
+}
+
+.page-404 .four-zero-four-bg {
+  background-image: url('https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif');
+  height: 400px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.page-404 .four-zero-four-bg h1 {
+  font-size: 80px;
+  text-align: center;
+}
+
+.page-404 .content-box-404 {
+  margin-top: -50px;
+}
+
+.page-404 .content-box-404 .h2 {
+  font-size: 80px;
+}
+
+.page-404 .content-box-404 p {
+  margin-top: 16px;
+}
+
+.page-404 .link-404 {
+  color: #fff !important;
+  padding: 10px 20px;
+  background: #39ac31;
+  margin-top: 20px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.page-404 .link-404:hover {
+  background: #2e8b27;
+}

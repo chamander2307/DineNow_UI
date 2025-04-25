@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/img/DineNow_2.svg";
 import { UserContext } from "../../contexts/UserContext";
 import { FaHeart, FaShoppingBag } from "react-icons/fa";
-import "../../assets/styles/Navbar.css";
+import "../../assets/styles/home/Navbar.css";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -45,8 +45,12 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
-            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
+            <Link to="/nearby" className="nav-item">
+              Gần Bạn
+            </Link>
+            <Link to="/restaurant-list" className="nav-item">
+              Các Nhà Hàng
+            </Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -97,6 +101,14 @@ const Header = () => {
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
                     <Link to="/reservation-history">Đơn Đặt</Link>
+
+                    {user?.role === "ADMIN" && (
+                      <Link to="/admin/restaurants">Quản lý Admin</Link>
+                    )}
+                    {user?.role === "OWNER" && (
+                      <Link to="/owner/restaurants">Nhà hàng của tôi</Link>
+                    )}
+
                     <button onClick={handleLogout}>Đăng Xuất</button>
                   </div>
                 )}

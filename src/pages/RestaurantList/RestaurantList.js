@@ -3,7 +3,7 @@ import React from "react";
 import RestaurantCard from "../../components/Restaurants/RestaurantCard";
 import FilterBar from "../../components/basicComponents/FilterBar";
 import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
-import "../../assets/styles/RestaurantList.css";
+import "../../assets/styles/Restaurant/RestaurantList.css";
 import { restaurants } from "../../data/restaurants";
 
 const RestaurantList = () => {

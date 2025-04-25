@@ -4,7 +4,7 @@ import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-ico
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import '../../assets/styles/RestaurantDetail.css';
+import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import { restaurants } from '../../data/restaurants';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
 

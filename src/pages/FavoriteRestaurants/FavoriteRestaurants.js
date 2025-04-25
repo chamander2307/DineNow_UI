@@ -4,7 +4,7 @@ import { FaHeart } from 'react-icons/fa';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 import restaurant2 from '../../assets/img/restaurant2.jpg';
 import restaurant3 from '../../assets/img/restaurant3.jpg';
-import '../../assets/styles/FavoriteRestaurants.css';
+import '../../assets/styles/Restaurant/FavoriteRestaurants.css';
 
 const FavoriteRestaurants = () => {
   // Dữ liệu nhà hàng (phải giống với RestaurantDetail.js)

@@ -16,6 +16,8 @@
   justify-content: space-between;
   width: 100%;
   max-width: 1140px;
+  box-sizing: border-box;
+padding: 0 12px;
 }
 
 /* ===== Logo + Menu ===== */

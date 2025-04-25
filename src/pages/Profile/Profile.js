@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import '../../assets/styles/Profile.css';
+import '../../assets/styles/home/Profile.css';
 import { UserContext } from '../../contexts/UserContext';
 import { updateUserProfile } from '../../services/userService';
 

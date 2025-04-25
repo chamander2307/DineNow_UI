@@ -1,7 +1,7 @@
   import React, { useEffect, useState } from 'react';
   import { useParams } from 'react-router-dom';
   import DishReviews from '../../components/Dish/DishReviews';
-  import '../../assets/styles/DishDetail.css';
+  import '../../assets/styles/Dish/DishDetail.css';
 
   import restaurant1 from '../../assets/img/restaurant1.jpg';
   // Dữ liệu giả lập (thay thế bằng API thực tế nếu có)
