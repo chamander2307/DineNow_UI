@@ -155,4 +155,22 @@
   .save-btn:hover {
     background: #bd2211;
   }
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .change-password-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .change-password-btn:hover {
+    background-color: #0056b3;
+  }
   

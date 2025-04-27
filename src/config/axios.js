@@ -1,37 +1,41 @@
-// src/config/axios.js
 import axios from "axios";
 import { refreshToken } from "../services/authService";
 import httpStatusMessages from "../constants/httpStatusMessages";
 
+// ✅ Tạo instance Axios
 const instance = axios.create({
   baseURL: "http://localhost:8080/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
+  withCredentials: true, // Cho phép gửi cookie (nếu dùng refreshToken dạng HttpOnly)
 });
 
-// ✅ Gắn accessToken nếu có trước khi gửi request
+// ✅ Interceptor trước khi gửi request
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
+
+  // Gắn Authorization nếu có token
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
     console.log("🔐 Gửi token:", config.headers["Authorization"]);
-  } else {
-    console.warn("⚠️ Không có accessToken trong localStorage");
   }
+
+  // ĐỪNG đặt Content-Type mặc định ở đây!
+  // Axios sẽ tự đặt:
+  // - application/json cho object thường
+  // - multipart/form-data khi dùng FormData
+
   return config;
 });
 
-// ✅ Xử lý khi gặp lỗi phản hồi
+// ✅ Interceptor xử lý response lỗi
 instance.interceptors.response.use(
   (res) => res,
   async (err) => {
     const originalRequest = err.config;
 
+    // Lỗi không phản hồi
     if (!err.response) {
-      console.error("❌ Không nhận được phản hồi từ server:", err);
-      alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      console.error("❌ Không có phản hồi từ server:", err);
+      alert("Không thể kết nối đến máy chủ.");
       return Promise.reject(err);
     }
 
@@ -41,26 +45,33 @@ instance.interceptors.response.use(
     console.warn(`⚠️ Response Error ${status}: ${message}`);
     console.log("➡️ Request headers:", originalRequest.headers);
 
-    // ✅ Nếu accessToken hết hạn → gọi refreshToken (bắt cả 401 & 403)
+    // ✅ Refresh token nếu lỗi 401/403 và chưa thử lại
     if ((status === 401 || status === 403) && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
-        console.log("🔄 Bắt đầu gọi refreshToken()");
+        console.log("🔄 Gọi refreshToken()");
         const data = await refreshToken();
         const newAccessToken = data.accessToken;
+
         localStorage.setItem("accessToken", newAccessToken);
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-        console.log("✅ Đã refresh accessToken:", newAccessToken);
-        return instance(originalRequest); // retry request gốc
+        console.log("✅ Đã refresh token:", newAccessToken);
+
+        return instance(originalRequest); // Gọi lại request cũ
       } catch (e) {
         console.error("❌ Refresh token thất bại:", e.response?.data || e.message);
         localStorage.removeItem("accessToken");
-        window.location.href = "/login";
+
+        if (!window.location.pathname.startsWith("/login")) {
+          window.location.href = "/login";
+        }
+
         return Promise.reject(e);
       }
     }
 
-    // ✅ Hiển thị lỗi dựa trên mã lỗi đã định nghĩa
+    // ❌ Nếu là lỗi khác, hiển thị cảnh báo
     alert(httpStatusMessages[status] || `Lỗi ${status}: ${message}`);
     return Promise.reject(err);
   }

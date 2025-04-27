@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   createMenuItem,
@@ -11,9 +12,9 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
     name: "",
     description: "",
     price: "",
-    category: "",
+    categoryId: "",
     available: true,
-    imageUrl: "",
+    image: null,
   });
 
   useEffect(() => {
@@ -22,17 +23,19 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
         name: initialData.name || "",
         description: initialData.description || "",
         price: initialData.price || "",
-        category: initialData.category?.name || "",
+        categoryId: initialData.category?.id || "",
         available: initialData.available,
-        imageUrl: "",
+        image: null,
       });
     }
   }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (type === "checkbox") {
       setFormData({ ...formData, [name]: checked });
+    } else if (type === "file") {
+      setFormData({ ...formData, [name]: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -41,9 +44,14 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = new FormData();
-    Object.entries(formData).forEach(([key, val]) => {
-      if (val !== "") payload.append(key, val);
-    });
+    payload.append("name", formData.name);
+    payload.append("description", formData.description);
+    payload.append("price", formData.price);
+    payload.append("categoryId", formData.categoryId);
+    payload.append("available", formData.available);
+    if (formData.image) {
+      payload.append("image", formData.image);
+    }
 
     try {
       if (isEdit) {
@@ -53,7 +61,7 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
         await createMenuItem(restaurantId, payload);
         alert("✅ Tạo món ăn thành công!");
       }
-      onSuccess?.(); // gọi lại load danh sách
+      onSuccess?.();
       onClose();
     } catch (err) {
       console.error(err);
@@ -69,8 +77,8 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
           <input name="name" placeholder="Tên món" value={formData.name} onChange={handleChange} required />
           <input name="description" placeholder="Mô tả" value={formData.description} onChange={handleChange} />
           <input name="price" type="number" placeholder="Giá" value={formData.price} onChange={handleChange} required />
-          <input name="category" placeholder="Loại món (Tên)" value={formData.category} onChange={handleChange} />
-          <input name="imageUrl" placeholder="URL ảnh" value={formData.imageUrl} onChange={handleChange} />
+          <input name="categoryId" placeholder="Loại món (Category ID)" value={formData.categoryId} onChange={handleChange} />
+          <input type="file" name="image" onChange={handleChange} />
           <label>
             <input type="checkbox" name="available" checked={formData.available} onChange={handleChange} />
             Đang phục vụ

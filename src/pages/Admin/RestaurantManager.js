@@ -8,16 +8,14 @@ import {
   fetchRestaurantById,
 } from "../../services/restaurantService";
 import RestaurantDetailModal from "../../components/common/RestaurantDetailModal";
-import "../../assets/styles/AdminRestaurantManager.css";
+import "../../assets/styles/admin/AdminRestaurantManager.css";
 
 const RestaurantManager = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [editingRestaurant, setEditingRestaurant] = useState(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -37,10 +35,7 @@ const RestaurantManager = () => {
 
   const handleSearch = async () => {
     try {
-      const body = {
-        restaurantName: searchName,
-        province: searchProvince,
-      };
+      const body = { restaurantName: searchName, province: searchProvince };
       const res = await searchRestaurants(body, page, 10);
       setRestaurants(res.data.content);
       setTotalPages(res.data.totalPages);
@@ -51,7 +46,7 @@ const RestaurantManager = () => {
 
   const handleApprove = async (id) => {
     if (window.confirm("Duyệt nhà hàng này?")) {
-      await approveRestaurant(id);
+      await approveRestaurant(id, "APPROVED"); // ✅ thêm status
       loadRestaurants();
     }
   };
@@ -67,12 +62,6 @@ const RestaurantManager = () => {
     const res = await fetchRestaurantById(id);
     setSelectedRestaurant(res.data);
     setShowDetailModal(true);
-  };
-
-  const handleEdit = async (id) => {
-    const res = await fetchRestaurantById(id);
-    setEditingRestaurant(res.data);
-    setShowFormModal(true);
   };
 
   return (
@@ -108,29 +97,45 @@ const RestaurantManager = () => {
           </tr>
         </thead>
         <tbody>
-          {restaurants.map((r) => (
-            <tr key={r.id}>
-              <td>{r.id}</td>
-              <td>{r.name}</td>
-              <td>{r.address}</td>
-              <td>{r.approved ? "✅ Đã duyệt" : "⏳ Chờ duyệt"}</td>
-              <td>
-                <button onClick={() => handleDetail(r.id)}>Chi tiết</button>
-                {!r.approved && (
-                  <button onClick={() => handleApprove(r.id)}>Duyệt</button>
-                )}
-                <button onClick={() => handleDelete(r.id)}>Xoá</button>
-              </td>
-            </tr>
-          ))}
+          {Array.isArray(restaurants) &&
+            restaurants.map((r) => (
+              <tr key={r.id}>
+                <td>{r.id}</td>
+                <td>{r.name}</td>
+                <td>{r.address}</td>
+                <td>
+                  {r.status === "APPROVED"
+                    ? "Đã duyệt"
+                    : r.status === "PENDING"
+                    ? "Chờ duyệt"
+                    : "Bị từ chối"}
+                </td>
+                <td>
+                  <button onClick={() => handleDetail(r.id)}>Chi tiết</button>
+                  {r.status === "PENDING" && (
+                    <button onClick={() => handleApprove(r.id)}>Duyệt</button>
+                  )}
+                  <button onClick={() => handleDelete(r.id)}>Xoá</button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
       {/* Phân trang */}
       <div className="pagination">
-        <button disabled={page <= 0} onClick={() => setPage(page - 1)}>← Trước</button>
-        <span>Trang {page + 1} / {totalPages}</span>
-        <button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Tiếp →</button>
+        <button disabled={page <= 0} onClick={() => setPage(page - 1)}>
+          ← Trước
+        </button>
+        <span>
+          Trang {page + 1} / {totalPages}
+        </span>
+        <button
+          disabled={page + 1 >= totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Tiếp →
+        </button>
       </div>
 
       {/* Modal chi tiết */}
