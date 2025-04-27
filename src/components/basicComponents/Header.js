@@ -53,20 +53,14 @@ const Header = () => {
             </span>
             {showDropdown && (
               <div className="dropdown-menu">
-                <Link to="/all-dishes">Tất cả món ăn</Link>
-                <Link to="/food/pho">Phở</Link>
-                <Link to="/food/bun-bo-hue">Bún bò Huế</Link>
-                <Link to="/food/hu-tieu">Hủ tiếu</Link>
-                <Link to="/food/com-tam">Cơm tấm</Link>
-                <Link to="/food/lau">Lẩu</Link>
-                <Link to="/food/ga-ran">Gà rán</Link>
-                <Link to="/food/pizza">Pizza</Link>
-                <Link to="/food/banh-canh">Bánh canh</Link>
-                <Link to="/food/mi-quang">Mì Quảng</Link>
-                <Link to="/food/sushi">Sushi</Link>
-                <Link to="/food/banh-xeo">Bánh xèo</Link>
-                <Link to="/food/goi-cuon">Gỏi cuốn</Link>
-                <Link to="/food/tra-sua">Trà sữa</Link>
+                <Link to="/food-category/mon-nuoc">Món Nước</Link>
+                <Link to="/food-category/mon-kho">Món Khô</Link>
+                <Link to="/food-category/mon-hap-luoc">Món Hấp - Luộc</Link>
+                <Link to="/food-category/mon-chien-nuong">Món Chiên - Nướng</Link>
+                <Link to="/food-category/mon-kho-to">Món Kho</Link>
+                <Link to="/food-category/mon-goi-nom">Món Gỏi - Nộm</Link>
+                <Link to="/food-category/mon-chay">Món Chay</Link>
+                <Link to="/food-category/mon-trang-mieng">Món Tráng Miệng</Link>
               </div>
             )}
             {isLogin && (
