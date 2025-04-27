@@ -16,6 +16,8 @@
   justify-content: space-between;
   width: 100%;
   max-width: 1140px;
+  box-sizing: border-box;
+padding: 0 12px;
 }
 
 /* ===== Logo + Menu ===== */
@@ -208,4 +210,22 @@
   background-color: #f7796b;
   color: white;
   font-weight: 500;
+}
+/* ===== Cart Dropdown ===== */
+.cart-container {
+  position: relative;
+}
+
+.cart-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 340px;
+  max-height: 500px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  z-index: 999;
 }

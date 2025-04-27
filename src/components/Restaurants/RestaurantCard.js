@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import "../../assets/styles/FeaturedSection.css";
+import "../../assets/styles/Restaurant/RestaurantCard.css";
 import { addFavoriteRestaurant } from "../../services/userService";
 import { UserContext } from "../../contexts/UserContext";
 import FavoriteButton from "../basicComponents/FavoriteButton";

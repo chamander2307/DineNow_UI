@@ -1,0 +1,100 @@
+.dish-reviews {
+  margin-top: 20px;
+}
+
+.dish-reviews-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.dish-reviews-items {
+  list-style: none;
+  padding: 0;
+}
+
+.dish-review-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 15px 0;
+}
+
+.dish-review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.dish-review-author {
+  font-weight: bold;
+}
+
+.dish-review-date {
+  color: #888;
+  font-size: 14px;
+}
+
+.dish-review-content {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* CSS cho form đánh giá */
+.review-form {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.review-form h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.star-input {
+  margin-bottom: 15px;
+}
+
+.star-input label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.star {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.star.filled {
+  color: #f1c40f;
+}
+
+.star-rating {
+  margin-bottom: 10px;
+}
+
+.review-comment {
+  width: 100%;
+  min-height: 100px;
+  padding: 3px;
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.submit-btn {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #2980b9;
+}

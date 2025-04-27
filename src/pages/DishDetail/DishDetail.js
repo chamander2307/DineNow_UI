@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
-import DishReviews from '../../components/Dish/DishReviews';
-import '../../assets/styles/DishDetail.css';
-import { restaurants } from '../../data/restaurants';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import DishReviews from "../../components/Dish/DishReviews";
+import "../../assets/styles/Dish/DishDetail.css";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { restaurants } from "../../data/restaurants";
 
 // Hàm hiển thị sao dựa trên rating
 const renderStars = (rating) => {
@@ -47,8 +47,12 @@ const DishDetail = () => {
       <div className="dish-content">
         <img src={dish.image} alt={dish.name} className="dish-images" />
         <div className="dish-info">
-          <p className="dish-description">{dish.description || 'Món ăn thơm ngon, đáng thử!'}</p>
-          <p className="dish-price">Giá: {dish.price.toLocaleString('vi-VN')} VNĐ</p>
+          <p className="dish-description">
+            {dish.description || "Món ăn thơm ngon, đáng thử!"}
+          </p>
+          <p className="dish-price">
+            Giá: {dish.price.toLocaleString("vi-VN")} VNĐ
+          </p>
           <div className="dish-rating">
             <span>Đánh giá: </span>
             {renderStars(dish.rating)}

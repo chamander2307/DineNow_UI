@@ -1,5 +1,5 @@
 import React from "react";
-import "../../assets/styles/AllDishes.css";
+import "../../assets/styles/Dish/AllDishes.css";
 import featuredDishes from "../../data/featuredDishes";
 import DishCard from "../../components/Dish/DishCard";
 

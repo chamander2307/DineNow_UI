@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../../../assets/styles/Login.css";
+import "../../../assets/styles/home/Login.css";
 import Logo from "../../../components/basicComponents/Logo";
 import OtpInput from "../../../components/auth/OTPinput";
 import { verifyAccountOTP, sendVerifyOTP } from "../../../services/authService";

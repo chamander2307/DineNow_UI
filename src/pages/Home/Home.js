@@ -1,6 +1,6 @@
 import React from "react";
 import Slider from "react-slick";
-import "../../assets/styles/Home.css";
+import "../../assets/styles/home/Home.css";
 import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
 import FilterBar from "../../components/basicComponents/FilterBar";
 import FoodCategoryList from "../../components/basicComponents/FoodCategoryList";
@@ -12,14 +12,19 @@ import featuredRestaurants from "../../data/featuredRestaurants";
 import RelatedArticles from "../../components/RelatedArticles";
 
 const Home = () => {
-  // 👉 Đây là settings dùng width cố định 300px / card
+  // ✅ Responsive settings: tự co giãn card, không tràn ngang
   const sliderSettings = {
     dots: true,
     infinite: false,
     speed: 700,
     arrows: true,
+    slidesToShow: 4,
     slidesToScroll: 1,
-    variableWidth: true, // 🔥 BẮT BUỘC khi dùng thẻ 300px
+    responsive: [
+      { breakpoint: 1280, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 1 } },
+    ],
   };
 
   return (

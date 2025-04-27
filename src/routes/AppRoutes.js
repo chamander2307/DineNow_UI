@@ -17,6 +17,10 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import Page404 from "../components/basicComponents/Page404";
 import ReservationDetail from "../pages/ReservationDetail/ReservationDetail";
 import AllDishes from "../pages/AllDishes/AllDishes";
+import RestaurantManager from "../pages/Admin/RestaurantManager";
+import RestaurantMyList from "../pages/Owner/RestaurantMyList";
+import MenuItemMyList from "../pages/Owner/MenuItemMyList";
+import CartPage from "../pages/CartPage/CartPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -36,8 +40,12 @@ const AppRoutes = () => {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/all-dishes" element={<AllDishes />} />  
       <Route path="/reservation-history" element={<ReservationHistory />} />
+      <Route path="/admin/restaurants" element={<RestaurantManager />} />
+      <Route path="/owner/restaurants" element={<RestaurantMyList />} />
+      <Route path="/owner/menu-items" element={<MenuItemMyList />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
-      <Route path="*" element={<Page404/>} />
+      <Route path="/cart" element={<CartPage />} />
+      <Route path="*" element={<Page404 />} />
     </Routes>
   );
 };

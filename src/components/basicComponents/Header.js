@@ -3,11 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/img/DineNow_2.svg";
 import { UserContext } from "../../contexts/UserContext";
 import { FaHeart, FaShoppingBag } from "react-icons/fa";
-import "../../assets/styles/Navbar.css";
+import "../../assets/styles/home/Navbar.css";
+import RestaurantCart from "../Restaurants/RestaurantCart";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showCartDropdown, setShowCartDropdown] = useState(false);//t
+  const cartRef = useRef();//t
   const dropdownRef = useRef();
   const userRef = useRef();
   const navigate = useNavigate();
@@ -22,6 +25,9 @@ const Header = () => {
       }
       if (userRef.current && !userRef.current.contains(e.target)) {
         setShowUserDropdown(false);
+      }
+      if (cartRef.current && !cartRef.current.contains(e.target)) {//t
+        setShowCartDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -45,8 +51,12 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
-            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
+            <Link to="/nearby" className="nav-item">
+              Gần Bạn
+            </Link>
+            <Link to="/restaurant-list" className="nav-item">
+              Các Nhà Hàng
+            </Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -81,9 +91,20 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          <Link to="/reservation-history" className="cart-link">
-            <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
-          </Link>
+          <div className="cart-container" ref={cartRef}>
+            <div
+              className="cart-link"
+              onClick={() => setShowCartDropdown(!showCartDropdown)}
+            >
+              <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
+            </div>
+
+            {showCartDropdown && (
+              <div className="cart-dropdown">
+                <RestaurantCart restaurants={[]} />
+              </div>
+            )}
+          </div>
 
           {isLogin ? (
             <div className="user-menu">
@@ -97,6 +118,14 @@ const Header = () => {
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
                     <Link to="/reservation-history">Đơn Đặt</Link>
+
+                    {user?.role === "ADMIN" && (
+                      <Link to="/admin/restaurants">Quản lý Admin</Link>
+                    )}
+                    {user?.role === "OWNER" && (
+                      <Link to="/owner/restaurants">Nhà hàng của tôi</Link>
+                    )}
+
                     <button onClick={handleLogout}>Đăng Xuất</button>
                   </div>
                 )}

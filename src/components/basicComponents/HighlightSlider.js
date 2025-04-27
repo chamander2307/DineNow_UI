@@ -2,7 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "../../assets/styles/FeaturedSection.css";
+import "../../assets/styles/home/FeaturedSection.css";
 
 import haisan from "../../assets/img/haisan.png";
 import lau from "../../assets/img/lau.png";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
-import "../../assets/styles/LocationSearchBar.css";
+import "../../assets/styles/home/LocationSearchBar.css";
 
 const LocationSearchBar = () => {
   const [city, setCity] = useState("Hồ Chí Minh");

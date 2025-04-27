@@ -1,0 +1,99 @@
+.restaurant-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-4px);
+}
+
+.rc-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.rc-content {
+  padding: 12px;
+}
+
+.rc-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.rc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.rc-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.rc-visits {
+  font-size: 13px;
+  color: #777;
+  white-space: nowrap;
+}
+
+.rc-pricing {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.bold-price {
+  color: #e67e22;
+  font-weight: bold;
+}
+
+.dim-price {
+  color: #ccc;
+}
+
+.rc-address {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0 12px;
+}
+
+.rc-button {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background-color: #e74c3c;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rc-button:hover {
+  background-color: #c0392b;
+}
+
+.rc-detail-button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.rc-detail-button:hover {
+  background-color: #218838;
+}

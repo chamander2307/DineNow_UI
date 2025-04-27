@@ -1,5 +1,5 @@
 import React from "react";
-import "../../assets/styles/FilterBar.css";
+import "../../assets/styles/home/FilterBar.css";
 
 const FilterBar = () => {
   return (

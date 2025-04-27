@@ -1,27 +1,34 @@
-
 /* =========================
    1. SLIDER STYLES (chia 4 thẻ card, KHÔNG áp dụng highlight)
 ========================= */
 .slider-card-item {
   width: 300px;
   max-width: 300px;
-  min-width: 300px;
   padding: 0 12px;
   box-sizing: border-box;
-}
-
-.horizontal-slider .horizontal-slider .horizontal-slider .slick-track {
-  display: flex !important;
-}
-
-.horizontal-slider .horizontal-slider .slick-slide {
-  float: none !important;
-  display: flex !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .horizontal-slider {
   margin-bottom: 60px;
   padding: 0 16px;
+  overflow: hidden; /* ✅ Ngăn scroll ngang + dọc */
+}
+
+.horizontal-slider .slick-list {
+  overflow: hidden !important; /* ✅ Ngăn slick-track vượt ra */
+}
+
+.horizontal-slider .slick-track {
+  display: flex !important;
+  align-items: stretch; /* ✅ Cùng chiều cao slide */
+}
+
+.horizontal-slider .slick-slide {
+  float: none !important;
+  display: flex !important;
+  height: auto !important; /* ✅ Không bị ép chiều cao */
 }
 
 .slick-prev,
@@ -83,6 +90,9 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
+  height: 100%; /* ✅ khớp chiều cao slide */
+  display: flex;
+  flex-direction: column;
 }
 
 .dish-item:hover {
@@ -99,6 +109,7 @@
 .dish-details {
   padding: 10px;
   text-align: left;
+  flex-grow: 1;
 }
 
 .dish-details h3 {
@@ -128,6 +139,9 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .restaurant-item:hover {
@@ -144,6 +158,7 @@
 .restaurant-details {
   padding: 10px;
   text-align: left;
+  flex-grow: 1;
 }
 
 .restaurant-details h3 {
@@ -217,58 +232,4 @@
 .favorite-icon svg {
   font-size: 18px;
   color: #e74c3c;
-}
-
-/* =========================
-   4. SECTION HEADER & HIGHLIGHT SLIDER
-========================= */
-.section-header {
-  margin-bottom: 16px;
-  text-align: left;
-  padding: 0 12px;
-}
-
-.section-header.center {
-  text-align: center;
-}
-
-.section-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #222;
-  margin-bottom: 4px;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
-}
-
-.section-sub {
-  font-size: 15px;
-  color: #666;
-}
-
-.highlight-header {
-  text-align: center !important;
-  margin-bottom: 24px;
-}
-
-.highlight-slider-wrapper {
-  width: 66.66%;
-  margin: 0 auto 40px auto;
-}
-
-.highlight-slide {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  overflow: hidden;
-  border-radius: 16px;
-}
-
-.highlight-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../../assets/styles/FeaturedSection.css";
+import "../../assets/styles/home/FeaturedSection.css";
 
 const DishCard = ({ dish }) => {
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../../assets/styles/ReservationHistory.css';
+import '../../assets/styles/Restaurant/ReservationHistory.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 // Giả lập dữ liệu đơn đặt bàn

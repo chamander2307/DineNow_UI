@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import '../../assets/styles/PaymentPage.css';
+import '../../assets/styles/Restaurant/PaymentPage.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 // Dữ liệu giả lập (thay thế bằng dữ liệu thực tế từ ứng dụng của bạn)

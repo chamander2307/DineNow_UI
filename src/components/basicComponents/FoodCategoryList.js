@@ -1,5 +1,5 @@
 import React from "react";
-import "../../assets/styles/FilterBar.css"; // dùng chung CSS
+import "../../assets/styles/home/FilterBar.css"; // dùng chung CSS
 import buffet from "../../assets/img/buffet.png";
 import lau from "../../assets/img/lau.png";
 import nuong from "../../assets/img/nuong.png";

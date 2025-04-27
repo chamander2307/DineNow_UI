@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../../assets/styles/DishReviews.css';
+import '../../assets/styles/Dish/DishReviews.css';
 
 // Hàm hiển thị sao dựa trên số điểm
 const StarRating = ({ rating }) => {

@@ -1,0 +1,47 @@
+/* RestaurantDetailModal.css */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-box.detail-modal {
+    background-color: white;
+    padding: 24px;
+    width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+  
+  .modal-box p {
+    margin: 8px 0;
+    font-size: 15px;
+  }
+  
+  .image-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .image-list img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
