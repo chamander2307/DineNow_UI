@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import OwnerLayout from "./OwnerLayout";
 import {
   fetchRestaurantsByOwner,
   createRestaurant,
-  updateRestaurant,
+  updateRestaurant
 } from "../../services/restaurantService";
-import "../../assets/styles/owner/OwnerRestaurant.css";
+import "../../assets/styles/Restaurant/RestaurantManagement.css";
 
-const RestaurantMyList = () => {
+const RestaurantManager = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const [showFormModal, setShowFormModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editData, setEditData] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -19,15 +19,16 @@ const RestaurantMyList = () => {
     description: "",
     images: [],
   });
-  const [editingRestaurantId, setEditingRestaurantId] = useState(null);
+  const [message, setMessage] = useState("");
+
+  const isEdit = !!editData;
 
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
-      const data = res.data.data;
-      setRestaurants(Array.isArray(data) ? data : []);
+      setRestaurants(res.data.data || []);
     } catch (err) {
-      console.error("Lỗi tải danh sách nhà hàng", err);
+      console.error("❌ Không thể tải danh sách nhà hàng", err);
     }
   };
 
@@ -35,8 +36,8 @@ const RestaurantMyList = () => {
     loadRestaurants();
   }, []);
 
-  const openCreateModal = () => {
-    setEditingRestaurantId(null);
+  const handleOpenCreate = () => {
+    setEditData(null);
     setFormData({
       name: "",
       address: "",
@@ -46,16 +47,12 @@ const RestaurantMyList = () => {
       description: "",
       images: [],
     });
-    setShowFormModal(true);
+    setMessage("");
+    setShowModal(true);
   };
 
-  const openEditModal = (id) => {
-    const restaurant = restaurants.find(r => r.id === id);
-    if (!restaurant) {
-      console.error("Không tìm thấy nhà hàng cần sửa");
-      return;
-    }
-    setEditingRestaurantId(id);
+  const handleOpenEdit = (restaurant) => {
+    setEditData(restaurant);
     setFormData({
       name: restaurant.name || "",
       address: restaurant.address || "",
@@ -65,37 +62,8 @@ const RestaurantMyList = () => {
       description: restaurant.description || "",
       images: [],
     });
-    setShowFormModal(true);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("address", formData.address);
-    payload.append("phone", formData.phone);
-    payload.append("typeId", formData.typeId);
-    payload.append("restaurantTierId", formData.restaurantTierId);
-    payload.append("description", formData.description);
-    for (let i = 0; i < formData.images.length; i++) {
-      payload.append("images", formData.images[i]);
-    }
-
-    try {
-      if (editingRestaurantId) {
-        await updateRestaurant(editingRestaurantId, payload);
-        alert("Cập nhật thành công");
-      } else {
-        await createRestaurant(payload);
-        alert("Tạo mới thành công");
-      }
-      setShowFormModal(false);
-      loadRestaurants();
-    } catch (err) {
-      console.error("Lỗi khi lưu nhà hàng", err);
-      alert("Thao tác thất bại");
-    }
+    setMessage("");
+    setShowModal(true);
   };
 
   const handleChange = (e) => {
@@ -107,16 +75,54 @@ const RestaurantMyList = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const phonePattern = /^0\d{9}$/;
+    if (!phonePattern.test(formData.phone)) {
+      setMessage("Số điện thoại không hợp lệ. Phải bắt đầu bằng 0 và đủ 10 số.");
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append("name", formData.name.toString());
+    payload.append("address", formData.address.toString());
+    payload.append("phone", formData.phone.toString());
+    payload.append("typeId", formData.typeId.toString());
+    payload.append("restaurantTierId", formData.restaurantTierId.toString());
+    payload.append("description", formData.description.toString());
+    for (let i = 0; i < formData.images.length; i++) {
+      payload.append("images", formData.images[i]);
+    }
+
+    try {
+      if (isEdit) {
+        await updateRestaurant(editData.id, payload);
+        setMessage("✅ Cập nhật nhà hàng thành công!");
+      } else {
+        await createRestaurant(payload);
+        setMessage("✅ Tạo nhà hàng thành công!");
+      }
+
+      setTimeout(() => {
+        setMessage("");
+        setShowModal(false);
+        loadRestaurants();
+      }, 1000);
+    } catch (err) {
+      console.error("❌ Thất bại:", err.response || err.message || err);
+      setMessage("❌ Lỗi: " + (err.response?.data?.message || err.message));
+    }
+  };
+
   return (
-    <OwnerLayout>
-      <div className="manager-header">
-        <h2>Quản lý nhà hàng</h2>
-        <button className="btn-create" onClick={openCreateModal}>
-          Tạo mới nhà hàng
-        </button>
+    <div className="restaurant-table-container">
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+        <h2>Nhà hàng của bạn</h2>
+        <button className="action-btn" onClick={handleOpenCreate}>+ Tạo nhà hàng</button>
       </div>
 
-      <table className="admin-table">
+      <table className="restaurant-table">
         <thead>
           <tr>
             <th>Ảnh</th>
@@ -129,17 +135,19 @@ const RestaurantMyList = () => {
         </thead>
         <tbody>
           {restaurants.length === 0 ? (
-            <tr><td colSpan="6">Chưa có nhà hàng nào.</td></tr>
+            <tr>
+              <td colSpan="6" style={{ textAlign: "center", padding: "20px" }}>
+                Không có nhà hàng nào.
+              </td>
+            </tr>
           ) : (
             restaurants.map((r) => (
               <tr key={r.id}>
                 <td>
                   <img
-                    src={r.thumbnailUrl || "/fallback.jpg"}
+                    src={r.thumbnailUrl}
                     alt={r.name}
-                    width={80}
-                    height={60}
-                    style={{ objectFit: "cover", borderRadius: "6px" }}
+                    style={{ width: 80, height: 60, objectFit: "cover", borderRadius: 6 }}
                   />
                 </td>
                 <td>{r.id}</td>
@@ -147,7 +155,7 @@ const RestaurantMyList = () => {
                 <td>{r.address}</td>
                 <td>{r.status || "Đang hoạt động"}</td>
                 <td>
-                  <button onClick={() => openEditModal(r.id)}>Sửa</button>
+                  <button className="action-btn" onClick={() => handleOpenEdit(r)}>Sửa</button>
                 </td>
               </tr>
             ))
@@ -155,11 +163,11 @@ const RestaurantMyList = () => {
         </tbody>
       </table>
 
-      {showFormModal && (
+      {showModal && (
         <div className="modal-overlay">
           <div className="modal-box">
-            <h2>{editingRestaurantId ? "Sửa nhà hàng" : "Tạo nhà hàng mới"}</h2>
-
+            <h2>{isEdit ? "Chỉnh sửa nhà hàng" : "Tạo nhà hàng mới"}</h2>
+            {message && <p className="notice">{message}</p>}
             <form onSubmit={handleSubmit}>
               <input name="name" placeholder="Tên nhà hàng" value={formData.name} onChange={handleChange} required />
               <input name="address" placeholder="Địa chỉ" value={formData.address} onChange={handleChange} required />
@@ -169,15 +177,15 @@ const RestaurantMyList = () => {
               <textarea name="description" placeholder="Mô tả" value={formData.description} onChange={handleChange} required />
               <input type="file" name="images" multiple onChange={handleChange} />
               <div className="modal-buttons">
-                <button type="submit">{editingRestaurantId ? "Lưu thay đổi" : "Tạo mới"}</button>
-                <button type="button" onClick={() => setShowFormModal(false)}>Huỷ</button>
+                <button type="submit">{isEdit ? "Lưu thay đổi" : "Tạo mới"}</button>
+                <button type="button" onClick={() => setShowModal(false)}>Huỷ</button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </OwnerLayout>
+    </div>
   );
 };
 
-export default RestaurantMyList;
+export default RestaurantManager;

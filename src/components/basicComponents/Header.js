@@ -39,8 +39,6 @@ const Header = () => {
     navigate("/login");
   };
 
-  if (loading) return null;
-
   return (
     <header className="header">
       <div className="header-inner">
@@ -51,12 +49,8 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">
-              Gần Bạn
-            </Link>
-            <Link to="/restaurant-list" className="nav-item">
-              Các Nhà Hàng
-            </Link>
+            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
+            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -106,7 +100,9 @@ const Header = () => {
             )}
           </div>
 
-          {isLogin ? (
+          {loading ? (
+            <span style={{ color: "white", marginLeft: 12 }}>Đang tải...</span>
+          ) : isLogin ? (
             <div className="user-menu">
               <div
                 className="user-info username-hover"
@@ -118,14 +114,12 @@ const Header = () => {
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
                     <Link to="/reservation-history">Đơn Đặt</Link>
-
                     {user?.role === "ADMIN" && (
                       <Link to="/admin/restaurants">Quản lý Admin</Link>
                     )}
                     {user?.role === "OWNER" && (
                       <Link to="/owner/restaurants">Nhà hàng của tôi</Link>
                     )}
-
                     <button onClick={handleLogout}>Đăng Xuất</button>
                   </div>
                 )}

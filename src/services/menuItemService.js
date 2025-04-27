@@ -1,40 +1,28 @@
-import axios from "../config/axios"
-// (1) Tạo món ăn mới cho nhà hàng
-export const createMenuItem = (restaurantId, formData) => {
-  return axios.post(`/api/owner/restaurants/${restaurantId}/menu`, formData);
+import axios from '../config/axios';
+
+// Tạo món ăn mới cho nhà hàng (OWNER)
+export const createMenuItem = async (restaurantId, formData) => {
+  return await axios.post(`/owner/restaurants/${restaurantId}/menu`, formData);
 };
 
-// (2) Lấy danh sách món ăn đang phục vụ của nhà hàng (available = true)
-export const getAvailableMenuByRestaurant = (restaurantId) => {
-  return axios.get(`/api/restaurants/${restaurantId}/menu`);
+// Cập nhật món ăn theo ID
+export const updateMenuItem = async (menuItemId, formData) => {
+  return await axios.put(`/owner/menu-items/${menuItemId}`, formData);
 };
 
-// (3) Lấy tất cả món ăn đang phục vụ (phân trang)
-export const getAllMenuItems = (page = 0, size = 20) => {
-  return axios.get(`/api/menu-items?page=${page}&size=${size}`);
+// Xoá món ăn theo ID
+export const deleteMenuItem = async (menuItemId) => {
+  return await axios.delete(`/owner/menu-items/${menuItemId}`);
 };
 
-// (4) Cập nhật thông tin món ăn (dạng form-data)
-export const updateMenuItem = (menuItemId, formData) => {
-  return axios.put(`/api/owner/menu-items/${menuItemId}`, formData);
+// Lấy danh sách món ăn của 1 nhà hàng do OWNER sở hữu
+export const getFullMenuByOwner = async (restaurantId) => {
+  return await axios.get(`/owner/menu-items/${restaurantId}`);
 };
 
-// (5) Xoá món ăn khỏi thực đơn
-export const deleteMenuItem = (menuItemId) => {
-  return axios.delete(`/api/owner/menu-items/${menuItemId}`);
-};
-
-// (6) Lấy chi tiết món ăn theo ID
-export const getMenuItemDetail = (menuItemId) => {
-  return axios.get(`/api/menu-items/${menuItemId}`);
-};
-
-// (7) Lấy danh sách món ăn của nhà hàng (gồm cả unavailable)
-export const getFullMenuByOwner = (restaurantId) => {
-  return axios.get(`/api/owner/menu-items/${restaurantId}`);
-};
-
-// (8) Cập nhật trạng thái phục vụ (available) của món ăn
-export const updateMenuItemAvailability = (menuItemId, available) => {
-  return axios.put(`/api/owner/menu-items/${menuItemId}/available?available=${available}`);
+// Cập nhật trạng thái phục vụ (còn món / hết món)
+export const updateMenuItemAvailability = async (menuItemId, available) => {
+  return await axios.put(`/owner/menu-items/${menuItemId}/available`, null, {
+    params: { available },
+  });
 };

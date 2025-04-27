@@ -6,15 +6,22 @@ import { addFavoriteRestaurant } from "../../services/userService";
 import { UserContext } from "../../contexts/UserContext";
 import FavoriteButton from "../basicComponents/FavoriteButton";
 
+const getImageUrl = (filename) => {
+  if (!filename) return "/fallback.jpg"; // ảnh mặc định nếu thiếu
+  return `http://localhost:8080/uploads/${filename}`;
+};
+
 const renderStars = (rating) => {
   const full = Math.floor(rating);
   const half = rating % 1 !== 0;
   const empty = 5 - full - (half ? 1 : 0);
   const stars = [];
 
-  for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} color="#f4c150" />);
+  for (let i = 0; i < full; i++)
+    stars.push(<FaStar key={`full-${i}`} color="#f4c150" />);
   if (half) stars.push(<FaStarHalfAlt key="half" color="#f4c150" />);
-  for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} color="#ccc" />);
+  for (let i = 0; i < empty; i++)
+    stars.push(<FaRegStar key={`empty-${i}`} color="#ccc" />);
 
   return <div className="star-icons">{stars}</div>;
 };
@@ -45,7 +52,16 @@ const RestaurantCard = ({ id, image, name, rating, address, visits }) => {
         onClick={handleFavoriteClick}
         restaurantId={id}
       />
-      <img src={image} alt={name} className="restaurant-image" />
+      <img
+        src={getImageUrl(image)}
+        alt={name}
+        className="restaurant-image"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "/fallback.jpg"; // fallback nếu lỗi ảnh
+        }}
+      />
+
       <div className="restaurant-details">
         <h3>{name}</h3>
         <div className="restaurant-meta">

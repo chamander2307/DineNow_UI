@@ -1,0 +1,43 @@
+.manager-header {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .add-type {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .add-type input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .add-type button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #2196F3;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .admin-table th, .admin-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .admin-table th {
+    background-color: #f5f5f5;
+  }
+  

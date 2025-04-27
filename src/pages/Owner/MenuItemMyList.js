@@ -5,25 +5,45 @@ import {
   deleteMenuItem,
   updateMenuItemAvailability,
 } from "../../services/menuItemService";
+import { fetchRestaurantsByOwner } from "../../services/restaurantService";
 import OwnerLayout from "./OwnerLayout";
-import "../../assets/styles/owner/MenuItemList.css"; // bạn cần tạo file css
+import "../../assets/styles/owner/MenuItemList.css";
 
 const MenuItemMyList = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [restaurantId, setRestaurantId] = useState("");
+  const [restaurantList, setRestaurantList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState(null);
+  const [message, setMessage] = useState("");
 
-  // Load danh sách món ăn của 1 nhà hàng
+  useEffect(() => {
+    const loadRestaurants = async () => {
+      try {
+        const res = await fetchRestaurantsByOwner();
+        const data = res.data;
+        setRestaurantList(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("❌ Lỗi tải danh sách nhà hàng", err);
+        setRestaurantList([]);
+        setMessage("Không thể tải danh sách nhà hàng.");
+      }
+    };
+    loadRestaurants();
+  }, []);
   const loadMenuItems = async () => {
     if (!restaurantId) return;
     try {
       setLoading(true);
       const res = await getFullMenuByOwner(restaurantId);
-      setMenuItems(res.data);
+      const data = res.data;
+      setMenuItems(Array.isArray(data) ? data : []);
+      setMessage("");
     } catch (err) {
       console.error("❌ Lỗi tải danh sách món ăn", err);
+      setMenuItems([]);
+      setMessage("Không thể tải danh sách món ăn.");
     } finally {
       setLoading(false);
     }
@@ -31,27 +51,30 @@ const MenuItemMyList = () => {
 
   useEffect(() => {
     loadMenuItems();
-    // eslint-disable-next-line
   }, [restaurantId]);
 
-  // Toggle trạng thái phục vụ
   const toggleAvailable = async (itemId, current) => {
     try {
       await updateMenuItemAvailability(itemId, !current);
+      setMessage("✅ Đã cập nhật trạng thái món.");
       loadMenuItems();
     } catch (err) {
-      alert("❌ Không thể cập nhật trạng thái");
+      console.error(err);
+      setMessage("❌ Không thể cập nhật trạng thái.");
     }
   };
 
-  // Xoá món ăn
   const handleDelete = async (itemId) => {
-    if (!window.confirm("Bạn chắc chắn muốn xoá món này?")) return;
+    const confirmed = window.confirm("Bạn chắc chắn muốn xoá món này?");
+    if (!confirmed) return;
+
     try {
       await deleteMenuItem(itemId);
+      setMessage("🗑️ Xoá món thành công.");
       loadMenuItems();
     } catch (err) {
-      alert("❌ Xoá thất bại!");
+      console.error(err);
+      setMessage("❌ Xoá món thất bại.");
     }
   };
 
@@ -59,76 +82,72 @@ const MenuItemMyList = () => {
     <OwnerLayout>
       <div className="manager-header">
         <h2>Quản lý món ăn</h2>
-        <div>
-          <input
-            placeholder="Nhập ID nhà hàng"
-            value={restaurantId}
-            onChange={(e) => setRestaurantId(e.target.value)}
-          />
+        <div style={{ display: "flex", gap: "12px" }}>
+          <select value={restaurantId} onChange={(e) => setRestaurantId(e.target.value)}>
+            <option value="">-- Chọn nhà hàng --</option>
+            {restaurantList.map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
           <button
             onClick={() => {
               setEditingMenuItem(null);
               setShowFormModal(true);
             }}
-            style={{ marginLeft: 12 }}
           >
             ➕ Thêm món mới
           </button>
         </div>
       </div>
 
+      {message && <div className="notice">{message}</div>}
+
       {loading ? (
-        <p>Đang tải...</p>
+        <p>⏳ Đang tải danh sách món ăn...</p>
       ) : (
-        <table className="admin-table">
+        <table className="menu-item-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Tên</th>
-              <th>Mô tả</th>
+              <th>Tên món</th>
               <th>Giá</th>
               <th>Trạng thái</th>
-              <th>Phục vụ</th>
-              <th>Thao tác</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {menuItems.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.name}</td>
-                <td>{item.description}</td>
-                <td>{item.price}</td>
-                <td>{item.available ? "✅" : "❌"}</td>
-                <td>
-                  <button onClick={() => toggleAvailable(item.id, item.available)}>
-                    {item.available ? "Tắt" : "Bật"}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={() => {
+            {menuItems.length === 0 ? (
+              <tr><td colSpan="4">Không có món nào.</td></tr>
+            ) : (
+              menuItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.price.toLocaleString()}đ</td>
+                  <td>{item.available ? "✅ Còn món" : "❌ Hết món"}</td>
+                  <td>
+                    <button onClick={() => toggleAvailable(item.id, item.available)}>
+                      Đổi trạng thái
+                    </button>
+                    <button onClick={() => {
                       setEditingMenuItem(item);
                       setShowFormModal(true);
-                    }}
-                  >
-                    Sửa
-                  </button>
-                  <button onClick={() => handleDelete(item.id)}>
-                    Xoá
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    }}>
+                      Sửa
+                    </button>
+                    <button onClick={() => handleDelete(item.id)}>
+                      Xoá
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       )}
 
-      {/* Modal thêm/sửa */}
       {showFormModal && (
         <MenuItemFormModal
-          restaurantId={restaurantId}
           initialData={editingMenuItem}
+          restaurantId={restaurantId}
           onClose={() => setShowFormModal(false)}
           onSuccess={loadMenuItems}
         />

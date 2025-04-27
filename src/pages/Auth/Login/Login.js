@@ -2,12 +2,11 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../assets/styles/home/Login.css";
 import Logo from "../../../components/basicComponents/Logo";
-import { login } from "../../../services/authService";
+import { login, googleLogin } from "../../../services/authService";
 import { getUserProfile } from "../../../services/userService";
 import { UserContext } from "../../../contexts/UserContext";
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from 'jwt-decode';
-import { googleLogin } from "../../../services/authService";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,46 +20,59 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await login({ email, password }); // res = { status, message, data }
-      console.log("📦 Login API response:", res);
+      const res = await login({ email, password });
+      console.log("Login API response:", res);
+
+      // Nếu status là lỗi (401, 418, ...) → ném lỗi thủ công để chuyển sang catch
+      if (res?.status && res.status !== 200) {
+        throw { response: res };
+      }
 
       const accessToken = res?.data?.accessToken;
       if (!accessToken) {
-        const err = new Error();
-        err.response = {
-          status: 418,
-          data: { message: "Tài khoản chưa xác thực." },
-        };
-        throw err;
+        throw new Error("Phản hồi không chứa accessToken");
       }
 
       localStorage.setItem("accessToken", accessToken);
 
-      // ✅ cập nhật context
       const profile = await getUserProfile();
       setUser(profile);
       setIsLogin(true);
 
-      console.log("✅ Đăng nhập thành công");
+      console.log("Đăng nhập thành công");
       navigate("/");
     } catch (err) {
-      console.error("===> Lỗi đăng nhập:");
-      console.error("Status:", err?.response?.status);
-      console.error("Message:", err?.response?.data?.message);
+      console.error("Chi tiết lỗi:", err);
 
       const status = err?.response?.status;
-      const serverMessage = err?.response?.data?.message;
-      const fallbackMessage = "Đăng nhập thất bại. Vui lòng thử lại.";
+      const message = err?.response?.data?.message;
 
       if (status === 418) {
         setError("Tài khoản chưa xác thực. Đang chuyển hướng...");
         setTimeout(() => {
           navigate(`/verify-email?email=${encodeURIComponent(email)}`);
         }, 1500);
-      } else if (status === 409) {
-        setError("Email hoặc mật khẩu không đúng.");
-      } else {
-        setError(serverMessage || fallbackMessage);
+        return;
+      }
+
+      switch (status) {
+        case 401:
+          setError("Email không hợp lệ.");
+          break;
+        case 409:
+          setError("Email hoặc mật khẩu không đúng.");
+          break;
+        case 405:
+          setError("Yêu cầu xác thực. Vui lòng kiểm tra email.");
+          break;
+        case 413:
+          setError("Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên.");
+          break;
+        case 500:
+          setError("Lỗi máy chủ. Vui lòng thử lại sau.");
+          break;
+        default:
+          setError(message || "Đăng nhập thất bại.");
       }
     }
   };
@@ -110,11 +122,9 @@ const Login = () => {
                     const { credential } = credentialResponse;
                     const decoded = jwtDecode(credential);
                     const res = await googleLogin({ idToken: credential });
-                    console.log("Google login googleID:", credential);
                     const accessToken = res?.data?.accessToken;
-                    localStorage.setItem("accessToken", accessToken);
-                    console.log("Google login accessToken:", res,accessToken);
                     if (!accessToken) throw new Error("Google login failed");
+                    localStorage.setItem("accessToken", accessToken);
                     const profile = await getUserProfile();
                     setUser(profile);
                     setIsLogin(true);
@@ -135,7 +145,6 @@ const Login = () => {
               <span> | </span>
               <Link to="/register">Đăng ký</Link>
             </div>
-            
           </form>
         </div>
       </div>
