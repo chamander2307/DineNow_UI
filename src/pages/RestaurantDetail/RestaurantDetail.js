@@ -7,6 +7,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import { restaurants } from '../../data/restaurants';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
+import FavoriteButton from '../../components/basicComponents/FavoriteButton';
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -30,26 +31,26 @@ const RestaurantDetail = () => {
   const { id } = useParams();
   const restaurant = restaurants.find(r => r.id === parseInt(id)) || {};
   const [isLiked, setIsLiked] = useState(() => {
-    const liked = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    const liked = JSON.parse(sessionStorage.getItem('likedRestaurants')) || {};
     return liked[id] || false;
   });
 
   // State để quản lý giỏ hàng
   const [cart, setCart] = useState(() => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || {};
+    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
     return savedCart[id] || {};
   });
 
   useEffect(() => {
-    const liked = JSON.parse(localStorage.getItem('likedRestaurants')) || {};
+    const liked = JSON.parse(sessionStorage.getItem('likedRestaurants')) || {};
     liked[id] = isLiked;
-    localStorage.setItem('likedRestaurants', JSON.stringify(liked));
+    sessionStorage.setItem('likedRestaurants', JSON.stringify(liked));
   }, [isLiked, id]);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem('cart')) || {};
+    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
     savedCart[id] = cart;
-    localStorage.setItem('cart', JSON.stringify(savedCart));
+    sessionStorage.setItem('cart', JSON.stringify(savedCart));
   }, [cart, id]);
 
   const toggleLike = () => setIsLiked(!isLiked);
@@ -137,7 +138,6 @@ const RestaurantDetail = () => {
       <div className="restaurant-info">
         <div className="restaurant-details1">
           <h1 className="rd-name">{restaurant.name}</h1>
-
           <div className="rd-meta">
             <div className="rd-rating">
               {renderStars(restaurant.rating)}

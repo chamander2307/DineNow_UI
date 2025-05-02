@@ -26,3 +26,14 @@ export const updateMenuItemAvailability = async (menuItemId, available) => {
     params: { available },
   });
 };
+// Lấy danh sách món ăn (public)
+export const fetchAllMenuItems = async (page = 0, size = 20) => {
+  return await axios.get("/menu-items", {
+    params: { page, size },
+  });
+};
+
+// Lấy chi tiết món ăn (public)
+export const fetchMenuItemById = async (menuItemId) => {
+  return await axios.get(`/menu-items/${menuItemId}`);
+};

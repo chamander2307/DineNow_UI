@@ -7,7 +7,7 @@ const Sidebar = () => {
     <aside className="admin-sidebar">
       <h2>Admin Panel</h2>
       <ul>
-        <li><Link to="/admin">Dashboard</Link></li>
+        <li><Link to="/admin/revenue-dashboard">Dashboard</Link></li>
         <li><Link to="/admin/restaurants">Quản lý Nhà hàng</Link></li>
         <li><Link to="/admin/restaurant-types">Quản lý Loại Nhà hàng</Link></li>
         <li><Link to="/admin/users">Quản lý Người dùng</Link></li>

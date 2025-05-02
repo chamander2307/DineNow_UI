@@ -29,7 +29,8 @@ const PaymentPage = () => {
   const totalPrice = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   // State để quản lý thông tin đặt chỗ
-  const [numberOfPeople, setNumberOfPeople] = useState('');
+  const [numberOfAdults, setNumberOfAdults] = useState('');
+  const [numberOfChildren, setNumberOfChildren] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [note, setNote] = useState('');
@@ -53,8 +54,21 @@ const PaymentPage = () => {
   // Xử lý thanh toán
   const handlePayment = (e) => {
     e.preventDefault();
-    if (!numberOfPeople || !date || !time) {
-      alert('Vui lòng nhập đầy đủ thông tin đặt chỗ (số người, ngày đến, giờ đến)!');
+    // Kiểm tra thông tin bắt buộc
+    if (!numberOfAdults && !numberOfChildren) {
+      alert('Vui lòng nhập số người lớn hoặc số trẻ em!');
+      return;
+    }
+    if (!date || !time) {
+      alert('Vui lòng nhập đầy đủ thông tin đặt chỗ (ngày đến, giờ đến)!');
+      return;
+    }
+
+    // Đảm bảo số lượng là số hợp lệ (ít nhất 0)
+    const adults = parseInt(numberOfAdults) || 0;
+    const children = parseInt(numberOfChildren) || 0;
+    if (adults + children === 0) {
+      alert('Vui lòng nhập ít nhất một người (người lớn hoặc trẻ em)!');
       return;
     }
 
@@ -63,7 +77,8 @@ const PaymentPage = () => {
       restaurant,
       selectedItems,
       totalPrice,
-      numberOfPeople,
+      numberOfAdults: adults,
+      numberOfChildren: children,
       date,
       time,
       note,
@@ -91,11 +106,11 @@ const PaymentPage = () => {
               </div>
               <div className="item-actions">
                 <input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                    min="1"
-                    className="quantity-input"
+                  type="number"
+                  value={item.quantity}
+                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                  min="1"
+                  className="quantity-input"
                 />
                 <button
                   className="remove-btn"
@@ -119,13 +134,23 @@ const PaymentPage = () => {
           <div className="booking-info">
             <h3>Thông tin đặt chỗ</h3>
             <div className="form-group">
-              <label>Số người: <span className="required">*</span></label>
+              <label>Số người lớn: <span className="required">*</span></label>
               <input
                 type="number"
-                value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(e.target.value)}
-                min="1"
-                required
+                value={numberOfAdults}
+                onChange={(e) => setNumberOfAdults(e.target.value)}
+                min="0"
+                required={!(parseInt(numberOfChildren) > 0)} // Bắt buộc nếu không có trẻ em
+              />
+            </div>
+            <div className="form-group">
+              <label>Số trẻ em: <span className="required">*</span></label>
+              <input
+                type="number"
+                value={numberOfChildren}
+                onChange={(e) => setNumberOfChildren(e.target.value)}
+                min="0"
+                required={!(parseInt(numberOfAdults) > 0)} // Bắt buộc nếu không có người lớn
               />
             </div>
             <div className="form-group">

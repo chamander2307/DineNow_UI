@@ -22,45 +22,49 @@ const MenuItemMyList = () => {
     const loadRestaurants = async () => {
       try {
         const res = await fetchRestaurantsByOwner();
-        const data = res.data;
-        setRestaurantList(Array.isArray(data) ? data : []);
+        const list = Array.isArray(res.data.data) ? res.data.data : [];
+        setRestaurantList(list);
+        if (list.length === 1) {
+          setRestaurantId(list[0].id.toString());
+        }
       } catch (err) {
-        console.error("❌ Lỗi tải danh sách nhà hàng", err);
+        console.error("Lỗi tải danh sách nhà hàng", err);
         setRestaurantList([]);
         setMessage("Không thể tải danh sách nhà hàng.");
       }
     };
     loadRestaurants();
   }, []);
-  const loadMenuItems = async () => {
-    if (!restaurantId) return;
-    try {
-      setLoading(true);
-      const res = await getFullMenuByOwner(restaurantId);
-      const data = res.data;
-      setMenuItems(Array.isArray(data) ? data : []);
-      setMessage("");
-    } catch (err) {
-      console.error("❌ Lỗi tải danh sách món ăn", err);
-      setMenuItems([]);
-      setMessage("Không thể tải danh sách món ăn.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const loadMenuItems = async () => {
+      if (!restaurantId) return;
+      try {
+        setLoading(true);
+        const res = await getFullMenuByOwner(restaurantId);
+        const data = res.data;
+        setMenuItems(Array.isArray(data) ? data : []);
+        setMessage("");
+      } catch (err) {
+        console.error("Lỗi tải danh sách món ăn", err);
+        setMenuItems([]);
+        setMessage("Không thể tải danh sách món ăn.");
+      } finally {
+        setLoading(false);
+      }
+    };
     loadMenuItems();
   }, [restaurantId]);
 
   const toggleAvailable = async (itemId, current) => {
     try {
       await updateMenuItemAvailability(itemId, !current);
-      setMessage("✅ Đã cập nhật trạng thái món.");
-      loadMenuItems();
+      setMessage("Đã cập nhật trạng thái món.");
+      const res = await getFullMenuByOwner(restaurantId);
+      setMenuItems(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      setMessage("❌ Không thể cập nhật trạng thái.");
+      setMessage("Không thể cập nhật trạng thái.");
     }
   };
 
@@ -70,11 +74,12 @@ const MenuItemMyList = () => {
 
     try {
       await deleteMenuItem(itemId);
-      setMessage("🗑️ Xoá món thành công.");
-      loadMenuItems();
+      setMessage("Xoá món thành công.");
+      const res = await getFullMenuByOwner(restaurantId);
+      setMenuItems(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      setMessage("❌ Xoá món thất bại.");
+      setMessage("Xoá món thất bại.");
     }
   };
 
@@ -82,28 +87,37 @@ const MenuItemMyList = () => {
     <OwnerLayout>
       <div className="manager-header">
         <h2>Quản lý món ăn</h2>
-        <div style={{ display: "flex", gap: "12px" }}>
-          <select value={restaurantId} onChange={(e) => setRestaurantId(e.target.value)}>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <label>Chọn nhà hàng:</label>
+          <select
+            value={restaurantId}
+            onChange={(e) => setRestaurantId(e.target.value)}
+          >
             <option value="">-- Chọn nhà hàng --</option>
             {restaurantList.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
             ))}
           </select>
           <button
+            disabled={!restaurantId}
             onClick={() => {
               setEditingMenuItem(null);
               setShowFormModal(true);
             }}
           >
-            ➕ Thêm món mới
+            Thêm món mới
           </button>
         </div>
       </div>
 
       {message && <div className="notice">{message}</div>}
 
-      {loading ? (
-        <p>⏳ Đang tải danh sách món ăn...</p>
+      {!restaurantId ? (
+        <p>Vui lòng chọn nhà hàng để xem danh sách món ăn.</p>
+      ) : loading ? (
+        <p>Đang tải danh sách món ăn...</p>
       ) : (
         <table className="menu-item-table">
           <thead>
@@ -116,26 +130,28 @@ const MenuItemMyList = () => {
           </thead>
           <tbody>
             {menuItems.length === 0 ? (
-              <tr><td colSpan="4">Không có món nào.</td></tr>
+              <tr>
+                <td colSpan="4">Không có món nào.</td>
+              </tr>
             ) : (
               menuItems.map((item) => (
                 <tr key={item.id}>
                   <td>{item.name}</td>
                   <td>{item.price.toLocaleString()}đ</td>
-                  <td>{item.available ? "✅ Còn món" : "❌ Hết món"}</td>
+                  <td>{item.available ? "Còn món" : "Hết món"}</td>
                   <td>
                     <button onClick={() => toggleAvailable(item.id, item.available)}>
                       Đổi trạng thái
                     </button>
-                    <button onClick={() => {
-                      setEditingMenuItem(item);
-                      setShowFormModal(true);
-                    }}>
+                    <button
+                      onClick={() => {
+                        setEditingMenuItem(item);
+                        setShowFormModal(true);
+                      }}
+                    >
                       Sửa
                     </button>
-                    <button onClick={() => handleDelete(item.id)}>
-                      Xoá
-                    </button>
+                    <button onClick={() => handleDelete(item.id)}>Xoá</button>
                   </td>
                 </tr>
               ))
@@ -149,7 +165,10 @@ const MenuItemMyList = () => {
           initialData={editingMenuItem}
           restaurantId={restaurantId}
           onClose={() => setShowFormModal(false)}
-          onSuccess={loadMenuItems}
+          onSuccess={async () => {
+            const res = await getFullMenuByOwner(restaurantId);
+            setMenuItems(Array.isArray(res.data) ? res.data : []);
+          }}
         />
       )}
     </OwnerLayout>

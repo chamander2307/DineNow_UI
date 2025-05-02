@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import '../../assets/styles/ReservationDetail.css';
+import '../../assets/styles/Restaurant/ReservationDetail.css';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 // Giả lập dữ liệu chi tiết đơn đặt bàn
@@ -28,11 +28,18 @@ const mockReservationDetail = {
     },
   ],
   totalAmount: 165000,
-  payment: {
-    method: 'VNPay',
-    amount: 165000,
-    status: 'Thành công',
-  },
+  payments: [
+    {
+      method: 'VNPay',
+      amount: 100000,
+      status: 'Thành công',
+    },
+    {
+      method: 'Thanh toán trực tiếp',
+      amount: 65000,
+      status: 'Thành công',
+    },
+  ],
   date: '2025-04-20',
   time: '18:00',
   guests: 4,
@@ -114,18 +121,36 @@ const ReservationDetail = () => {
         )}
       </div>
 
-      {/* Tổng tiền và hình thức thanh toán */}
+      {/* Thông tin thanh toán dạng bảng */}
       <div className="payment-section">
         <h3>Thông tin thanh toán</h3>
         <p><strong>Tổng tiền:</strong> {reservation.totalAmount.toLocaleString('vi-VN')} VNĐ</p>
-        <p><strong>Hình thức thanh toán:</strong> {reservation.payment.method}</p>
-        <p><strong>Số tiền thanh toán:</strong> {reservation.payment.amount.toLocaleString('vi-VN')} VNĐ</p>
-        <p>
-          <strong>Trạng thái:</strong>
-          <span className={`payment-status ${reservation.payment.status.toLowerCase()}`}>
-            {reservation.payment.status}
-          </span>
-        </p>
+        {reservation.payments && reservation.payments.length > 0 ? (
+          <table className="payment-table">
+            <thead>
+              <tr>
+                <th>Hình thức thanh toán</th>
+                <th>Số tiền thanh toán</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reservation.payments.map((payment, index) => (
+                <tr key={index}>
+                  <td>{payment.method}</td>
+                  <td>{payment.amount.toLocaleString('vi-VN')} VNĐ</td>
+                  <td>
+                    <span className={`payment-status ${payment.status.toLowerCase()}`}>
+                      {payment.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Chưa có thông tin thanh toán.</p>
+        )}
       </div>
 
       {/* Nút quay lại */}

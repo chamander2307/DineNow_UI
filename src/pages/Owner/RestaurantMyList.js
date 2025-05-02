@@ -9,6 +9,8 @@ import "../../assets/styles/owner/OwnerRestaurant.css";
 
 const RestaurantMyList = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [tiers, setTiers] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +23,11 @@ const RestaurantMyList = () => {
   });
   const [editingRestaurantId, setEditingRestaurantId] = useState(null);
 
+  useEffect(() => {
+    loadRestaurants();
+    loadOptions();
+  }, []);
+
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
@@ -31,9 +38,18 @@ const RestaurantMyList = () => {
     }
   };
 
-  useEffect(() => {
-    loadRestaurants();
-  }, []);
+  const loadOptions = () => {
+    setTypes([
+      { id: 1, name: "Nhà hàng Việt" },
+      { id: 2, name: "Chay" },
+      { id: 3, name: "Buffet" },
+    ]);
+    setTiers([
+      { id: 1, name: "Cơ bản" },
+      { id: 2, name: "Tiêu chuẩn" },
+      { id: 3, name: "Cao cấp" },
+    ]);
+  };
 
   const openCreateModal = () => {
     setEditingRestaurantId(null);
@@ -50,7 +66,7 @@ const RestaurantMyList = () => {
   };
 
   const openEditModal = (id) => {
-    const restaurant = restaurants.find(r => r.id === id);
+    const restaurant = restaurants.find((r) => r.id === id);
     if (!restaurant) {
       console.error("Không tìm thấy nhà hàng cần sửa");
       return;
@@ -129,7 +145,9 @@ const RestaurantMyList = () => {
         </thead>
         <tbody>
           {restaurants.length === 0 ? (
-            <tr><td colSpan="6">Chưa có nhà hàng nào.</td></tr>
+            <tr>
+              <td colSpan="6">Chưa có nhà hàng nào.</td>
+            </tr>
           ) : (
             restaurants.map((r) => (
               <tr key={r.id}>
@@ -148,6 +166,9 @@ const RestaurantMyList = () => {
                 <td>{r.status || "Đang hoạt động"}</td>
                 <td>
                   <button onClick={() => openEditModal(r.id)}>Sửa</button>
+                  <button style={{ marginLeft: 8 }}>
+                    {r.status === "INACTIVE" ? "Mở lại" : "Tạm khóa"}
+                  </button>
                 </td>
               </tr>
             ))
@@ -164,8 +185,21 @@ const RestaurantMyList = () => {
               <input name="name" placeholder="Tên nhà hàng" value={formData.name} onChange={handleChange} required />
               <input name="address" placeholder="Địa chỉ" value={formData.address} onChange={handleChange} required />
               <input name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleChange} required />
-              <input name="typeId" placeholder="ID loại nhà hàng" value={formData.typeId} onChange={handleChange} required />
-              <input name="restaurantTierId" placeholder="ID cấp độ nhà hàng" value={formData.restaurantTierId} onChange={handleChange} required />
+
+              <select name="typeId" value={formData.typeId} onChange={handleChange} required>
+                <option value="">-- Chọn loại nhà hàng --</option>
+                {types.map((type) => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
+              </select>
+
+              <select name="restaurantTierId" value={formData.restaurantTierId} onChange={handleChange} required>
+                <option value="">-- Chọn cấp độ --</option>
+                {tiers.map((tier) => (
+                  <option key={tier.id} value={tier.id}>{tier.name}</option>
+                ))}
+              </select>
+
               <textarea name="description" placeholder="Mô tả" value={formData.description} onChange={handleChange} required />
               <input type="file" name="images" multiple onChange={handleChange} />
               <div className="modal-buttons">

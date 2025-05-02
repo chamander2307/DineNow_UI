@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "./AdminLayout";
 import {
-  fetchAllRestaurants,
+  getPendingRestaurants,
+  getApprovedRestaurants,
+  getRejectedRestaurants,
+  getBlockedRestaurants,
   approveRestaurant,
-  deleteRestaurant,
-  searchRestaurants,
-  fetchRestaurantById,
-} from "../../services/restaurantService";
+  rejectRestaurant,
+  blockRestaurant,
+  unblockRestaurant,
+} from "../../services/adminService";
 import RestaurantDetailModal from "../../components/common/RestaurantDetailModal";
 import "../../assets/styles/admin/AdminRestaurantManager.css";
 
-const RestaurantManager = () => {
+const AdminRestaurantManager = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const [searchName, setSearchName] = useState("");
-  const [searchProvince, setSearchProvince] = useState("");
+  const [filterType, setFilterType] = useState("PENDING");
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -21,46 +23,68 @@ const RestaurantManager = () => {
 
   useEffect(() => {
     loadRestaurants();
-  }, [page]);
+  }, [filterType, page]);
 
   const loadRestaurants = async () => {
     try {
-      const res = await fetchAllRestaurants(page, 10);
-      setRestaurants(res.data.content);
-      setTotalPages(res.data.totalPages);
-    } catch (err) {
-      alert("Không thể tải danh sách nhà hàng");
-    }
-  };
+      let res;
 
-  const handleSearch = async () => {
-    try {
-      const body = { restaurantName: searchName, province: searchProvince };
-      const res = await searchRestaurants(body, page, 10);
-      setRestaurants(res.data.content);
-      setTotalPages(res.data.totalPages);
+      switch (filterType) {
+        case "PENDING":
+          res = await getPendingRestaurants();
+          break;
+        case "APPROVED":
+          res = await getApprovedRestaurants();
+          break;
+        case "REJECTED":
+          res = await getRejectedRestaurants();
+          break;
+        case "BLOCKED":
+          res = await getBlockedRestaurants();
+          break;
+        default:
+          res = { data: [] };
+      }
+
+      const content = Array.isArray(res.data.data) ? res.data.data : [];
+      setRestaurants(content);
+      setTotalPages(1); // Giả sử chưa phân trang
     } catch (err) {
-      alert("Lỗi khi tìm kiếm nhà hàng");
+      console.error("Lỗi khi tải danh sách nhà hàng:", err);
+      alert("Không thể tải danh sách nhà hàng");
     }
   };
 
   const handleApprove = async (id) => {
     if (window.confirm("Duyệt nhà hàng này?")) {
-      await approveRestaurant(id, "APPROVED"); // ✅ thêm status
+      await approveRestaurant(id);
       loadRestaurants();
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn chắc chắn muốn xoá nhà hàng này?")) {
-      await deleteRestaurant(id);
+  const handleReject = async (id) => {
+    if (window.confirm("Từ chối nhà hàng này?")) {
+      await rejectRestaurant(id);
       loadRestaurants();
     }
   };
 
-  const handleDetail = async (id) => {
-    const res = await fetchRestaurantById(id);
-    setSelectedRestaurant(res.data);
+  const handleBlock = async (id) => {
+    if (window.confirm("Chặn nhà hàng này?")) {
+      await blockRestaurant(id);
+      loadRestaurants();
+    }
+  };
+
+  const handleUnblock = async (id) => {
+    if (window.confirm("Bỏ chặn nhà hàng này?")) {
+      await unblockRestaurant(id);
+      loadRestaurants();
+    }
+  };
+
+  const handleDetail = (restaurant) => {
+    setSelectedRestaurant(restaurant);
     setShowDetailModal(true);
   };
 
@@ -70,20 +94,19 @@ const RestaurantManager = () => {
         <h2>Quản lý Nhà hàng</h2>
       </div>
 
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Tên nhà hàng"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Quận / Thành phố"
-          value={searchProvince}
-          onChange={(e) => setSearchProvince(e.target.value)}
-        />
-        <button onClick={handleSearch}>Tìm kiếm</button>
+      <div className="filter-bar">
+        <select
+          value={filterType}
+          onChange={(e) => {
+            setFilterType(e.target.value);
+            setPage(0);
+          }}
+        >
+          <option value="PENDING">Chờ duyệt</option>
+          <option value="APPROVED">Đã duyệt</option>
+          <option value="REJECTED">Bị từ chối</option>
+          <option value="BLOCKED">Bị chặn</option>
+        </select>
       </div>
 
       <table className="admin-table">
@@ -93,36 +116,39 @@ const RestaurantManager = () => {
             <th>Tên</th>
             <th>Địa chỉ</th>
             <th>Trạng thái</th>
+            <th>Kích hoạt</th>
             <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(restaurants) &&
-            restaurants.map((r) => (
-              <tr key={r.id}>
-                <td>{r.id}</td>
-                <td>{r.name}</td>
-                <td>{r.address}</td>
-                <td>
-                  {r.status === "APPROVED"
-                    ? "Đã duyệt"
-                    : r.status === "PENDING"
-                    ? "Chờ duyệt"
-                    : "Bị từ chối"}
-                </td>
-                <td>
-                  <button onClick={() => handleDetail(r.id)}>Chi tiết</button>
-                  {r.status === "PENDING" && (
+          {restaurants.map((r) => (
+            <tr key={r.id}>
+              <td>{r.id}</td>
+              <td>{r.name}</td>
+              <td>{r.address}</td>
+              <td>{r.status}</td>
+              <td>{r.enabled ? "Đang hoạt động" : "Đã khoá"}</td>
+              <td>
+                <button onClick={() => handleDetail(r)}>Chi tiết</button>
+                {filterType === "PENDING" && (
+                  <>
                     <button onClick={() => handleApprove(r.id)}>Duyệt</button>
-                  )}
-                  <button onClick={() => handleDelete(r.id)}>Xoá</button>
-                </td>
-              </tr>
-            ))}
+                    <button onClick={() => handleReject(r.id)}>Từ chối</button>
+                  </>
+                )}
+                {filterType === "APPROVED" && (
+                  <button onClick={() => handleBlock(r.id)}>Chặn</button>
+                )}
+                {filterType === "BLOCKED" && (
+                  <button onClick={() => handleUnblock(r.id)}>Bỏ chặn</button>
+                )}
+                <button onClick={() => handleReject(r.id)}>Xoá</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
-      {/* Phân trang */}
       <div className="pagination">
         <button disabled={page <= 0} onClick={() => setPage(page - 1)}>
           ← Trước
@@ -138,7 +164,6 @@ const RestaurantManager = () => {
         </button>
       </div>
 
-      {/* Modal chi tiết */}
       {showDetailModal && selectedRestaurant && (
         <RestaurantDetailModal
           restaurant={selectedRestaurant}
@@ -149,4 +174,4 @@ const RestaurantManager = () => {
   );
 };
 
-export default RestaurantManager;
+export default AdminRestaurantManager;

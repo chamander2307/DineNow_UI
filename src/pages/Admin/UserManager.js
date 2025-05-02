@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "./AdminLayout";
 import { fetchAllUsers } from "../../services/adminService";
+import AdminCreateOwnerModal from "../../components/admin/AdminCreateOwnerModal";
+
 import "../../assets/styles/admin/AdminUserManager.css";
 
 const UserManager = () => {
   const [users, setUsers] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -24,7 +27,17 @@ const UserManager = () => {
       <div className="manager-header">
         <h2>Quản lý Người dùng</h2>
       </div>
-
+      <div className="manager-actions">
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          Tạo Chủ Nhà Hàng
+        </button>
+        {showModal && (
+          <AdminCreateOwnerModal
+            onClose={() => setShowModal(false)}
+            onSuccess={loadUsers}
+          />
+        )}
+      </div>
       <table className="admin-table">
         <thead>
           <tr>
@@ -42,7 +55,7 @@ const UserManager = () => {
               <td>{u.fullName}</td>
               <td>{u.email}</td>
               <td>{u.role}</td>
-              <td>{u.enabled ? "✅ Kích hoạt" : "❌ Khoá"}</td>
+              <td>{u.enabled ? " Kích hoạt" : " Khoá"}</td>
             </tr>
           ))}
         </tbody>

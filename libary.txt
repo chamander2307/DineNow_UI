@@ -2,8 +2,30 @@
  npm install react-slick slick-carousel
  npm install react-icons
  npm install react-slick slick-carousel
+ npm install re-chart
 
+Admin: 
+renvernues : xem theo loại ( doanh thu/ lợi nhuận).
+-Doanh thu/Lợi nhuận: đầu trang là tổng doanh thu của các nhà hàng.
+    + Trang tổng doanh thu tất cả các nhà hàng, tổng doanh thu theo năm / tháng/ chọn khoảng thời gian.
+    + Xem tổng lợi nhuận theo từ trước đến nay / năm / tháng/ chọn khoảng thời gian.
+    + tìm kiếm nhà hàng để xem doanh thu / lợi nhuận theo bảng.
 
-icon tròn ở dưới hiển thị loại món ăn.
-tìm kiếm món ăn khi ấn lọc sẽ sang trang tìm kiếm riêng.
+/// trường nhập id sẽ hiển thị combobox cho người dùng chọn.
 
+Owner: 
+-quản lí nhà hàng:
+    +thêm nút tạm khóa/mở cho từng nhà hàng.
+    +thêm nhà hàng:
+        -id loại nhà hàng và tierID hiển thị combobox.
+-quản lí doanh thu:
+        + Xem theo nhà hàng (combobox chọn nhà hàng để xem)
+        + renvernues: xem doanh thu/lợi nhuận theo tháng (trục x).
+-quản lí món ăn :
+-quản lí đơn hàng:
+    + đầu tiên hiển thị form xác nhận đơn (hiển thị giống file docx) 
+        - hiển thị tất cả các đơn đang pending của tất cả nhà hàng.
+    + những trạng thái khác của đơn sẽ hiển thị theo từng nhà hàng:
+        - confirm và paid
+        - cancel và failed
+        - completed

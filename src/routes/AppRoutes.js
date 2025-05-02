@@ -32,12 +32,12 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import RestaurantManager from "../pages/Admin/RestaurantManager";
 import RestaurantMyList from "../pages/Owner/RestaurantMyList";
 import MenuItemMyList from "../pages/Owner/MenuItemMyList";
+import CartPage from "../pages/CartPage/CartPage";
 import RestaurantTypeManager from "../pages/Admin/RestaurantTypeManager";
 import UserManager from "../pages/Admin/UserManager";
+import RevenueDashboard from "../pages/Admin/RevenueDashboard";
 
-// Trang lỗi
 import Page404 from "../components/basicComponents/Page404";
-
 const AppRoutes = () => {
   return (
     <Routes>
@@ -57,6 +57,7 @@ const AppRoutes = () => {
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
       <Route path="/change-password" element={<ChangePassword />} />
+      <Route path="/cart" element={<CartPage />} />
 
       {/* Nhà hàng & món ăn */}
       <Route path="/restaurant-list" element={<RestaurantList />} />
@@ -71,14 +72,12 @@ const AppRoutes = () => {
 
       {/* Quản trị */}
       <Route path="/admin/restaurants" element={<RestaurantManager />} />
-      <Route
-        path="/admin/restaurant-types"
-        element={<RestaurantTypeManager />}
-      />
+      <Route path="/admin/restaurant-types" element={<RestaurantTypeManager />} />
       <Route path="/admin/users" element={<UserManager />} />
       <Route path="/owner/restaurants" element={<RestaurantMyList />} />
       <Route path="/owner/menu-items" element={<MenuItemMyList />} />
-      {/* Trang lỗi 404 */}
+      <Route path="/reservation/:id" element={<ReservationDetail />} />
+      <Route path="/admin/revenue-dashboard" element={<RevenueDashboard />} />
       <Route path="*" element={<Page404 />} />
     </Routes>
   );

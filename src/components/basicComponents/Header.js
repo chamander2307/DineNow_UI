@@ -4,10 +4,13 @@ import LogoIcon from "../../assets/img/DineNow_2.svg";
 import { UserContext } from "../../contexts/UserContext";
 import { FaHeart, FaShoppingBag } from "react-icons/fa";
 import "../../assets/styles/home/Navbar.css";
+import RestaurantCart from "../Restaurants/RestaurantCart";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showCartDropdown, setShowCartDropdown] = useState(false); //t
+  const cartRef = useRef(); //t
   const dropdownRef = useRef();
   const userRef = useRef();
   const navigate = useNavigate();
@@ -22,6 +25,10 @@ const Header = () => {
       }
       if (userRef.current && !userRef.current.contains(e.target)) {
         setShowUserDropdown(false);
+      }
+      if (cartRef.current && !cartRef.current.contains(e.target)) {
+        //t
+        setShowCartDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -43,8 +50,12 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">Gần Bạn</Link>
-            <Link to="/restaurant-list" className="nav-item">Các Nhà Hàng</Link>
+            <Link to="/nearby" className="nav-item">
+              Gần Bạn
+            </Link>
+            <Link to="/restaurant-list" className="nav-item">
+              Các Nhà Hàng
+            </Link>
             <span
               className="nav-item dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
@@ -56,7 +67,9 @@ const Header = () => {
                 <Link to="/food-category/mon-nuoc">Món Nước</Link>
                 <Link to="/food-category/mon-kho">Món Khô</Link>
                 <Link to="/food-category/mon-hap-luoc">Món Hấp - Luộc</Link>
-                <Link to="/food-category/mon-chien-nuong">Món Chiên - Nướng</Link>
+                <Link to="/food-category/mon-chien-nuong">
+                  Món Chiên - Nướng
+                </Link>
                 <Link to="/food-category/mon-kho-to">Món Kho</Link>
                 <Link to="/food-category/mon-goi-nom">Món Gỏi - Nộm</Link>
                 <Link to="/food-category/mon-chay">Món Chay</Link>
@@ -73,9 +86,20 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          <Link to="/reservation-history" className="cart-link">
-            <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
-          </Link>
+          <div className="cart-container" ref={cartRef}>
+            <div
+              className="cart-link"
+              onClick={() => setShowCartDropdown(!showCartDropdown)}
+            >
+              <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
+            </div>
+
+            {showCartDropdown && (
+              <div className="cart-dropdown">
+                <RestaurantCart restaurants={[]} />
+              </div>
+            )}
+          </div>
 
           {loading ? (
             <span style={{ color: "white", marginLeft: 12 }}>Đang tải...</span>

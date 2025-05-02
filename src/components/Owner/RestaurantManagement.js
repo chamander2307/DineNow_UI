@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   fetchRestaurantsByOwner,
   createRestaurant,
-  updateRestaurant
+  updateRestaurant,
 } from "../../services/restaurantService";
 import "../../assets/styles/Restaurant/RestaurantManagement.css";
 
 const RestaurantManager = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [tiers, setTiers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [formData, setFormData] = useState({
@@ -23,6 +25,11 @@ const RestaurantManager = () => {
 
   const isEdit = !!editData;
 
+  useEffect(() => {
+    loadRestaurants();
+    loadOptions();
+  }, []);
+
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
@@ -32,9 +39,20 @@ const RestaurantManager = () => {
     }
   };
 
-  useEffect(() => {
-    loadRestaurants();
-  }, []);
+  const loadOptions = () => {
+    // Dùng mock thay vì gọi service
+    setTypes([
+      { id: 1, name: "Nhà hàng Việt" },
+      { id: 2, name: "Nhà hàng chay" },
+      { id: 3, name: "Buffet" },
+    ]);
+
+    setTiers([
+      { id: 1, name: "Cơ bản" },
+      { id: 2, name: "Tiêu chuẩn" },
+      { id: 3, name: "Cao cấp" },
+    ]);
+  };
 
   const handleOpenCreate = () => {
     setEditData(null);
@@ -85,12 +103,12 @@ const RestaurantManager = () => {
     }
 
     const payload = new FormData();
-    payload.append("name", formData.name.toString());
-    payload.append("address", formData.address.toString());
-    payload.append("phone", formData.phone.toString());
-    payload.append("typeId", formData.typeId.toString());
-    payload.append("restaurantTierId", formData.restaurantTierId.toString());
-    payload.append("description", formData.description.toString());
+    payload.append("name", formData.name);
+    payload.append("address", formData.address);
+    payload.append("phone", formData.phone);
+    payload.append("typeId", formData.typeId);
+    payload.append("restaurantTierId", formData.restaurantTierId);
+    payload.append("description", formData.description);
     for (let i = 0; i < formData.images.length; i++) {
       payload.append("images", formData.images[i]);
     }
@@ -98,10 +116,10 @@ const RestaurantManager = () => {
     try {
       if (isEdit) {
         await updateRestaurant(editData.id, payload);
-        setMessage("✅ Cập nhật nhà hàng thành công!");
+        setMessage("Cập nhật nhà hàng thành công!");
       } else {
         await createRestaurant(payload);
-        setMessage("✅ Tạo nhà hàng thành công!");
+        setMessage("Tạo nhà hàng thành công!");
       }
 
       setTimeout(() => {
@@ -110,9 +128,16 @@ const RestaurantManager = () => {
         loadRestaurants();
       }, 1000);
     } catch (err) {
-      console.error("❌ Thất bại:", err.response || err.message || err);
-      setMessage("❌ Lỗi: " + (err.response?.data?.message || err.message));
+      console.error("Thất bại:", err.response || err.message || err);
+      setMessage("Lỗi: " + (err.response?.data?.message || err.message));
     }
+  };
+
+  const handleToggleStatus = async (restaurant) => {
+    const newStatus = restaurant.status === "INACTIVE" ? "ACTIVE" : "INACTIVE";
+    console.log(`(Giả lập) Đổi trạng thái nhà hàng ID ${restaurant.id} thành ${newStatus}`);
+    alert(`(Giả lập) Đã đổi trạng thái thành ${newStatus}`);
+    loadRestaurants();
   };
 
   return (
@@ -156,6 +181,9 @@ const RestaurantManager = () => {
                 <td>{r.status || "Đang hoạt động"}</td>
                 <td>
                   <button className="action-btn" onClick={() => handleOpenEdit(r)}>Sửa</button>
+                  <button className="action-btn" style={{ marginLeft: 8 }} onClick={() => handleToggleStatus(r)}>
+                    {r.status === "INACTIVE" ? "Mở lại" : "Tạm khóa"}
+                  </button>
                 </td>
               </tr>
             ))
@@ -172,8 +200,21 @@ const RestaurantManager = () => {
               <input name="name" placeholder="Tên nhà hàng" value={formData.name} onChange={handleChange} required />
               <input name="address" placeholder="Địa chỉ" value={formData.address} onChange={handleChange} required />
               <input name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleChange} required />
-              <input name="typeId" placeholder="ID loại nhà hàng" value={formData.typeId} onChange={handleChange} required />
-              <input name="restaurantTierId" placeholder="ID cấp độ nhà hàng" value={formData.restaurantTierId} onChange={handleChange} required />
+
+              <select name="typeId" value={formData.typeId} onChange={handleChange} required>
+                <option value="">-- Chọn loại nhà hàng --</option>
+                {types.map((type) => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
+              </select>
+
+              <select name="restaurantTierId" value={formData.restaurantTierId} onChange={handleChange} required>
+                <option value="">-- Chọn cấp độ --</option>
+                {tiers.map((tier) => (
+                  <option key={tier.id} value={tier.id}>{tier.name}</option>
+                ))}
+              </select>
+
               <textarea name="description" placeholder="Mô tả" value={formData.description} onChange={handleChange} required />
               <input type="file" name="images" multiple onChange={handleChange} />
               <div className="modal-buttons">

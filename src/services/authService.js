@@ -9,7 +9,7 @@ export const register = async (userData) => {
 // 2. Đăng nhập
 export const login = async (credentials) => {
   const res = await axios.post('/auth/login', credentials);
-  return res.data; // ✅ Trả cả status, message, data
+  return res.data; // Trả cả status, message, data
 };
 
 // 3. Đăng xuất

@@ -276,8 +276,7 @@
   gap: 5px;
 }
 
-.add-btn,
-.remove-btn {
+.add-btn,.remove-btn {
   padding: 5px 10px;
   font-size: 16px;
   border-radius: 50%;

@@ -1,0 +1,25 @@
+.dashboard-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+  }
+  
+  .revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  
+  .revenue-table th,
+  .revenue-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+  }
+
+  .chart-wrapper {
+    margin-top: 20px;
+    padding: 10px;
+    overflow: visible;
+  }
+  

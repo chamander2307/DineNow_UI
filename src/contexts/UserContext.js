@@ -21,8 +21,7 @@ export const UserProvider = ({ children }) => {
     try {
       const userData = await getUserProfile();
   
-      // ❌ KHÔNG ép role thành "ROLE_..."
-      // Chấp nhận role đúng như backend trả về
+
   
       setUser(userData);
       setIsLogin(true);
