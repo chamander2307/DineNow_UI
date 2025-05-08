@@ -70,7 +70,7 @@ const AppRoutes = () => {
       <Route path="/restaurant-list" element={<RestaurantList />} />
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
-      <Route path="/dish/:id" element={<DishDetail />} />
+      <Route path="/dish/:dishId" element={<DishDetail />} />
       <Route path="/all-dishes" element={<AllDishes />} />
 
       {/* Chính sách & Thanh toán */}

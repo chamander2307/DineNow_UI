@@ -43,7 +43,7 @@ export const restaurants = [
         price: 49000,
         image: han,
         category: "Canh",
-        rating: 4.0,
+        rating: 8.7,
       },
     ],
     reviews: [

@@ -133,6 +133,12 @@
   margin-top: 40px;
 }
 
+.menu-section-full h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
 .categories-list-horizontal {
   display: flex;
   flex-wrap: wrap;
@@ -191,22 +197,19 @@
 
 /* === Món ăn dạng lưới ngang === */
 .horizontal-dishes {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   margin-top: 20px;
 }
 
 .dish-item {
-  width: 100%;
-  max-width: 260px;
-  height: 320px;
+  width: 200px;
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: all 0.3s ease;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -218,8 +221,8 @@
 }
 
 .dish-image {
-  height: 180px;
   width: 100%;
+  height: 120px;
   object-fit: cover;
   display: block;
 }
@@ -239,6 +242,21 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.dish-star-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #f4c150;
+  margin-bottom: 4px;
+}
+
+.dish-rating-number {
+  font-size: 12px;
+  color: #f4c150;
+  font-weight: bold;
 }
 
 .price {
@@ -276,7 +294,8 @@
   gap: 5px;
 }
 
-.add-btn,.remove-btn {
+.add-btn,
+.remove-btn {
   padding: 5px 10px;
   font-size: 16px;
   border-radius: 50%;
@@ -392,4 +411,155 @@
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+/* === Chi tiết món ăn === */
+.dish-detail-section {
+  margin: 40px 0;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background-color: #ccc;
+  color: #333;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #bbb;
+}
+
+.dish-section {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.dish-images {
+  flex: 0 0 300px;
+}
+
+.dish-images img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.dish-details {
+  flex: 1;
+}
+
+.dish-name {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.dish-description {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.dish-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dish-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #f4c150;
+}
+
+.dish-price {
+  font-size: 16px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.dish-actions-Detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.add-item-container-Detail {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-to-cart-Detail {
+  padding: 6px 12px;
+  background-color: #e67e22;
+  color: #fff;
+  font-size: 13px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-Detail:hover {
+  background-color: #d35400;
+}
+
+.add-btn-Detail,
+.remove-btn-Detail {
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  border: none;
+}
+
+.add-btn-Detail {
+  background-color: #e74c3c;
+}
+
+.add-btn-Detail:hover {
+  background-color: #c0392b;
+}
+
+.remove-btn-Detail {
+  background-color: #ccc;
+}
+
+.remove-btn-Detail:hover {
+  background-color: #999;
+}
+
+.item-quantity-Detail {
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* === Đánh giá trong chi tiết món ăn === */
+.dish-reviews-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
 }

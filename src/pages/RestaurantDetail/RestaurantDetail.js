@@ -8,16 +8,23 @@ import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import { restaurants } from '../../data/restaurants';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
 import FavoriteButton from '../../components/basicComponents/FavoriteButton';
+import DishReviews from '../../components/Dish/DishReviews';
 
 const renderStars = (rating) => {
-  const full = Math.floor(rating);
-  const half = rating % 1 !== 0;
+  const effectiveRating = Math.min(rating || 0, 5); // Giới hạn tối đa là 5
+  const full = Math.floor(effectiveRating);
+  const half = effectiveRating % 1 !== 0;
   const empty = 5 - full - (half ? 1 : 0);
   const stars = [];
   for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} />);
   if (half) stars.push(<FaStarHalfAlt key="half" />);
   for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} />);
-  return <div className="star-rating">{stars}</div>;
+  return (
+    <div className="dish-star-rating">
+      {stars}
+      <span className="dish-rating-number">({effectiveRating.toFixed(1)})</span>
+    </div>
+  );
 };
 
 const priceRanges = [
@@ -41,6 +48,9 @@ const RestaurantDetail = () => {
     return savedCart[id] || {};
   });
 
+  // State để theo dõi món ăn được chọn
+  const [selectedDish, setSelectedDish] = useState(null);
+
   useEffect(() => {
     const liked = JSON.parse(sessionStorage.getItem('likedRestaurants')) || {};
     liked[id] = isLiked;
@@ -59,7 +69,7 @@ const RestaurantDetail = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [selectedPrice, setSelectedPrice] = useState('');
 
-  const categories = ['Tất cả', ...new Set(restaurant.menuItems?.map(item => item.category))];
+  const categories = ['Tất cả', ...new Set(restaurant.menuItems?.map(item => item.category) || [])];
 
   const filteredMenu = restaurant.menuItems?.filter(item => {
     const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -116,14 +126,14 @@ const RestaurantDetail = () => {
 
   // Chuyển đổi cart thành selectedItems để truyền sang PaymentPage
   const selectedItems = Object.keys(cart).map((dishId) => {
-    const dish = restaurant.menuItems.find(item => item.id === dishId);
+    const dish = restaurant.menuItems?.find(item => item.id === dishId);
     return {
-      id: dish.id,
-      name: dish.name,
-      price: dish.price,
+      id: dish?.id,
+      name: dish?.name,
+      price: dish?.price,
       quantity: cart[dishId],
     };
-  });
+  }).filter(item => item.name); // Loại bỏ các món không tồn tại
 
   return (
     <div className="restaurant-detail">
@@ -178,97 +188,198 @@ const RestaurantDetail = () => {
         </div>
       </div>
 
-      {restaurant.menuItems && restaurant.menuItems.length > 0 && (
-        <div className="highlight-slider-wrapper">
-          <h2 className="highlight-title">Món ăn nổi bật</h2>
-          <Slider {...sliderSettings}>
-            {restaurant.menuItems.slice(0, 5).map((item) => (
-              <div key={item.id} className="highlight-slide">
-                <img src={item.image} alt={item.name} className="highlight-image" />
-                <div className="highlight-info">
-                  <h3>{item.name}</h3>
-                  <div className="rating-display">
-                    {renderStars(item.rating)} <span className="rating-number">({item.rating})</span>
-                  </div>
-                  <p className="price">{item.price.toLocaleString()}đ</p>
+      {/* Hiển thị chi tiết món ăn nếu có selectedDish, nếu không thì hiển thị slider "Món ăn nổi bật" */}
+      {selectedDish ? (
+        <div className="dish-detail-section">
+          <div className="dish-section">
+            <div className="dish-images">
+              <img src={selectedDish.image} alt={selectedDish.name} />
+            </div>
+            <div className="dish-details">
+              <h2 className="dish-name">{selectedDish.name}</h2>
+              <p className="dish-description">{selectedDish.description || 'Món ăn này chưa có mô tả.'}</p>
+              <div className="dish-meta">
+                <div className="dish-rating">
+                  {renderStars(selectedDish.rating)}
+                  <span className="rating-number">({selectedDish.rating || 0})</span>
                 </div>
               </div>
-            ))}
-          </Slider>
-        </div>
-      )}
-
-      <div className="menu-section-full">
-        <h2>Thực đơn</h2>
-        <ul className="categories-list-horizontal">
-          {categories.map((cat, i) => (
-            <li
-              key={i}
-              className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </li>
-          ))}
-        </ul>
-
-        <div className="price-filter">
-          <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
-            {priceRanges.map((range, idx) => (
-              <option key={idx} value={range.value}>{range.label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Tìm món..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="horizontal-dishes">
-          {filteredMenu.map(dish => (
-            <Link to={`/dish/${dish.id}`} key={dish.id} className="slider-item">
-              <div className="dish-item">
-                <img src={dish.image} alt={dish.name} className="dish-image" />
-                <div className="dish-details">
-                  <h3>{dish.name}</h3>
-                  <div className="rating-display">
-                    {renderStars(dish.rating)} <span className="rating-number">({dish.rating})</span>
-                  </div>
-                  <p className="price">{dish.price.toLocaleString()}đ</p>
-                </div>
-                {cart[dish.id] ? (
-                  <div className="add-item-container">
-                    <button className="remove-btn" onClick={(e) => { e.preventDefault(); decreaseQuantity(dish.id); }}>
+              <p className="price">{selectedDish.price.toLocaleString()}đ</p>
+              <div className="dish-actions-Detail">
+                {cart[selectedDish.id] ? (
+                  <div className="add-item-container-Detail">
+                    <button className="remove-btn-Detail" onClick={(e) => { e.preventDefault(); decreaseQuantity(selectedDish.id); }}>
                       −
                     </button>
-                    <span className="item-quantity">{cart[dish.id]}</span>
-                    <button className="add-btn" onClick={(e) => { e.preventDefault(); increaseQuantity(dish.id); }}>
+                    <span className="item-quantity-Detail">{cart[selectedDish.id]}</span>
+                    <button className="add-btn-Detail" onClick={(e) => { e.preventDefault(); increaseQuantity(selectedDish.id); }}>
                       +
                     </button>
                   </div>
                 ) : (
-                  <button className="add-to-cart" onClick={(e) => { e.preventDefault(); addToCart(dish.id); }}>
+                  <button className="add-to-cart-Detail" onClick={(e) => { e.preventDefault(); addToCart(selectedDish.id); }}>
                     Thêm
                   </button>
                 )}
               </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <div className="reviews-section-full">
-        <h2>Đánh giá</h2>
-        <RestaurantReviewForm
-          restaurantId={restaurant.id}
-          existingReviews={restaurant.reviews?.slice(0, 3)}
-        />
-      </div>
+          <div className="menu-section-full">
+            <h2>Thực đơn</h2>
+            <ul className="categories-list-horizontal">
+              {categories.map((cat, i) => (
+                <li
+                  key={i}
+                  className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+
+            <div className="price-filter">
+              <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
+                {priceRanges.map((range, idx) => (
+                  <option key={idx} value={range.value}>{range.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Tìm món..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="horizontal-dishes">
+              {filteredMenu.map(dish => (
+                <div key={dish.id} className="dish-item" onClick={() => setSelectedDish(dish)}>
+                  <img src={dish.image} alt={dish.name} className="dish-image" />
+                  <div className="dish-details">
+                    <h3>{dish.name}</h3>
+                    {renderStars(dish.rating)}
+                    <p className="price">{dish.price.toLocaleString()}đ</p>
+                  </div>
+                  {cart[dish.id] ? (
+                    <div className="add-item-container">
+                      <button className="remove-btn" onClick={(e) => { e.preventDefault(); decreaseQuantity(dish.id); }}>
+                        −
+                      </button>
+                      <span className="item-quantity">{cart[dish.id]}</span>
+                      <button className="add-btn" onClick={(e) => { e.preventDefault(); increaseQuantity(dish.id); }}>
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button className="add-to-cart" onClick={(e) => { e.preventDefault(); addToCart(dish.id); }}>
+                      Thêm
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Di chuyển DishReviews ra ngoài dish-section */}
+          <div className="dish-reviews-section">
+            <DishReviews reviews={selectedDish.reviews || []} />
+          </div>
+          <button className="back-btn" onClick={() => setSelectedDish(null)}>
+            Quay lại
+          </button>
+        </div>
+      ) : (
+        <>
+          {restaurant.menuItems && restaurant.menuItems.length > 0 && (
+            <div className="highlight-slider-wrapper">
+              <h2 className="highlight-title">Món ăn nổi bật</h2>
+              <Slider {...sliderSettings}>
+                {restaurant.menuItems.slice(0, 5).map((item) => (
+                  <div key={item.id} className="highlight-slide" onClick={() => setSelectedDish(item)}>
+                    <img src={item.image} alt={item.name} className="highlight-image" />
+                    <div className="highlight-info">
+                      <h3>{item.name}</h3>
+                      <p className="price">{item.price.toLocaleString()}đ</p>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          )}
+
+          <div className="menu-section-full">
+            <h2>Thực đơn</h2>
+            <ul className="categories-list-horizontal">
+              {categories.map((cat, i) => (
+                <li
+                  key={i}
+                  className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+
+            <div className="price-filter">
+              <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
+                {priceRanges.map((range, idx) => (
+                  <option key={idx} value={range.value}>{range.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Tìm món..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="horizontal-dishes">
+              {filteredMenu.map(dish => (
+                <div key={dish.id} className="dish-item" onClick={() => setSelectedDish(dish)}>
+                  <img src={dish.image} alt={dish.name} className="dish-image" />
+                  <div className="dish-details">
+                    <h3>{dish.name}</h3>
+                    {renderStars(dish.rating)}
+                    <p className="price">{dish.price.toLocaleString()}đ</p>
+                  </div>
+                  {cart[dish.id] ? (
+                    <div className="add-item-container">
+                      <button className="remove-btn" onClick={(e) => { e.preventDefault(); decreaseQuantity(dish.id); }}>
+                        −
+                      </button>
+                      <span className="item-quantity">{cart[dish.id]}</span>
+                      <button className="add-btn" onClick={(e) => { e.preventDefault(); increaseQuantity(dish.id); }}>
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button className="add-to-cart" onClick={(e) => { e.preventDefault(); addToCart(dish.id); }}>
+                      Thêm
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="reviews-section-full">
+            <RestaurantReviewForm
+              restaurantId={restaurant.id}
+              existingReviews={restaurant.reviews?.slice(0, 3)}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
