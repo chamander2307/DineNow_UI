@@ -38,9 +38,18 @@ export const getOrderDetail = async (orderId) => {
 
 // Lấy đơn hàng theo trạng thái và nhà hàng
 export const getOwnerOrdersByStatuses = async (restaurantId, statuses) => {
-  return await axios.get(`/api/owner/restaurant/${restaurantId}/orders`, {
-    params: { status: statuses },
-  });
+  try {
+    if (!restaurantId) throw new Error("ID nhà hàng không hợp lệ");
+    
+    const statusParams = statuses.map((status) => `status=${status}`).join("&");
+    const url = `/api/owner/restaurant/${restaurantId}/orders?${statusParams}`;
+    const res = await axios.get(url);
+    console.log("API Response (Orders):", res);
+    return res;
+  } catch (err) {
+    console.error("Lỗi khi gọi API đơn hàng:", err);
+    throw err;
+  }
 };
 
 // Cập nhật trạng thái đơn hàng (CONFIRMED, PAID, FAILED, v.v.)

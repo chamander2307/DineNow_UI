@@ -20,6 +20,7 @@ const OwnerOrderManager = () => {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   useEffect(() => {
     if (!loading && user?.role === "OWNER") {
@@ -36,15 +37,32 @@ const OwnerOrderManager = () => {
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
-      const data = Array.isArray(res) ? res : [];
-      setRestaurants(data);
+      console.log("API Response (Restaurants):", res);
+  
+      if (res && res.status === 200) {
+        const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setRestaurants(data);
+        if (data.length > 0) setSelectedRestaurantId(data[0].id); // Chọn nhà hàng đầu tiên nếu có
+      } else {
+        console.warn("API trả về lỗi:", res);
+        setRestaurants([]);
+      }
     } catch (err) {
       console.error("Lỗi tải nhà hàng", err);
+      setRestaurants([]);
     }
   };
+  
 
   const loadOrders = async () => {
+    setLoadingOrders(true);
     try {
+      if (!selectedRestaurantId) {
+        console.warn("Chưa chọn nhà hàng.");
+        setLoadingOrders(false);
+        return;
+      }
+  
       const statusList =
         selectedStatus === "confirmed_paid"
           ? ["CONFIRMED", "PAID"]
@@ -52,14 +70,25 @@ const OwnerOrderManager = () => {
           ? ["CANCELED", "FAILED"]
           : selectedStatus === "completed"
           ? ["COMPLETED"]
-          : ["PENDING"]; // mặc định
-
-      const res = await getOwnerOrdersByStatuses(selectedRestaurantId || null, statusList);
-      setOrders(Array.isArray(res.data.data) ? res.data.data : []);
+          : ["PENDING"];
+  
+      const res = await getOwnerOrdersByStatuses(selectedRestaurantId, statusList);
+      console.log("API Response (Orders):", res);
+  
+      if (res && res.status === 200) {
+        setOrders(Array.isArray(res.data) ? res.data : res.data?.data || []);
+      } else {
+        console.warn("API trả về lỗi:", res);
+        setOrders([]);
+      }
     } catch (err) {
       console.error("Lỗi tải đơn hàng", err);
+      setOrders([]);
+    } finally {
+      setLoadingOrders(false);
     }
   };
+  
 
   const handleApprove = async (id) => {
     if (!window.confirm("Xác nhận duyệt đơn này?")) return;
@@ -85,7 +114,6 @@ const OwnerOrderManager = () => {
     <OwnerLayout>
       <div className="manager-header">
         <h2>Quản lý đơn hàng</h2>
-
         <div style={{ display: "flex", gap: "16px", marginBottom: 16 }}>
           <select
             value={selectedRestaurantId}
@@ -127,7 +155,11 @@ const OwnerOrderManager = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.length === 0 ? (
+          {loadingOrders ? (
+            <tr>
+              <td colSpan="8">Đang tải đơn hàng...</td>
+            </tr>
+          ) : orders.length === 0 ? (
             <tr>
               <td colSpan="8">Không có đơn hàng nào.</td>
             </tr>
