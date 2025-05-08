@@ -2,96 +2,81 @@ import React, { useEffect, useState } from "react";
 import {
   createMenuItem,
   updateMenuItem,
+  fetchMainCategories,
 } from "../../services/menuItemService";
-import { getFoodCategoriesByRestaurant } from "../../services/foodCategoryService";
-import "../../assets/styles/MenuItemFormModal.css";
+import "../../assets/styles/owner/MenuItemFormModal.css";
 
-const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) => {
+const MenuItemFormModal = ({ restaurantId, initialData, onClose, onSuccess }) => {
   const isEdit = !!initialData;
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     categoryId: "",
-    available: true,
     image: null,
+    available: true,
   });
-
-  const [categoryList, setCategoryList] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    if (isEdit) {
+    if (initialData) {
       setFormData({
         name: initialData.name || "",
         description: initialData.description || "",
         price: initialData.price || "",
         categoryId: initialData.category?.id?.toString() || "",
-        available: initialData.available,
         image: null,
+        available: initialData.available ?? true,
       });
     }
   }, [initialData]);
 
   useEffect(() => {
-    if (!restaurantId) return;
-
-    const fetchCategories = async () => {
-      try {
-        const res = await getFoodCategoriesByRestaurant(restaurantId);
-        const data = res.data;
-        setCategoryList(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Lỗi khi tải danh mục món ăn", err);
-        setCategoryList([]);
-      }
-    };
-
-    fetchCategories();
-  }, [restaurantId]);
+    fetchMainCategories().then((data) => setCategories(data));
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === "checkbox") {
-      setFormData({ ...formData, [name]: checked });
-    } else if (type === "file") {
-      setFormData({ ...formData, [name]: files[0] });
+    const { name, value, files, type, checked } = e.target;
+    if (type === "file") {
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
+    } else if (type === "checkbox") {
+      setFormData((prev) => ({ ...prev, [name]: checked }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const payload = new FormData();
     payload.append("name", formData.name);
     payload.append("description", formData.description);
     payload.append("price", formData.price);
-    payload.append("categoryId", formData.categoryId);
+    payload.append("category", formData.categoryId);
     payload.append("available", formData.available);
-    if (formData.image) {
-      payload.append("image", formData.image);
-    }
+    if (formData.image) payload.append("imageUrl", formData.image);
 
     try {
       if (isEdit) {
         await updateMenuItem(initialData.id, payload);
-        alert("Cập nhật thành công.");
+        alert("Cập nhật món ăn thành công");
       } else {
         await createMenuItem(restaurantId, payload);
-        alert("Tạo món ăn thành công.");
+        alert("Tạo món ăn mới thành công");
       }
       onSuccess?.();
-      onClose();
     } catch (err) {
+      alert("Thao tác thất bại");
       console.error(err);
-      alert("Thao tác thất bại.");
     }
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-box">
-        <h2>{isEdit ? "Chỉnh sửa món ăn" : "Tạo món ăn mới"}</h2>
+        <h2>{isEdit ? "Chỉnh sửa món ăn" : "Thêm món ăn mới"}</h2>
         <form onSubmit={handleSubmit}>
           <input
             name="name"
@@ -100,18 +85,19 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
             onChange={handleChange}
             required
           />
-          <input
+          <textarea
             name="description"
             placeholder="Mô tả"
             value={formData.description}
             onChange={handleChange}
+            required
           />
           <input
             name="price"
-            type="number"
-            placeholder="Giá"
+            placeholder="Giá (VND)"
             value={formData.price}
             onChange={handleChange}
+            type="number"
             required
           />
           <select
@@ -120,10 +106,10 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
             onChange={handleChange}
             required
           >
-            <option value="">-- Chọn danh mục món ăn --</option>
-            {categoryList.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
+            <option value="">-- Chọn danh mục --</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
               </option>
             ))}
           </select>
@@ -135,12 +121,13 @@ const MenuItemFormModal = ({ initialData, restaurantId, onClose, onSuccess }) =>
               checked={formData.available}
               onChange={handleChange}
             />
-            Đang phục vụ
+            Còn phục vụ
           </label>
-
           <div className="modal-buttons">
             <button type="submit">{isEdit ? "Lưu thay đổi" : "Tạo mới"}</button>
-            <button type="button" onClick={onClose}>Huỷ</button>
+            <button type="button" onClick={onClose}>
+              Huỷ
+            </button>
           </div>
         </form>
       </div>

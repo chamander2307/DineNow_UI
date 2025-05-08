@@ -1,47 +1,48 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import '../../../assets/styles/home/Login.css'; 
-import Logo from '../../../components/basicComponents/Logo';
-import { register } from '../../../services/authService';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../../../assets/styles/home/Login.css";
+import Logo from "../../../components/basicComponents/Logo";
+import { register } from "../../../services/authService";
 
 const Register = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
 
-    // ==== Kiểm tra client trước khi gọi API ====
     const phoneRegex = /^0\d{9}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
     if (!phoneRegex.test(phone)) {
-      alert('Số điện thoại phải có đúng 10 số và bắt đầu bằng 0');
+      setError("Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0.");
       return;
     }
 
     if (!passwordRegex.test(password)) {
-      alert('Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, thường, số và ký tự đặc biệt');
+      setError("Mật khẩu phải dài ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert('Mật khẩu nhập lại không khớp');
+      setError("Mật khẩu nhập lại không khớp.");
       return;
     }
 
     try {
       await register({ fullName, email, password, phone });
-      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
-      navigate(`/verify-email?email=${encodeURIComponent(email)}`); // ✅ Chuyển đến trang xác thực
+      alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      const errorMessage = err?.response?.data?.message || 'Đăng ký thất bại';
-      alert(errorMessage);
-      console.error('Lỗi đăng ký:', err);
+      console.error("Lỗi đăng ký:", err);
+      const message = err?.response?.data?.message || "Đăng ký thất bại.";
+      setError(message);
     }
   };
 
@@ -59,6 +60,8 @@ const Register = () => {
           <p className="auth__slogan">Tạo tài khoản để trải nghiệm DineNow tốt nhất</p>
 
           <form className="auth__form" onSubmit={handleRegister}>
+            {error && <div className="auth__error">{error}</div>}
+
             <div className="input-icon">
               <i className="fa fa-user" />
               <input
@@ -109,7 +112,9 @@ const Register = () => {
                 required
               />
             </div>
+
             <button type="submit">Tạo tài khoản</button>
+
             <div className="auth__extra">
               <span>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></span>
             </div>

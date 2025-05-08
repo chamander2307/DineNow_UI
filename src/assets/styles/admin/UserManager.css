@@ -1,0 +1,18 @@
+.user-manager {
+  padding: 20px;
+}
+
+.user-manager h2 {
+  margin-bottom: 16px;
+}
+
+.user-manager .filter-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.user-manager .filter-group select,
+.user-manager .filter-group button {
+  padding: 6px 12px;
+}

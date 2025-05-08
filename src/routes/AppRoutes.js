@@ -36,6 +36,13 @@ import CartPage from "../pages/CartPage/CartPage";
 import RestaurantTypeManager from "../pages/Admin/RestaurantTypeManager";
 import UserManager from "../pages/Admin/UserManager";
 import RevenueDashboard from "../pages/Admin/RevenueDashboard";
+import AdminMainCategoryManager from "../pages/Admin/AdminMainCategoryManager";
+import OwnerReservationList from "../pages/Owner/OwnerReservationList";
+import OwnerReviewList from "../pages/Owner/OwnerReviewList";
+import OwnerRevenueDashboard from "../pages/Owner/OwnerRevenueDashboard";
+import OwnerOrderManager from "../pages/Owner/OwnerOrderManager";
+import AdminOrderManager from "../pages/Admin/AdminOrderManager";
+import OwnerProfitDashboard from "../pages/Owner/OwnerProfitDashboard";
 
 import Page404 from "../components/basicComponents/Page404";
 const AppRoutes = () => {
@@ -78,6 +85,17 @@ const AppRoutes = () => {
       <Route path="/owner/menu-items" element={<MenuItemMyList />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
       <Route path="/admin/revenue-dashboard" element={<RevenueDashboard />} />
+      <Route path="/admin/main-category" element={<AdminMainCategoryManager />} />
+      <Route path="/owner/menu-items/:restaurantId" element={<MenuItemMyList />} />
+      <Route path="/owner/reservation" element={<OwnerReservationList />} />
+      <Route path="/owner/review" element={<OwnerReviewList />} />
+      <Route path="/owner/revenue-dashboard" element={<OwnerRevenueDashboard />} />
+      <Route path="/owner/order" element={<OwnerOrderManager />} />
+      <Route path="/admin/orders" element={<AdminOrderManager />} />
+      <Route path="/owner/profit-dashboard" element={<OwnerProfitDashboard />} />
+      
+
+      {/* Các trang không tìm thấy */}
       <Route path="*" element={<Page404 />} />
     </Routes>
   );

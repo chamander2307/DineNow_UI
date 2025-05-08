@@ -1,6 +1,6 @@
 .admin-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .admin-sidebar {
@@ -15,4 +15,5 @@
   flex: 1;
   padding: 24px;
   overflow-x: hidden;
+  margin-top: 64px; 
 }

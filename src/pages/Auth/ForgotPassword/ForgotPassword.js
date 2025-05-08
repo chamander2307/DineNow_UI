@@ -2,57 +2,70 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../../components/auth/AuthLayout";
 import "../../../assets/styles/home/Login.css";
-import {sendForgotOTP,resetPassword,verifyResetOTP} from "../../../services/authService";
-const ResetPasswordFlow = () => {
+import {
+  sendForgotOTP,
+  verifyResetOTP,
+  resetPassword,
+} from "../../../services/authService";
+
+const ForgotPassword = () => {
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleEmailSubmit = async(e) => {
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    try{
+    setError("");
+    try {
       await sendForgotOTP(email);
-      alert("Mã OTP đã được gửi đến email của bạn");
+      alert("Mã OTP đã được gửi đến email của bạn.");
       setStep(2);
-    }catch(err){
-      alert("Gửi mã OTP thất bại");
-      console.error(err);
+    } catch (err) {
+      console.error("Gửi OTP thất bại:", err);
+      setError("Không thể gửi mã OTP. Vui lòng thử lại.");
     }
   };
 
-  const handleOtpSubmit = async(e) => {
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    try{
+    setError("");
+    try {
       await verifyResetOTP({ email, otp });
-      alert("Xác thực OTP thành công");
+      alert("Xác thực OTP thành công.");
       setStep(3);
-    }catch(err){
-      alert("Xác thực OTP thất bại");
-      console.error(err);
+    } catch (err) {
+      console.error("Xác thực OTP thất bại:", err);
+      setError("Mã OTP không đúng hoặc đã hết hạn.");
     }
   };
 
-  const handleResetSubmit = async(e) => {
+  const handleResetSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (password !== confirmPassword) {
-      alert("Mật khẩu không khớp!");
+      setError("Mật khẩu không khớp.");
       return;
     }
-    try{
+
+    try {
       await resetPassword({ email, newPassword: password });
-      alert("Đổi mật khẩu thành công");
+      alert("Đổi mật khẩu thành công. Mời bạn đăng nhập.");
       navigate("/login");
-    }catch(err){
-      alert("Đổi mật khẩu thất bại");
-      console.error(err);
+    } catch (err) {
+      console.error("Đổi mật khẩu thất bại:", err);
+      setError("Đổi mật khẩu thất bại. Vui lòng thử lại.");
     }
   };
 
   return (
     <AuthLayout title="Khôi Phục Mật Khẩu">
+      {error && <div className="auth__error">{error}</div>}
+
       {step === 1 && (
         <form className="auth__form fade-step" onSubmit={handleEmailSubmit}>
           <input
@@ -82,7 +95,7 @@ const ResetPasswordFlow = () => {
             required
           />
           <button type="submit" className="auth__button">
-            Xác thực
+            Xác thực OTP
           </button>
           <button
             type="button"
@@ -121,4 +134,4 @@ const ResetPasswordFlow = () => {
   );
 };
 
-export default ResetPasswordFlow;
+export default ForgotPassword;

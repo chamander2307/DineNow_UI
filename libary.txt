@@ -29,3 +29,26 @@ Owner:
         - confirm và paid
         - cancel và failed
         - completed
+
+
+thanh điều hướng cho cố định bên trên màn hình.
+
+ADMIN:
+    loại nhà hàng: chỉ cho thêm/sửa
+    main-category: chỉ cho thêm/sửa
+    đối soát/thanh toán: 
+        + hiển thị bảng restaurants_payment cho 15 ngày.
+        + quản lí nhà hàng đã tất toán/chưa tất toán.
+            - chưa tất toán:
+                hiển thị nhà hàng chưa hoàn tiền trong khoảng thời gian 15 ngày:
+                    * có nút hoàn tiền, ấn vào mở ra form có thông tin tài khoản của nhà hàng,
+                      số tiền, có textfield để nhập note(bắt buộc nhập, nội dung đã thanh toán theo chu kì) Có nút hủy/hoàn tất.
+                    
+Owner:
+    thêm nhà hàng: 
+        chỉnh sửa lại cách nhập địa chỉ
+    tổng quan(lọc theo nhà hàng).
+    quản lí đơn đặt: cho xem chi tiết trừ những đơn đã hủy/thanh toán thất bại.
+    quản lí đánh giá:
+        + đánh giá nhà hàng.
+        + thêm giao diện đánh giá món ăn  (lọc nhà hàng / món ăn).

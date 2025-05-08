@@ -1,40 +1,59 @@
 import axios from "../config/axios";
 
-// CUSTOMER - tạo đơn hàng
+// ========== CUSTOMER ==========
+
+// Tạo đơn hàng mới
 export const createOrder = async (restaurantId, orderData) => {
-  return await axios.post(`/customers/orders/restaurant/${restaurantId}`, orderData);
+  return await axios.post(`/api/customers/orders/restaurant/${restaurantId}`, orderData);
 };
 
-// CUSTOMER - danh sách đơn hàng
+// Lấy tất cả đơn hàng của người dùng
 export const getCustomerOrders = async () => {
-  return await axios.get("/customers/orders");
+  return await axios.get("/api/customers/orders");
 };
 
+// Lấy đơn hàng theo nhà hàng
 export const getCustomerOrdersByRestaurant = async (restaurantId) => {
-  return await axios.get(`/customers/orders/restaurant/${restaurantId}`);
+  return await axios.get(`/api/customers/orders/restaurant/${restaurantId}`);
 };
 
+// Lọc đơn hàng theo trạng thái
 export const getCustomerOrdersByStatuses = async (statuses) => {
-  return await axios.get("/customers/orders/status", {
+  return await axios.get("/api/customers/orders/status", {
     params: { status: statuses },
   });
 };
 
+// Huỷ đơn hàng
 export const cancelOrder = async (orderId) => {
-  return await axios.put(`/customers/orders/cancel/${orderId}`);
+  return await axios.put(`/api/customers/orders/cancel/${orderId}`);
 };
 
-// OWNER - đơn hàng
+// ========== OWNER ==========
+
+// Lấy chi tiết đơn hàng
 export const getOrderDetail = async (orderId) => {
-  return await axios.get(`/owner/orders/${orderId}`);
+  return await axios.get(`/api/owner/orders/${orderId}`);
 };
 
+// Lấy đơn hàng theo trạng thái và nhà hàng
 export const getOwnerOrdersByStatuses = async (restaurantId, statuses) => {
-  return await axios.get(`/owner/restaurant/${restaurantId}/orders`, {
+  return await axios.get(`/api/owner/restaurant/${restaurantId}/orders`, {
     params: { status: statuses },
   });
 };
 
+// Cập nhật trạng thái đơn hàng (CONFIRMED, PAID, FAILED, v.v.)
 export const updateOrderStatus = async (orderId, status) => {
-  return await axios.put(`/owner/orders/${orderId}/status`, status);
+  return await axios.put(`/api/owner/orders/${orderId}/status`, null, {
+    params: { status },
+  });
 };
+
+// Duyệt đơn hàng (alias tiện dụng)
+export const approveOrder = async (orderId) => {
+  return await updateOrderStatus(orderId, "CONFIRMED");
+};
+
+// Alias: để tương thích tên hàm cũ đang dùng trong giao diện
+export const fetchOrdersByStatusAndRestaurant = getOwnerOrdersByStatuses;

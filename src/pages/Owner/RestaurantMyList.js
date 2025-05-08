@@ -1,126 +1,62 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import OwnerLayout from "./OwnerLayout";
 import {
   fetchRestaurantsByOwner,
-  createRestaurant,
-  updateRestaurant,
 } from "../../services/restaurantService";
+import RestaurantFormModal from "../../components/Owner/RestaurantFormModal";
+import RestaurantDetailModal from "../../components/Owner/RestaurantDetailModal";
 import "../../assets/styles/owner/OwnerRestaurant.css";
 
 const RestaurantMyList = () => {
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
-  const [types, setTypes] = useState([]);
-  const [tiers, setTiers] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    phone: "",
-    typeId: "",
-    restaurantTierId: "",
-    description: "",
-    images: [],
-  });
-  const [editingRestaurantId, setEditingRestaurantId] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   useEffect(() => {
     loadRestaurants();
-    loadOptions();
   }, []);
 
+  // Load restaurants from API
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
-      const data = res.data.data;
-      setRestaurants(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Lỗi tải danh sách nhà hàng", err);
-    }
-  };
+      console.log("API Response:", res);
 
-  const loadOptions = () => {
-    setTypes([
-      { id: 1, name: "Nhà hàng Việt" },
-      { id: 2, name: "Chay" },
-      { id: 3, name: "Buffet" },
-    ]);
-    setTiers([
-      { id: 1, name: "Cơ bản" },
-      { id: 2, name: "Tiêu chuẩn" },
-      { id: 3, name: "Cao cấp" },
-    ]);
+      if (res && res.status === 200) {
+        if (Array.isArray(res.data)) {
+          setRestaurants(res.data);
+        } else if (res.data && Array.isArray(res.data.data)) {
+          setRestaurants(res.data.data);
+        } else {
+          console.warn("Không tìm thấy dữ liệu nhà hàng:", res);
+          setRestaurants([]);
+        }
+      } else {
+        console.warn("API trả về lỗi:", res);
+        setRestaurants([]);
+      }
+    } catch (err) {
+      console.error("Lỗi khi tải danh sách nhà hàng:", err);
+      setRestaurants([]);
+    }
   };
 
   const openCreateModal = () => {
-    setEditingRestaurantId(null);
-    setFormData({
-      name: "",
-      address: "",
-      phone: "",
-      typeId: "",
-      restaurantTierId: "",
-      description: "",
-      images: [],
-    });
+    setSelectedRestaurant(null);
     setShowFormModal(true);
   };
 
-  const openEditModal = (id) => {
-    const restaurant = restaurants.find((r) => r.id === id);
-    if (!restaurant) {
-      console.error("Không tìm thấy nhà hàng cần sửa");
-      return;
-    }
-    setEditingRestaurantId(id);
-    setFormData({
-      name: restaurant.name || "",
-      address: restaurant.address || "",
-      phone: restaurant.phone || "",
-      typeId: restaurant.typeId?.toString() || "",
-      restaurantTierId: restaurant.restaurantTierId?.toString() || "",
-      description: restaurant.description || "",
-      images: [],
-    });
+  const openEditModal = (restaurant) => {
+    setSelectedRestaurant(restaurant);
     setShowFormModal(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("address", formData.address);
-    payload.append("phone", formData.phone);
-    payload.append("typeId", formData.typeId);
-    payload.append("restaurantTierId", formData.restaurantTierId);
-    payload.append("description", formData.description);
-    for (let i = 0; i < formData.images.length; i++) {
-      payload.append("images", formData.images[i]);
-    }
-
-    try {
-      if (editingRestaurantId) {
-        await updateRestaurant(editingRestaurantId, payload);
-        alert("Cập nhật thành công");
-      } else {
-        await createRestaurant(payload);
-        alert("Tạo mới thành công");
-      }
-      setShowFormModal(false);
-      loadRestaurants();
-    } catch (err) {
-      console.error("Lỗi khi lưu nhà hàng", err);
-      alert("Thao tác thất bại");
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "images") {
-      setFormData({ ...formData, images: files });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+  const openDetailModal = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setShowDetailModal(true);
   };
 
   return (
@@ -128,7 +64,7 @@ const RestaurantMyList = () => {
       <div className="manager-header">
         <h2>Quản lý nhà hàng</h2>
         <button className="btn-create" onClick={openCreateModal}>
-          Tạo mới nhà hàng
+          Thêm mới nhà hàng
         </button>
       </div>
 
@@ -139,6 +75,10 @@ const RestaurantMyList = () => {
             <th>ID</th>
             <th>Tên</th>
             <th>Địa chỉ</th>
+            <th>Loại</th>
+            <th>Hạng</th>
+            <th>Đánh giá TB</th>
+            <th>Đặt chỗ</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
           </tr>
@@ -146,7 +86,7 @@ const RestaurantMyList = () => {
         <tbody>
           {restaurants.length === 0 ? (
             <tr>
-              <td colSpan="6">Chưa có nhà hàng nào.</td>
+              <td colSpan="10">Chưa có nhà hàng nào.</td>
             </tr>
           ) : (
             restaurants.map((r) => (
@@ -163,12 +103,14 @@ const RestaurantMyList = () => {
                 <td>{r.id}</td>
                 <td>{r.name}</td>
                 <td>{r.address}</td>
+                <td>{r.typeName || "—"}</td>
+                <td>{r.restaurantTierName || "—"}</td>
+                <td>{r.averageRating?.toFixed(1) || "0.0"}</td>
+                <td>{r.reservationCount || "0"}</td>
                 <td>{r.status || "Đang hoạt động"}</td>
                 <td>
-                  <button onClick={() => openEditModal(r.id)}>Sửa</button>
-                  <button style={{ marginLeft: 8 }}>
-                    {r.status === "INACTIVE" ? "Mở lại" : "Tạm khóa"}
-                  </button>
+                  <button onClick={() => openEditModal(r)}>Sửa</button>
+                  <button onClick={() => openDetailModal(r)}>Xem</button>
                 </td>
               </tr>
             ))
@@ -177,38 +119,20 @@ const RestaurantMyList = () => {
       </table>
 
       {showFormModal && (
-        <div className="modal-overlay">
-          <div className="modal-box">
-            <h2>{editingRestaurantId ? "Sửa nhà hàng" : "Tạo nhà hàng mới"}</h2>
+        <RestaurantFormModal
+          isOpen={showFormModal}
+          onClose={() => setShowFormModal(false)}
+          restaurant={selectedRestaurant}
+          onRefresh={loadRestaurants}
+        />
+      )}
 
-            <form onSubmit={handleSubmit}>
-              <input name="name" placeholder="Tên nhà hàng" value={formData.name} onChange={handleChange} required />
-              <input name="address" placeholder="Địa chỉ" value={formData.address} onChange={handleChange} required />
-              <input name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleChange} required />
-
-              <select name="typeId" value={formData.typeId} onChange={handleChange} required>
-                <option value="">-- Chọn loại nhà hàng --</option>
-                {types.map((type) => (
-                  <option key={type.id} value={type.id}>{type.name}</option>
-                ))}
-              </select>
-
-              <select name="restaurantTierId" value={formData.restaurantTierId} onChange={handleChange} required>
-                <option value="">-- Chọn cấp độ --</option>
-                {tiers.map((tier) => (
-                  <option key={tier.id} value={tier.id}>{tier.name}</option>
-                ))}
-              </select>
-
-              <textarea name="description" placeholder="Mô tả" value={formData.description} onChange={handleChange} required />
-              <input type="file" name="images" multiple onChange={handleChange} />
-              <div className="modal-buttons">
-                <button type="submit">{editingRestaurantId ? "Lưu thay đổi" : "Tạo mới"}</button>
-                <button type="button" onClick={() => setShowFormModal(false)}>Huỷ</button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {showDetailModal && (
+        <RestaurantDetailModal
+          isOpen={showDetailModal}
+          onClose={() => setShowDetailModal(false)}
+          restaurant={selectedRestaurant}
+        />
       )}
     </OwnerLayout>
   );

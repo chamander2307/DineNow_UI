@@ -1,128 +1,105 @@
 import React, { useEffect, useState } from "react";
+import {
+  createMainCategory,
+  updateMainCategory,
+  deleteMainCategory,
+} from "../../services/adminService";
+import { fetchMainCategories } from "../../services/menuItemService";
 import AdminLayout from "./AdminLayout";
+import MainCategoryFormModal from "../../components/admin/MainCategoryFormModal";
 import "../../assets/styles/admin/AdminMainCategoryManager.css";
-
 const AdminMainCategoryManager = () => {
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+  const [message, setMessage] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    loadMockCategories();
+    loadCategories();
   }, []);
 
-  const loadMockCategories = () => {
-    const mockData = [
-      { id: 1, name: "Khai vị", description: "Món khai vị hấp dẫn" },
-      { id: 2, name: "Món chính", description: "Món ăn chính trong bữa ăn" },
-      { id: 3, name: "Tráng miệng", description: "Món ngọt sau bữa ăn" },
-    ];
-    setCategories(mockData);
+  const loadCategories = async () => {
+    try {
+      const res = await fetchMainCategories();
+      setCategories(Array.isArray(res) ? res : []);
+    } catch {
+      setMessage("Không thể tải danh mục");
+    }
   };
 
-  const handleCreate = () => {
-    if (!newCategory.name.trim()) {
-      alert("Tên loại không được để trống");
-      return;
-    }
-    const newItem = {
-      id: categories.length + 1,
-      name: newCategory.name,
-      description: newCategory.description,
-    };
-    setCategories([...categories, newItem]);
-    setNewCategory({ name: "", description: "" });
-  };
-
-  const handleUpdate = () => {
-    if (!editingCategory.name.trim()) {
-      alert("Tên loại không được để trống");
-      return;
-    }
-    setCategories(categories.map(cat => cat.id === editingCategory.id ? editingCategory : cat));
+  const openCreateModal = () => {
     setEditingCategory(null);
+    setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xoá loại món ăn này?")) {
-      setCategories(categories.filter(cat => cat.id !== id));
+  const openEditModal = (cat) => {
+    setEditingCategory(cat);
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Xác nhận xoá?")) {
+      try {
+        await deleteMainCategory(id);
+        loadCategories();
+      } catch {
+        setMessage("Xoá thất bại");
+      }
+    }
+  };
+
+  const handleModalSubmit = async (formData, id) => {
+    try {
+      if (id) {
+        await updateMainCategory(id, formData);
+        setMessage("Cập nhật thành công");
+      } else {
+        await createMainCategory(formData);
+        setMessage("Tạo mới thành công");
+      }
+      setShowModal(false);
+      loadCategories();
+    } catch {
+      setMessage("Thao tác thất bại");
     }
   };
 
   return (
     <AdminLayout>
-      <div className="manager-header">
-        <h2>Quản lý Loại Món ăn Chính (Main Category)</h2>
-      </div>
+      <div className="main-category-manager">
+        <h2>Quản lý danh mục chính</h2>
+        <button className="create-button" onClick={openCreateModal}>+ Tạo mới</button>
 
-      <div className="add-category">
-        <input
-          type="text"
-          placeholder="Tên loại món ăn"
-          value={newCategory.name}
-          onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Mô tả (tuỳ chọn)"
-          value={newCategory.description}
-          onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-        />
-        <button onClick={handleCreate}>Thêm loại</button>
-      </div>
+        {message && <p className="message">{message}</p>}
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Mô tả</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((cat) => (
-            <tr key={cat.id}>
-              <td>{cat.id}</td>
-              <td>
-                {editingCategory?.id === cat.id ? (
-                  <input
-                    type="text"
-                    value={editingCategory.name}
-                    onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                  />
-                ) : (
-                  cat.name
-                )}
-              </td>
-              <td>
-                {editingCategory?.id === cat.id ? (
-                  <input
-                    type="text"
-                    value={editingCategory.description}
-                    onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
-                  />
-                ) : (
-                  cat.description
-                )}
-              </td>
-              <td>
-                {editingCategory?.id === cat.id ? (
-                  <>
-                    <button onClick={handleUpdate}>Lưu</button>
-                    <button onClick={() => setEditingCategory(null)}>Huỷ</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => setEditingCategory(cat)}>Sửa</button>
-                    <button onClick={() => handleDelete(cat.id)}>Xoá</button>
-                  </>
-                )}
-              </td>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Tên danh mục</th>
+              <th>Hành động</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {categories.map((c) => (
+              <tr key={c.id}>
+                <td>{c.name}</td>
+                <td>
+                  <button onClick={() => openEditModal(c)}>Sửa</button>
+                  <button onClick={() => handleDelete(c.id)}>Xoá</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {showModal && (
+          <MainCategoryFormModal
+            onClose={() => setShowModal(false)}
+            onSuccess={handleModalSubmit}
+            initialData={editingCategory}
+          />
+        )}
+      </div>
     </AdminLayout>
   );
 };

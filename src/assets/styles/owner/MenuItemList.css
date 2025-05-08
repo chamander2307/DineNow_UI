@@ -56,4 +56,14 @@
   .admin-table td button:hover {
     background-color: #117a8b;
   }
+  .modal-box {
+    width: 90%;
+    max-width: 1200px;
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 0 auto;
+  }
   

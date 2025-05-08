@@ -1,0 +1,54 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .dashboard-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-container label {
+    font-weight: 500;
+    margin-right: 8px;
+  }
+  
+  .dashboard-container select {
+    padding: 6px 12px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    font-size: 15px;
+  }
+  
+  .revenue-table th,
+  .revenue-table td {
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .revenue-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+  }
+  
+  .revenue-table tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+  
+  .revenue-table tr:hover {
+    background-color: #fdf0ec;
+  }
+  

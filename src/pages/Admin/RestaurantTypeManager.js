@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "./AdminLayout";
 import {
-  fetchRestaurantTypes,
-  createRestaurantType,
-  updateRestaurantType,
   deleteRestaurantType,
 } from "../../services/adminService";
-import "../../assets/styles/admin/AdminRestaurantTypeManager.css";
+import { fetchRestaurantTypes } from "../../services/restaurantService";
+import AdminLayout from "./AdminLayout";
+import RestaurantTypeFormModal from "../../components/common/RestaurantTypeFormModal";
+import "../../assets/styles/admin/RestaurantTypeManager.css";
 
 const RestaurantTypeManager = () => {
   const [types, setTypes] = useState([]);
-  const [newType, setNewType] = useState({ name: "", description: "" });
-  const [editingType, setEditingType] = useState(null);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingData, setEditingData] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     loadTypes();
@@ -19,130 +19,82 @@ const RestaurantTypeManager = () => {
 
   const loadTypes = async () => {
     try {
-      const data = await fetchRestaurantTypes();
-      setTypes(data);
-    } catch (err) {
-      alert("Không thể tải loại nhà hàng");
-    }
-  };
-
-  const handleCreate = async () => {
-    if (!newType.name.trim()) {
-      alert("Tên loại không được để trống");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("name", newType.name);
-    formData.append("description", newType.description || "");
-    try {
-      await createRestaurantType(formData);
-      setNewType({ name: "", description: "" });
-      loadTypes();
-    } catch (err) {
-      alert("Tạo loại nhà hàng thất bại");
-    }
-  };
-
-  const handleUpdate = async () => {
-    if (!editingType.name.trim()) {
-      alert("Tên loại không được để trống");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("name", editingType.name);
-    formData.append("description", editingType.description || "");
-    try {
-      await updateRestaurantType(editingType.id, formData);
-      setEditingType(null);
-      loadTypes();
-    } catch (err) {
-      alert("Cập nhật loại nhà hàng thất bại");
+      const res = await fetchRestaurantTypes();
+      const list = Array.isArray(res.data.data) ? res.data.data : [];
+      setTypes(list);
+    } catch {
+      setMessage("Không thể tải loại nhà hàng");
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xoá loại nhà hàng này?")) {
-      await deleteRestaurantType(id);
-      loadTypes();
+    if (window.confirm("Xác nhận xoá?")) {
+      try {
+        await deleteRestaurantType(id);
+        loadTypes();
+      } catch {
+        setMessage("Xoá thất bại");
+      }
     }
+  };
+
+  const openCreateModal = () => {
+    setEditingData(null);
+    setShowFormModal(true);
+  };
+
+  const openEditModal = (type) => {
+    setEditingData(type);
+    setShowFormModal(true);
   };
 
   return (
     <AdminLayout>
-      <div className="manager-header">
-        <h2>Quản lý Loại Nhà hàng</h2>
-      </div>
+      <div className="restaurant-type-manager">
+        <h2>Quản lý loại nhà hàng</h2>
+        <button onClick={openCreateModal}>+ Thêm loại</button>
 
-      {/* Thêm mới */}
-      <div className="add-type">
-        <input
-          type="text"
-          placeholder="Tên loại nhà hàng"
-          value={newType.name}
-          onChange={(e) => setNewType({ ...newType, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Mô tả (tuỳ chọn)"
-          value={newType.description}
-          onChange={(e) => setNewType({ ...newType, description: e.target.value })}
-        />
-        <button onClick={handleCreate}>Thêm loại</button>
-      </div>
+        {message && <p className="message">{message}</p>}
 
-      {/* Danh sách */}
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Mô tả</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {types.map((t) => (
-            <tr key={t.id}>
-              <td>{t.id}</td>
-              <td>
-                {editingType?.id === t.id ? (
-                  <input
-                    type="text"
-                    value={editingType.name}
-                    onChange={(e) => setEditingType({ ...editingType, name: e.target.value })}
-                  />
-                ) : (
-                  t.name
-                )}
-              </td>
-              <td>
-                {editingType?.id === t.id ? (
-                  <input
-                    type="text"
-                    value={editingType.description}
-                    onChange={(e) => setEditingType({ ...editingType, description: e.target.value })}
-                  />
-                ) : (
-                  t.description
-                )}
-              </td>
-              <td>
-                {editingType?.id === t.id ? (
-                  <>
-                    <button onClick={handleUpdate}>Lưu</button>
-                    <button onClick={() => setEditingType(null)}>Huỷ</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => setEditingType(t)}>Sửa</button>
-                    <button onClick={() => handleDelete(t.id)}>Xoá</button>
-                  </>
-                )}
-              </td>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Hình</th>
+              <th>Tên</th>
+              <th>Mô tả</th>
+              <th>Hành động</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {types.map((type) => (
+              <tr key={type.id}>
+                <td>
+                  {type.imageUrl && (
+                    <img src={type.imageUrl} alt={type.name} className="thumbnail" />
+                  )}
+                </td>
+                <td>{type.name}</td>
+                <td>{type.description}</td>
+                <td>
+                  <button onClick={() => openEditModal(type)}>Sửa</button>
+                  <button onClick={() => handleDelete(type.id)}>Xoá</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {showFormModal && (
+          <RestaurantTypeFormModal
+            onClose={() => setShowFormModal(false)}
+            onSuccess={() => {
+              loadTypes();
+              setShowFormModal(false);
+            }}
+            initialData={editingData}
+          />
+        )}
+      </div>
     </AdminLayout>
   );
 };

@@ -23,23 +23,18 @@ const Login = () => {
       const res = await login({ email, password });
       console.log("Login API response:", res);
 
-      // Nếu status là lỗi (401, 418, ...) → ném lỗi thủ công để chuyển sang catch
-      if (res?.status && res.status !== 200) {
-        throw { response: res };
-      }
-
-      const accessToken = res?.data?.accessToken;
-      if (!accessToken) {
+      const token = res?.data?.accessToken;
+      if (!token) {
         throw new Error("Phản hồi không chứa accessToken");
       }
 
-      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("accessToken", token);
 
       const profile = await getUserProfile();
+      console.log("Thông tin người dùng:", profile);
       setUser(profile);
       setIsLogin(true);
 
-      console.log("Đăng nhập thành công");
       navigate("/");
     } catch (err) {
       console.error("Chi tiết lỗi:", err);
@@ -66,7 +61,7 @@ const Login = () => {
           setError("Yêu cầu xác thực. Vui lòng kiểm tra email.");
           break;
         case 413:
-          setError("Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên.");
+          setError("Tài khoản đã bị khoá.");
           break;
         case 500:
           setError("Lỗi máy chủ. Vui lòng thử lại sau.");
@@ -74,6 +69,28 @@ const Login = () => {
         default:
           setError(message || "Đăng nhập thất bại.");
       }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      const decoded = jwtDecode(credential);
+      console.log("Google decoded token:", decoded);
+
+      const res = await googleLogin({ idToken: credential });
+      const token = res?.data?.accessToken;
+      if (!token) throw new Error("Google login failed");
+
+      localStorage.setItem("accessToken", token);
+
+      const profile = await getUserProfile();
+      setUser(profile);
+      setIsLogin(true);
+      navigate("/");
+    } catch (err) {
+      console.error("Google login failed:", err);
+      setError("Đăng nhập Google thất bại.");
     }
   };
 
@@ -115,31 +132,17 @@ const Login = () => {
               />
             </div>
             <button type="submit">Đăng nhập</button>
+
             <div style={{ marginTop: "15px" }}>
               <GoogleLogin
-                onSuccess={async (credentialResponse) => {
-                  try {
-                    const { credential } = credentialResponse;
-                    const decoded = jwtDecode(credential);
-                    const res = await googleLogin({ idToken: credential });
-                    const accessToken = res?.data?.accessToken;
-                    if (!accessToken) throw new Error("Google login failed");
-                    localStorage.setItem("accessToken", accessToken);
-                    const profile = await getUserProfile();
-                    setUser(profile);
-                    setIsLogin(true);
-                    navigate("/");
-                  } catch (err) {
-                    console.error("Google login failed:", err);
-                    setError("Đăng nhập Google thất bại.");
-                  }
-                }}
+                onSuccess={handleGoogleSuccess}
                 onError={() => {
                   console.log("Google Login Failed");
                   setError("Đăng nhập Google thất bại.");
                 }}
               />
             </div>
+
             <div className="auth__extra">
               <Link to="/forgot-password">Quên mật khẩu?</Link>
               <span> | </span>

@@ -1,20 +1,79 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../../assets/styles/admin/Sidebar.css';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import "../../assets/styles/admin/Sidebar.css";
 
 const Sidebar = () => {
   return (
-    <aside className="admin-sidebar">
+    <div className="sidebar">
       <h2>Admin Panel</h2>
       <ul>
-        <li><Link to="/admin/revenue-dashboard">Dashboard</Link></li>
-        <li><Link to="/admin/restaurants">Quản lý Nhà hàng</Link></li>
-        <li><Link to="/admin/restaurant-types">Quản lý Loại Nhà hàng</Link></li>
-        <li><Link to="/admin/users">Quản lý Người dùng</Link></li>
-        {/* Có thể thêm sau nếu có quản lý món ăn riêng */}
-        {/* <li><Link to="/admin/menus">Quản lý Món ăn</Link></li> */}
+        <li>
+          <NavLink
+            to="/admin/feedback"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Tổng quan
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/users"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Quản lý người dùng
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/restaurants"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Quản lý nhà hàng
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/restaurant-types"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Loại nhà hàng
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/main-category"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Danh mục món ăn
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink
+            to="/admin/orders"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Quản lí đơn đặt
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/feedback"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Đối soát và thanh toán{" "}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/revenue-dashboard"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Thống kê doanh thu
+          </NavLink>
+        </li>
       </ul>
-    </aside>
+    </div>
   );
 };
 

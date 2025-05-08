@@ -1,35 +1,62 @@
 import React from "react";
 import "../../assets/styles/admin/RestaurantDetailModal.css";
 
-const RestaurantDetailModal = ({ restaurant, onClose }) => {
+const RestaurantDetailModal = ({ restaurant, onClose, onApprove }) => {
+  const {
+    id,
+    name,
+    address,
+    phone,
+    restaurantTierName,
+    description,
+    type,
+    averageRating,
+    status,
+    createdAt,
+    imageUrls,
+  } = restaurant;
+
+  const handleApprove = () => onApprove(id, "APPROVED");
+  const handleReject = () => onApprove(id, "REJECTED");
+
   return (
     <div className="modal-overlay">
-      <div className="modal-box detail-modal">
+      <div className="modal">
         <h2>Chi tiết nhà hàng</h2>
-        <p><strong>ID:</strong> {restaurant.id}</p>
-        <p><strong>Tên:</strong> {restaurant.name}</p>
-        <p><strong>Địa chỉ:</strong> {restaurant.address}</p>
-        <p><strong>Số điện thoại:</strong> {restaurant.phone}</p>
-        <p><strong>Loại:</strong> {restaurant.typeName}</p>
-        <p><strong>Cấp độ:</strong> {restaurant.restaurantTierName}</p>
-        <p><strong>Trạng thái:</strong> {restaurant.status}</p>
-        <p><strong>Đánh giá trung bình:</strong> {restaurant.averageRating}</p>
-        <p><strong>Ngày tạo:</strong> {new Date(restaurant.createdAt).toLocaleString()}</p>
-        <p><strong>Ngày cập nhật:</strong> {new Date(restaurant.updatedAt).toLocaleString()}</p>
-        <p><strong>Mô tả:</strong></p>
-        <div className="description-box">
-          {restaurant.description || "Không có mô tả"}
-        </div>
+        <button className="close-btn" onClick={onClose}>×</button>
 
-        <p><strong>Ảnh đại diện:</strong></p>
-        <img
-          src={restaurant.thumbnailUrl || "/fallback.jpg"}
-          alt="thumbnail"
-          className="detail-thumbnail"
-        />
+        <div className="modal-content">
+          <p><strong>Tên:</strong> {name}</p>
+          <p><strong>Loại:</strong> {type?.name || "—"}</p>
+          <p><strong>Hạng:</strong> {restaurantTierName || "—"}</p>
+          <p><strong>Trạng thái:</strong> {status}</p>
+          <p><strong>Số điện thoại:</strong> {phone}</p>
+          <p><strong>Địa chỉ:</strong> {address}</p>
+          <p><strong>Rating:</strong> {averageRating}</p>
+          <p><strong>Ngày tạo:</strong> {new Date(createdAt).toLocaleString()}</p>
 
-        <div className="modal-buttons">
-          <button onClick={onClose}>Đóng</button>
+          <div>
+            <strong>Mô tả:</strong>
+            <div
+              className="description-html"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          </div>
+
+          {imageUrls?.length > 0 && (
+            <div className="image-grid">
+              {imageUrls.map((url, index) => (
+                <img key={index} src={url} alt={`ảnh-${index}`} />
+              ))}
+            </div>
+          )}
+
+          {status === "PENDING" && (
+            <div className="modal-actions">
+              <button className="approve-btn" onClick={handleApprove}>Duyệt</button>
+              <button className="reject-btn" onClick={handleReject}>Từ chối</button>
+            </div>
+          )}
         </div>
       </div>
     </div>

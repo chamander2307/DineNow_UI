@@ -1,63 +1,28 @@
-.manager-header {
-  margin-bottom: 20px;
+.restaurant-manager {
+  padding: 20px;
 }
 
-.filter-bar {
-  margin-bottom: 20px;
+.filter-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.filter-bar select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.filter-group input {
+  padding: 8px;
+  width: 200px;
 }
 
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.admin-table th,
-.admin-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-.admin-table th {
-  background-color: #f2f2f2;
-}
-
-.admin-table button {
-  margin-right: 6px;
-  padding: 6px 10px;
-  border: none;
+.thumbnail {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
   border-radius: 4px;
-  cursor: pointer;
-}
-
-.admin-table button:first-child {
-  background-color: #007bff;
-  color: white;
-}
-
-.admin-table button:first-child:hover {
-  background-color: #0056b3;
-}
-
-.admin-table button:last-child {
-  background-color: #dc3545;
-  color: white;
-}
-
-.admin-table button:last-child:hover {
-  background-color: #c82333;
 }
 
 .pagination {
-  margin-top: 20px;
+  margin-top: 16px;
   display: flex;
-  justify-content: center;
+  gap: 10px;
   align-items: center;
-  gap: 12px;
 }

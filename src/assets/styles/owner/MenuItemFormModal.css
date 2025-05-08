@@ -1,0 +1,41 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-box.wide-modal {
+    background: #fff;
+    padding: 24px;
+    width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+  
+  .modal-box.wide-modal h2 {
+    margin-bottom: 16px;
+  }
+  
+  .modal-box.wide-modal input,
+  .modal-box.wide-modal select,
+  .modal-box.wide-modal textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  
