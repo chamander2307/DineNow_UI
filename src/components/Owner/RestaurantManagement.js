@@ -3,6 +3,8 @@ import {
   fetchRestaurantsByOwner,
   createRestaurant,
   updateRestaurant,
+  fetchRestaurantTypes,
+  fetchRestaurantTiers,
 } from "../../services/restaurantService";
 import Select from "react-select";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -23,7 +25,6 @@ const RestaurantManager = () => {
     description: "",
     images: [],
   });
-
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -39,12 +40,9 @@ const RestaurantManager = () => {
     fetch("https://provinces.open-api.vn/api/p/")
       .then((res) => res.json())
       .then((data) => {
-        const provinceOptions = data.map((p) => ({
-          value: p.code,
-          label: p.name,
-        }));
-        setProvinces(provinceOptions);
-      });
+        setProvinces(data.map((p) => ({ value: p.code, label: p.name })));
+      })
+      .catch(() => alert("Không thể tải danh sách tỉnh."));
   }, []);
 
   useEffect(() => {
@@ -52,15 +50,12 @@ const RestaurantManager = () => {
       fetch(`https://provinces.open-api.vn/api/p/${selectedProvince.value}?depth=2`)
         .then((res) => res.json())
         .then((data) => {
-          const districtOptions = data.districts.map((d) => ({
-            value: d.code,
-            label: d.name,
-          }));
-          setDistricts(districtOptions);
+          setDistricts(data.districts.map((d) => ({ value: d.code, label: d.name })));
           setSelectedDistrict(null);
           setWards([]);
           setSelectedWard(null);
-        });
+        })
+        .catch(() => alert("Không thể tải danh sách quận/huyện."));
     }
   }, [selectedProvince]);
 
@@ -69,36 +64,33 @@ const RestaurantManager = () => {
       fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict.value}?depth=2`)
         .then((res) => res.json())
         .then((data) => {
-          const wardOptions = data.wards.map((w) => ({
-            value: w.code,
-            label: w.name,
-          }));
-          setWards(wardOptions);
+          setWards(data.wards.map((w) => ({ value: w.code, label: w.name })));
           setSelectedWard(null);
-        });
+        })
+        .catch(() => alert("Không thể tải danh sách phường/xã."));
     }
   }, [selectedDistrict]);
 
   const loadRestaurants = async () => {
     try {
       const res = await fetchRestaurantsByOwner();
-      setRestaurants(res.data.data || []);
+      setRestaurants(res?.data || []);
     } catch (err) {
-      console.error("Không thể tải danh sách nhà hàng", err);
+      alert("Không thể tải danh sách nhà hàng.");
     }
   };
 
-  const loadOptions = () => {
-    setTypes([
-      { id: 1, name: "Nhà hàng Việt" },
-      { id: 2, name: "Nhà hàng chay" },
-      { id: 3, name: "Buffet" },
-    ]);
-    setTiers([
-      { id: 1, name: "Cơ bản" },
-      { id: 2, name: "Tiêu chuẩn" },
-      { id: 3, name: "Cao cấp" },
-    ]);
+  const loadOptions = async () => {
+    try {
+      const [typesRes, tiersRes] = await Promise.all([
+        fetchRestaurantTypes(),
+        fetchRestaurantTiers(),
+      ]);
+      setTypes(typesRes.map((t) => ({ id: t.id, name: t.name })));
+      setTiers(tiersRes.data.data.map((t) => ({ id: t.id, name: t.name })));
+    } catch (err) {
+      alert("Không thể tải loại nhà hàng hoặc cấp độ.");
+    }
   };
 
   const handleOpenCreate = () => {
@@ -132,22 +124,30 @@ const RestaurantManager = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "images") {
-      setFormData((prev) => ({ ...prev, images: files }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "images" ? files : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.phone || !selectedProvince || !formData.typeId || !formData.restaurantTierId) {
+      alert("Vui lòng nhập đầy đủ thông tin bắt buộc.");
+      return;
+    }
+
+    const phoneRegex = /^0[0-9]{9}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (0xxxxxxxxx).");
+      return;
+    }
+
     const fullAddress = [
       selectedWard?.label,
       selectedDistrict?.label,
       selectedProvince?.label,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    ].filter(Boolean).join(", ");
 
     const payload = new FormData();
     payload.append("name", formData.name);
@@ -171,8 +171,7 @@ const RestaurantManager = () => {
       setShowModal(false);
       loadRestaurants();
     } catch (err) {
-      console.error("Thất bại:", err);
-      alert("Không thể lưu nhà hàng.");
+      alert("Không thể lưu nhà hàng: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -220,15 +219,14 @@ const RestaurantManager = () => {
             <h2>{isEdit ? "Chỉnh sửa nhà hàng" : "Tạo nhà hàng mới"}</h2>
             <form onSubmit={handleSubmit}>
               <input name="name" placeholder="Tên nhà hàng" value={formData.name} onChange={handleChange} required />
-
               <label>Tỉnh / Thành phố</label>
               <Select
                 options={provinces}
                 value={selectedProvince}
                 onChange={setSelectedProvince}
                 placeholder="Chọn tỉnh"
+                required
               />
-
               <label>Quận / Huyện</label>
               <Select
                 options={districts}
@@ -237,7 +235,6 @@ const RestaurantManager = () => {
                 placeholder="Chọn quận"
                 isDisabled={!selectedProvince}
               />
-
               <label>Phường / Xã</label>
               <Select
                 options={wards}
@@ -246,33 +243,27 @@ const RestaurantManager = () => {
                 placeholder="Chọn phường"
                 isDisabled={!selectedDistrict}
               />
-
               <input name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleChange} required />
-
               <select name="typeId" value={formData.typeId} onChange={handleChange} required>
                 <option value="">-- Chọn loại nhà hàng --</option>
                 {types.map((type) => (
                   <option key={type.id} value={type.id}>{type.name}</option>
                 ))}
               </select>
-
               <select name="restaurantTierId" value={formData.restaurantTierId} onChange={handleChange} required>
                 <option value="">-- Chọn cấp độ --</option>
                 {tiers.map((tier) => (
                   <option key={tier.id} value={tier.id}>{tier.name}</option>
                 ))}
               </select>
-
               <label>Mô tả</label>
               <CKEditor
                 editor={ClassicEditor}
                 data={formData.description}
                 onChange={(event, editor) => {
-                  const data = editor.getData();
-                  setFormData((prev) => ({ ...prev, description: data }));
+                  setFormData((prev) => ({ ...prev, description: editor.getData() }));
                 }}
               />
-
               <input type="file" name="images" multiple onChange={handleChange} />
               <div className="modal-buttons">
                 <button type="submit">{isEdit ? "Lưu thay đổi" : "Tạo mới"}</button>

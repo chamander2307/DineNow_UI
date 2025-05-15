@@ -1,24 +1,31 @@
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 64px; /* Đặt khoảng cách bằng chiều cao của Navbar */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 64px); /* Trừ đi chiều cao của Navbar */
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  width: 600px;
-  max-height: 90vh;
+  z-index: 1100; /* Đảm bảo luôn nằm trên Navbar */
   overflow-y: auto;
-  position: relative;
 }
 
+/* Modal Box */
+.modal-box {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  margin: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Close Button */
 .close-btn {
   position: absolute;
   top: 12px;
@@ -29,10 +36,12 @@
   cursor: pointer;
 }
 
+/* Modal Content */
 .modal-content p {
   margin: 8px 0;
 }
 
+/* Image Grid */
 .image-grid {
   display: flex;
   flex-wrap: wrap;
@@ -47,12 +56,14 @@
   border-radius: 4px;
 }
 
+/* Modal Actions */
 .modal-actions {
   margin-top: 16px;
   display: flex;
   gap: 10px;
 }
 
+/* Approve and Reject Button */
 .approve-btn {
   background-color: #4caf50;
   color: white;
@@ -64,6 +75,8 @@
   color: white;
   padding: 8px 16px;
 }
+
+/* Description with HTML formatting */
 .description-html {
   margin-top: 8px;
   padding: 10px;

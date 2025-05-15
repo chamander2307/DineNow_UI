@@ -1,20 +1,76 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "../../assets/styles/admin/Sidebar.css";
 
 const OwnerSidebar = () => {
   return (
-    <div className="admin-sidebar">
+    <div className="sidebar">
       <h2>Chủ Nhà Hàng</h2>
       <ul>
-        <li><Link to="/owner/profile">Tổng quan</Link></li>
-        <li><Link to="/owner/restaurants">Nhà hàng của tôi</Link></li>
-        <li><Link to="/owner/menu-items">Món ăn</Link></li>
-        <li><Link to="/owner/reservation">Đơn đặt hàng</Link></li>
-        <li><Link to="/owner/review">Đánh giá nhà hàng</Link></li>
-        <li><Link to="/">Đánh giá món ăn</Link></li>
-        <li><Link to="/owner/revenue-dashboard">Quản lý doanh thu</Link></li>
-        <li><Link to="/owner/order">Quản lý đơn đặt</Link></li>
+        <li>
+          <NavLink
+            to="/owner/profile"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Tổng quan
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/restaurants"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Nhà hàng của tôi
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/menu-items"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Món ăn
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/reservation"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Đặt bàn
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/review"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Đánh giá nhà hàng
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/menu-item-review"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Đánh giá món ăn
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/revenue-dashboard"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Quản lý doanh thu
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/order"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Quản lý đơn hàng
+          </NavLink>
+        </li>
       </ul>
     </div>
   );

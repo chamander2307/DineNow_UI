@@ -1,26 +1,32 @@
-.restaurant-card {
+.restaurant-item {
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
-  max-width: 300px;
+  width: 300px;
+  height: 360px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  gap : 10px;
 }
 
-.restaurant-card:hover {
+.restaurant-item:hover {
   transform: translateY(-4px);
 }
 
-.rc-image {
+.restaurant-image {
   width: 100%;
   height: 180px;
   object-fit: cover;
 }
 
-.rc-content {
+.restaurant-details {
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .rc-name {
@@ -30,19 +36,19 @@
   color: #333;
 }
 
-.rc-meta {
+.restaurant-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 6px 0;
 }
 
-.rc-stars {
+.star-icons {
   display: flex;
   gap: 2px;
 }
 
-.rc-visits {
+.visit-count {
   font-size: 13px;
   color: #777;
   white-space: nowrap;
@@ -62,10 +68,16 @@
   color: #ccc;
 }
 
-.rc-address {
+.restaurant-address {
   font-size: 13px;
   color: #555;
-  margin: 4px 0 12px;
+  margin: 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
 .rc-button {
@@ -78,6 +90,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: auto;
 }
 
 .rc-button:hover {

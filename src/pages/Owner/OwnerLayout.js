@@ -6,7 +6,7 @@ const OwnerLayout = ({ children }) => {
   return (
     <div className="admin-layout">
       <div className="admin-sidebar">
-      <OwnerSidebar />
+        <OwnerSidebar />
       </div>
       <div className="admin-content">{children}</div>
     </div>

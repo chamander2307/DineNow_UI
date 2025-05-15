@@ -42,7 +42,7 @@ import OwnerReviewList from "../pages/Owner/OwnerReviewList";
 import OwnerRevenueDashboard from "../pages/Owner/OwnerRevenueDashboard";
 import OwnerOrderManager from "../pages/Owner/OwnerOrderManager";
 import AdminOrderManager from "../pages/Admin/AdminOrderManager";
-import OwnerProfitDashboard from "../pages/Owner/OwnerProfitDashboard";
+import OwnerMenuItemReviewList from "../pages/Owner/OwnerMenuItemReviewList";
 
 import Page404 from "../components/basicComponents/Page404";
 const AppRoutes = () => {
@@ -92,7 +92,7 @@ const AppRoutes = () => {
       <Route path="/owner/revenue-dashboard" element={<OwnerRevenueDashboard />} />
       <Route path="/owner/order" element={<OwnerOrderManager />} />
       <Route path="/admin/orders" element={<AdminOrderManager />} />
-      <Route path="/owner/profit-dashboard" element={<OwnerProfitDashboard />} />
+      <Route path="/owner/menu-item-review" element={<OwnerMenuItemReviewList />} />
       
 
       {/* Các trang không tìm thấy */}

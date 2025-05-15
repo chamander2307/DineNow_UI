@@ -201,7 +201,7 @@ const PaymentPage = () => {
             </div>
           </div>
 
-          <button type="submit" className="payment-btn">Thanh toán</button>
+          <button type="submit" className="payment-btn">Đặt bàn</button>
         </form>
       </div>
     </div>

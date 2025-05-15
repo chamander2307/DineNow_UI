@@ -2,67 +2,117 @@ import axios from "../config/axios";
 
 // ========== CUSTOMER ==========
 
-// Tạo đơn hàng mới
 export const createOrder = async (restaurantId, orderData) => {
-  return await axios.post(`/api/customers/orders/restaurant/${restaurantId}`, orderData);
+  try {
+    const response = await axios.post(`/api/customers/orders/restaurant/${restaurantId}`, orderData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi tạo đơn hàng:", error);
+    throw error;
+  }
 };
 
-// Lấy tất cả đơn hàng của người dùng
 export const getCustomerOrders = async () => {
-  return await axios.get("/api/customers/orders");
+  try {
+    const response = await axios.get("/api/customers/orders");
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng của khách:", error);
+    throw error;
+  }
 };
 
-// Lấy đơn hàng theo nhà hàng
 export const getCustomerOrdersByRestaurant = async (restaurantId) => {
-  return await axios.get(`/api/customers/orders/restaurant/${restaurantId}`);
+  try {
+    const response = await axios.get(`/api/customers/orders/restaurant/${restaurantId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng theo nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Lọc đơn hàng theo trạng thái
 export const getCustomerOrdersByStatuses = async (statuses) => {
-  return await axios.get("/api/customers/orders/status", {
-    params: { status: statuses },
-  });
+  try {
+    const response = await axios.get("/api/customers/orders/status", {
+      params: { status: statuses },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lọc đơn hàng theo trạng thái:", error);
+    throw error;
+  }
 };
 
-// Huỷ đơn hàng
 export const cancelOrder = async (orderId) => {
-  return await axios.put(`/api/customers/orders/cancel/${orderId}`);
+  try {
+    const response = await axios.put(`/api/customers/orders/cancel/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi hủy đơn hàng:", error);
+    throw error;
+  }
 };
 
 // ========== OWNER ==========
 
-// Lấy chi tiết đơn hàng
 export const getOrderDetail = async (orderId) => {
-  return await axios.get(`/api/owner/orders/${orderId}`);
-};
-
-// Lấy đơn hàng theo trạng thái và nhà hàng
-export const getOwnerOrdersByStatuses = async (restaurantId, statuses) => {
   try {
-    if (!restaurantId) throw new Error("ID nhà hàng không hợp lệ");
-    
-    const statusParams = statuses.map((status) => `status=${status}`).join("&");
-    const url = `/api/owner/restaurant/${restaurantId}/orders?${statusParams}`;
-    const res = await axios.get(url);
-    console.log("API Response (Orders):", res);
-    return res;
-  } catch (err) {
-    console.error("Lỗi khi gọi API đơn hàng:", err);
-    throw err;
+    const response = await axios.get(`/api/owner/orders/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
+    throw error;
   }
 };
 
-// Cập nhật trạng thái đơn hàng (CONFIRMED, PAID, FAILED, v.v.)
-export const updateOrderStatus = async (orderId, status) => {
-  return await axios.put(`/api/owner/orders/${orderId}/status`, null, {
-    params: { status },
-  });
+export const getAllOwnerOrdersByStatuses = async (statusList) => {
+  try {
+    const response = await axios.get(`/api/owner/orders`, {
+      params: { status: statusList },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+    throw error;
+  }
 };
 
-// Duyệt đơn hàng (alias tiện dụng)
+export const getOwnerOrdersByRestaurant = async (restaurantId, statusList) => {
+  try {
+    const response = await axios.get(`/api/owner/restaurant/${restaurantId}/orders`, {
+      params: { status: statusList },
+      paramsSerializer: (params) => {
+        return params.status.map((s) => `status=${s}`).join("&");
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng theo nhà hàng:", error);
+    throw error;
+  }
+};
+
+export const updateOrderStatus = async (orderId, status, reason = null) => {
+  try {
+    const data = reason ? { reason } : {};
+    const response = await axios.put(`/api/owner/orders/${orderId}/status`, data, {
+      params: { status },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+    throw error;
+  }
+};
+
 export const approveOrder = async (orderId) => {
-  return await updateOrderStatus(orderId, "CONFIRMED");
+  try {
+    return await updateOrderStatus(orderId, "CONFIRMED");
+  } catch (error) {
+    console.error("Lỗi khi phê duyệt đơn hàng:", error);
+    throw error;
+  }
 };
 
-// Alias: để tương thích tên hàm cũ đang dùng trong giao diện
-export const fetchOrdersByStatusAndRestaurant = getOwnerOrdersByStatuses;
+export const fetchOrdersByStatusAndRestaurant = getOwnerOrdersByRestaurant;

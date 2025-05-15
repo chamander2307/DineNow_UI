@@ -1,60 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import '../../assets/styles/Restaurant/RestaurantCart.css';
-import Restaurant1 from "../../assets/img/restaurant1.jpg"; // Đường dẫn hình ảnh mẫu
+import { createOrder } from '../../services/orderService';
 
 const RestaurantCart = () => {
   const navigate = useNavigate();
+  const [restaurants, setRestaurants] = useState([]);
+  const [cartItems, setCartItems] = useState({});
+  const [isOpen, setIsOpen] = useState({});
 
-  // 🌟 Dữ liệu mẫu
-  const sampleRestaurants = [
-    {
-      id: 'A',
-      name: 'Nhà hàng A',
-      image: Restaurant1,
-      address: '123 Đường Láng, Hà Nội',
-      dishes: [
-        { id: '1', name: 'Món A', quantity: 2, price: 45000 },
-        { id: '2', name: 'Món B', quantity: 1, price: 45000 },
-        { id: '3', name: 'Món E', quantity: 1, price: 45000 },
-      ],
-    },
-    {
-      id: 'B',
-      name: 'Nhà hàng B',
-      image: Restaurant1,
-      address: '456 Nguyễn Trãi, TP.HCM',
-      dishes: [
-        { id: '3', name: 'Món C', quantity: 10, price: 45000 },
-        { id: '4', name: 'Món D', quantity: 8, price: 45000 },
-      ],
-    },
-  ];
+  // Lấy giỏ hàng từ localStorage khi mount
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const initialRestaurants = storedCart.reduce((acc, item) => {
+      const restaurant = acc.find(r => r.id === item.restaurantId);
+      if (restaurant) {
+        restaurant.dishes.push({
+          id: item.dishId,
+          name: item.dishName,
+          quantity: item.quantity,
+          price: item.price,
+        });
+      } else {
+        acc.push({
+          id: item.restaurantId,
+          name: item.restaurantName,
+          image: item.restaurantImage || '/fallback.jpg',
+          address: item.restaurantAddress,
+          dishes: [{
+            id: item.dishId,
+            name: item.dishName,
+            quantity: item.quantity,
+            price: item.price,
+          }],
+        });
+      }
+      return acc;
+    }, []);
 
-  // State để quản lý danh sách nhà hàng và món ăn (động)
-  const [restaurants, setRestaurants] = useState(sampleRestaurants);
-
-  // State để quản lý số lượng món ăn cho từng nhà hàng
-  const [cartItems, setCartItems] = useState(() =>
-    sampleRestaurants.reduce((acc, restaurant) => {
+    setRestaurants(initialRestaurants);
+    setCartItems(initialRestaurants.reduce((acc, restaurant) => {
       acc[restaurant.id] = restaurant.dishes.reduce((dishAcc, dish) => {
-        dishAcc[dish.id] = dish.quantity || 0;
+        dishAcc[dish.id] = dish.quantity;
         return dishAcc;
       }, {});
       return acc;
-    }, {})
-  );
-
-  // State để quản lý trạng thái mở/đóng của combobox cho từng nhà hàng
-  const [isOpen, setIsOpen] = useState(() =>
-    sampleRestaurants.reduce((acc, restaurant) => {
-      acc[restaurant.id] = false; // Mặc định đóng
+    }, {}));
+    setIsOpen(initialRestaurants.reduce((acc, restaurant) => {
+      acc[restaurant.id] = false;
       return acc;
-    }, {})
-  );
+    }, {}));
+  }, []);
 
-  // Hàm tăng số lượng món ăn
+  // Cập nhật localStorage khi giỏ hàng thay đổi
+  useEffect(() => {
+    const cart = restaurants.flatMap(restaurant =>
+      restaurant.dishes.map(dish => ({
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        restaurantImage: restaurant.image,
+        restaurantAddress: restaurant.address,
+        dishId: dish.id,
+        dishName: dish.name,
+        quantity: cartItems[restaurant.id]?.[dish.id] || 0,
+        price: dish.price,
+      }))
+    );
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [restaurants, cartItems]);
+
   const increaseQuantity = (restaurantId, dishId) => {
     setCartItems(prev => ({
       ...prev,
@@ -65,7 +80,6 @@ const RestaurantCart = () => {
     }));
   };
 
-  // Hàm giảm số lượng món ăn và xử lý xóa
   const decreaseQuantity = (restaurantId, dishId) => {
     setCartItems(prev => {
       const currentQuantity = prev[restaurantId][dishId] || 0;
@@ -83,10 +97,13 @@ const RestaurantCart = () => {
                 };
               }
               return restaurant;
-            })
+            }).filter(restaurant => restaurant.dishes.length > 0)
           );
           const updatedCartItems = { ...prev };
           delete updatedCartItems[restaurantId][dishId];
+          if (Object.keys(updatedCartItems[restaurantId]).length === 0) {
+            delete updatedCartItems[restaurantId];
+          }
           return updatedCartItems;
         } else {
           return {
@@ -109,7 +126,6 @@ const RestaurantCart = () => {
     });
   };
 
-  // Hàm bật/tắt combobox
   const toggleDropdown = (restaurantId) => {
     setIsOpen(prev => ({
       ...prev,
@@ -117,90 +133,107 @@ const RestaurantCart = () => {
     }));
   };
 
-  // Hàm xử lý thanh toán
-  const handleCheckout = (restaurant) => {
-    const selectedItems = [
-      {
-        restaurant: {
-          id: restaurant.id,
-          name: restaurant.name,
-        },
-        dishes: restaurant.dishes
-          .filter(dish => cartItems[restaurant.id][dish.id] > 0)
-          .map(dish => ({
-            id: dish.id,
-            name: dish.name,
-            quantity: cartItems[restaurant.id][dish.id],
-          })),
-      },
-    ].filter(item => item.dishes.length > 0);
+  const handleCheckout = async (restaurant) => {
+    const selectedItems = restaurant.dishes
+      .filter(dish => cartItems[restaurant.id][dish.id] > 0)
+      .map(dish => ({
+        id: dish.id,
+        name: dish.name,
+        quantity: cartItems[restaurant.id][dish.id],
+        price: dish.price,
+      }));
 
     if (selectedItems.length === 0) {
       alert('Giỏ hàng trống! Vui lòng chọn ít nhất một món trước khi thanh toán.');
       return;
     }
 
-    navigate('/payment', { state: { selectedItems } });
+    const orderData = {
+      restaurantId: restaurant.id,
+      items: selectedItems,
+    };
+
+    try {
+      const response = await createOrder(restaurant.id, orderData);
+      if (response.data) {
+        // Xóa món của nhà hàng khỏi giỏ hàng
+        setRestaurants(prev => prev.filter(r => r.id !== restaurant.id));
+        setCartItems(prev => {
+          const updated = { ...prev };
+          delete updated[restaurant.id];
+          return updated;
+        });
+        localStorage.setItem('cart', JSON.stringify([]));
+        navigate('/payment', { state: { order: response.data } });
+      }
+    } catch (error) {
+      console.error('Lỗi khi tạo đơn hàng:', error);
+      alert('Không thể tạo đơn hàng. Vui lòng thử lại.');
+    }
   };
 
   return (
     <div className="restaurant-cart">
-      {restaurants.map(restaurant => (
-        <div key={restaurant.id} className="restaurant-section">
-          <div
-            className="restaurant-header"
-            onClick={() => toggleDropdown(restaurant.id)}
-          >
-            <img src={restaurant.image} alt={restaurant.name} className="restaurant-images" />
-            <div className="restaurant-infos">
-              <div className="restaurant-name-wrappers">
-                <h3 className="restaurant-names">{restaurant.name}</h3>
-                {isOpen[restaurant.id] ? (
-                  <FaChevronUp className="chevron-icon" />
-                ) : (
-                  <FaChevronDown className="chevron-icon" />
-                )}
+      {restaurants.length === 0 ? (
+        <p>Giỏ hàng trống.</p>
+      ) : (
+        restaurants.map(restaurant => (
+          <div key={restaurant.id} className="restaurant-section">
+            <div
+              className="restaurant-header"
+              onClick={() => toggleDropdown(restaurant.id)}
+            >
+              <img src={restaurant.image} alt={restaurant.name} className="restaurant-images" />
+              <div className="restaurant-infos">
+                <div className="restaurant-name-wrappers">
+                  <h3 className="restaurant-names">{restaurant.name}</h3>
+                  {isOpen[restaurant.id] ? (
+                    <FaChevronUp className="chevron-icon" />
+                  ) : (
+                    <FaChevronDown className="chevron-icon" />
+                  )}
+                </div>
+                <p className="restaurant-addresss">{restaurant.address}</p>
               </div>
-              <p className="restaurant-addresss">{restaurant.address}</p>
             </div>
-          </div>
-          {isOpen[restaurant.id] && (
-            <>
-              <ul className="dish-lists">
-                {restaurant.dishes.map(dish => (
-                  <li key={dish.id} className="dish-items">
-                    <span className="dish-names">{dish.name}</span>
-                    <div className="dish-price-quantity">
-                      <span className="dish-price">{dish.price.toLocaleString('vi-VN')} VNĐ</span>
-                      <div className="quantity-controls">
-                        <button
-                          className="decrease-btn"
-                          onClick={() => decreaseQuantity(restaurant.id, dish.id)}
-                        >
-                          −
-                        </button>
-                        <span className="quantity">{cartItems[restaurant.id][dish.id]}</span>
-                        <button
-                          className="increase-btn"
-                          onClick={() => increaseQuantity(restaurant.id, dish.id)}
-                        >
-                          +
-                        </button>
+            {isOpen[restaurant.id] && (
+              <>
+                <ul className="dish-lists">
+                  {restaurant.dishes.map(dish => (
+                    <li key={dish.id} className="dish-items">
+                      <span className="dish-names">{dish.name}</span>
+                      <div className="dish-price-quantity">
+                        <span className="dish-price">{dish.price.toLocaleString('vi-VN')} VNĐ</span>
+                        <div className="quantity-controls">
+                          <button
+                            className="decrease-btn"
+                            onClick={() => decreaseQuantity(restaurant.id, dish.id)}
+                          >
+                            −
+                          </button>
+                          <span className="quantity">{cartItems[restaurant.id]?.[dish.id] || 0}</span>
+                          <button
+                            className="increase-btn"
+                            onClick={() => increaseQuantity(restaurant.id, dish.id)}
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <button
-                className="checkout-btn"
-                onClick={() => handleCheckout(restaurant)}
-              >
-                Thanh toán
-              </button>
-            </>
-          )}
-        </div>
-      ))}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  className="checkout-btn"
+                  onClick={() => handleCheckout(restaurant)}
+                >
+                  Thanh toán
+                </button>
+              </>
+            )}
+          </div>
+        ))
+      )}
     </div>
   );
 };

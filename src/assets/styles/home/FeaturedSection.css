@@ -1,5 +1,5 @@
 /* =========================
-   1. SLIDER STYLES (chia 4 thẻ card, KHÔNG áp dụng highlight)
+   1. SLIDER STYLES
 ========================= */
 .slider-card-item {
   width: 300px;
@@ -13,22 +13,22 @@
 .horizontal-slider {
   margin-bottom: 60px;
   padding: 0 16px;
-  overflow: hidden; /* ✅ Ngăn scroll ngang + dọc */
+  overflow: hidden;
 }
 
 .horizontal-slider .slick-list {
-  overflow: hidden !important; /* ✅ Ngăn slick-track vượt ra */
+  overflow: hidden !important;
 }
 
 .horizontal-slider .slick-track {
   display: flex !important;
-  align-items: stretch; /* ✅ Cùng chiều cao slide */
+  align-items: stretch;
 }
 
 .horizontal-slider .slick-slide {
   float: none !important;
   display: flex !important;
-  height: auto !important; /* ✅ Không bị ép chiều cao */
+  height: auto !important;
 }
 
 .slick-prev,
@@ -90,7 +90,7 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  height: 100%; /* ✅ khớp chiều cao slide */
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -99,11 +99,54 @@
   transform: translateY(-6px);
 }
 
-.dish-image {
+.dish-image-container {
+  position: relative;
   width: 100%;
   height: 180px;
+}
+
+.dish-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+  opacity: 0 !important;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.dish-image-container:hover .favorite-button {
+  opacity: 1 !important;
+}
+
+.favorite-button:hover {
+  transform: scale(1.1);
+  background-color: #ffecec;
+}
+
+.favorite-button:not(:hover) {
+  visibility: hidden !important;
+}
+
+.dish-image-container:hover .favorite-button:not(:hover) {
+  visibility: visible !important;
 }
 
 .dish-details {
@@ -139,9 +182,11 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  height: 100%;
+  width: 300px; /* Cố định chiều rộng */
+  height: 360px; /* Cố định chiều cao */
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .restaurant-item:hover {
@@ -159,6 +204,8 @@
   padding: 10px;
   text-align: left;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .restaurant-details h3 {
@@ -192,8 +239,20 @@
   white-space: nowrap;
 }
 
+.restaurant-address {
+  font-size: 14px;
+  color: #555;
+  margin: 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1; /* Đẩy nút xuống dưới */
+}
+
 .rc-button {
-  margin-top: 8px;
+  margin-top: auto; /* Đảm bảo nút ở dưới cùng */
   padding: 8px 16px;
   background-color: #e74c3c;
   color: #fff;
@@ -221,7 +280,14 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.restaurant-item:hover .favorite-icon {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .favorite-icon:hover {

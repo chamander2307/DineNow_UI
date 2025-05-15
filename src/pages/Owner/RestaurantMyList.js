@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OwnerLayout from "./OwnerLayout";
-import {
-  fetchRestaurantsByOwner,
-} from "../../services/restaurantService";
+import { fetchRestaurantsByOwner } from "../../services/restaurantService";
 import RestaurantFormModal from "../../components/Owner/RestaurantFormModal";
 import RestaurantDetailModal from "../../components/Owner/RestaurantDetailModal";
+import Modal from "react-modal";
 import "../../assets/styles/owner/OwnerRestaurant.css";
+
+Modal.setAppElement("#root");
 
 const RestaurantMyList = () => {
   const navigate = useNavigate();
@@ -14,33 +15,22 @@ const RestaurantMyList = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadRestaurants();
   }, []);
 
-  // Load restaurants from API
   const loadRestaurants = async () => {
+    setLoading(true);
     try {
       const res = await fetchRestaurantsByOwner();
-      console.log("API Response:", res);
-
-      if (res && res.status === 200) {
-        if (Array.isArray(res.data)) {
-          setRestaurants(res.data);
-        } else if (res.data && Array.isArray(res.data.data)) {
-          setRestaurants(res.data.data);
-        } else {
-          console.warn("Không tìm thấy dữ liệu nhà hàng:", res);
-          setRestaurants([]);
-        }
-      } else {
-        console.warn("API trả về lỗi:", res);
-        setRestaurants([]);
-      }
+      setRestaurants(res?.data || []);
     } catch (err) {
-      console.error("Lỗi khi tải danh sách nhà hàng:", err);
+      alert("Không thể tải danh sách nhà hàng: " + (err.response?.data?.message || err.message));
       setRestaurants([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,79 +49,90 @@ const RestaurantMyList = () => {
     setShowDetailModal(true);
   };
 
+  const closeFormModal = () => {
+    setShowFormModal(false);
+    setSelectedRestaurant(null);
+  };
+
+  const closeDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedRestaurant(null);
+  };
+
   return (
     <OwnerLayout>
       <div className="manager-header">
         <h2>Quản lý nhà hàng</h2>
-        <button className="btn-create" onClick={openCreateModal}>
+        <button className="btn-create" onClick={openCreateModal} disabled={loading}>
           Thêm mới nhà hàng
         </button>
       </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Ảnh</th>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Địa chỉ</th>
-            <th>Loại</th>
-            <th>Hạng</th>
-            <th>Đánh giá TB</th>
-            <th>Đặt chỗ</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {restaurants.length === 0 ? (
+      {loading ? (
+        <div className="loading-spinner" style={{ textAlign: "center", padding: "20px" }}>
+          <span>Đang tải...</span>
+        </div>
+      ) : restaurants.length === 0 ? (
+        <p style={{ textAlign: "center", padding: "20px" }}>Không có nhà hàng nào.</p>
+      ) : (
+        <table className="admin-table">
+          <thead>
             <tr>
-              <td colSpan="10">Chưa có nhà hàng nào.</td>
+              <th>Ảnh</th>
+              <th>ID</th>
+              <th>Tên</th>
+              <th>Địa chỉ</th>
+              <th>Loại</th>
+              <th>Hạng</th>
+              <th>Đánh giá TB</th>
+              <th>Số lượng đặt bàn</th>
+              <th>Thao tác</th>
             </tr>
-          ) : (
-            restaurants.map((r) => (
+          </thead>
+          <tbody>
+            {restaurants.map((r) => (
               <tr key={r.id}>
                 <td>
                   <img
                     src={r.thumbnailUrl || "/fallback.jpg"}
-                    alt={r.name}
+                    alt={r.name || "Nhà hàng"}
                     width={80}
                     height={60}
-                    style={{ objectFit: "cover", borderRadius: "6px" }}
+                    onError={(e) => { e.target.src = "/fallback.jpg"; }}
                   />
                 </td>
                 <td>{r.id}</td>
                 <td>{r.name}</td>
                 <td>{r.address}</td>
-                <td>{r.typeName || "—"}</td>
-                <td>{r.restaurantTierName || "—"}</td>
-                <td>{r.averageRating?.toFixed(1) || "0.0"}</td>
-                <td>{r.reservationCount || "0"}</td>
-                <td>{r.status || "Đang hoạt động"}</td>
+                <td>{r.type?.name || r.typeName || "N/A"}</td>
+                <td>{r.restaurantTierName || "N/A"}</td>
+                <td>{r.averageRating ? r.averageRating.toFixed(1) : "0.0"}</td>
+                <td>{r.reservationCount ?? "0"}</td>
                 <td>
                   <button onClick={() => openEditModal(r)}>Sửa</button>
                   <button onClick={() => openDetailModal(r)}>Xem</button>
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {showFormModal && (
         <RestaurantFormModal
           isOpen={showFormModal}
-          onClose={() => setShowFormModal(false)}
+          onClose={closeFormModal}
           restaurant={selectedRestaurant}
           onRefresh={loadRestaurants}
+          restaurants={restaurants} // Truyền danh sách nhà hàng
         />
       )}
 
-      {showDetailModal && (
+      {showDetailModal && selectedRestaurant && (
         <RestaurantDetailModal
           isOpen={showDetailModal}
-          onClose={() => setShowDetailModal(false)}
-          restaurant={selectedRestaurant}
+          onClose={closeDetailModal}
+          restaurantId={selectedRestaurant.id}
         />
       )}
     </OwnerLayout>

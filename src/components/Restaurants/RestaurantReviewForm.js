@@ -1,102 +1,74 @@
-import React, { useState, useContext } from 'react';
-import { UserContext } from '../../contexts/UserContext'; // Import UserContext
-import '../../assets/styles/Restaurant/RestaurantReviewForm.css'; // Import CSS tùy chỉnh
+import React, { useState, useEffect, useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
+import { fetchRestaurantReviews, addRestaurantReview } from '../../services/reviewService';
+import { getCustomerOrdersByRestaurant } from '../../services/orderService';
+import '../../assets/styles/Restaurant/RestaurantReviewForm.css';
 
-const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
-  // State để quản lý form đánh giá
-  const [rating, setRating] = useState(0); // Số sao
-  const [comment, setComment] = useState(''); // Bình luận
-  const [reviews, setReviews] = useState(existingReviews || []); // Danh sách đánh giá
-  const [hoverRating, setHoverRating] = useState(0); // Số sao khi hover (cho hiệu ứng)
-  const [isFormVisible, setIsFormVisible] = useState(true); // Trạng thái hiển thị form
-  const [editIndex, setEditIndex] = useState(null); // Chỉ số của đánh giá đang chỉnh sửa
-  const [editRating, setEditRating] = useState(0); // Số sao khi chỉnh sửa
-  const [editComment, setEditComment] = useState(''); // Bình luận khi chỉnh sửa
-
-  // Lấy thông tin người dùng từ UserContext
+const RestaurantReviewForm = ({ restaurantId }) => {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [reviews, setReviews] = useState([]);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [hasOrdered, setHasOrdered] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
   const currentUser = user?.fullName || user?.email || 'Người dùng';
 
-  // Xử lý khi người dùng gửi đánh giá
-  const handleSubmit = (e) => {
+  // Lấy danh sách đánh giá và kiểm tra đơn hàng
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Lấy danh sách đánh giá
+        const reviewData = await fetchRestaurantReviews(restaurantId);
+        setReviews(reviewData || []);
+
+        // Kiểm tra đơn hàng
+        if (user) {
+          const orderData = await getCustomerOrdersByRestaurant(restaurantId);
+          setHasOrdered(Array.isArray(orderData?.data) && orderData.data.length > 0);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [restaurantId, user]);
+
+  // Gửi đánh giá mới
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0 || comment.trim() === '') {
       alert('Vui lòng chọn số sao và nhập bình luận!');
       return;
     }
 
-    const newReview = {
-      user: currentUser, // Sử dụng thông tin người dùng hiện tại
-      rating,
-      comment,
-      date: new Date().toLocaleDateString(), // Ngày gửi đánh giá
-    };
-
-    // Cập nhật danh sách đánh giá
-    setReviews([newReview, ...reviews]);
-
-    // Reset form và ẩn form
-    setRating(0);
-    setComment('');
-    setIsFormVisible(false);
-  };
-
-  // Xử lý xóa đánh giá
-  const handleDelete = (index) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) {
-      const updatedReviews = reviews.filter((_, i) => i !== index);
-      setReviews(updatedReviews);
-      // Hiện lại form sau khi xóa, bất kể danh sách có rỗng hay không
-      setIsFormVisible(true);
+    const reviewData = { rating, comment };
+    try {
+      const newReview = await addRestaurantReview(restaurantId, reviewData);
+      if (newReview) {
+        setReviews([{
+          user: currentUser,
+          rating: newReview.rating,
+          comment: newReview.comment,
+          date: new Date().toLocaleDateString(),
+        }, ...reviews]);
+        setRating(0);
+        setComment('');
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi đánh giá:', error);
+      alert('Không thể gửi đánh giá. Vui lòng thử lại.');
     }
-  };
-
-  // Xử lý khi nhấn nút chỉnh sửa
-  const handleEdit = (index) => {
-    const review = reviews[index];
-    setEditIndex(index);
-    setEditRating(review.rating);
-    setEditComment(review.comment);
-    setIsFormVisible(true);
-  };
-
-  // Xử lý cập nhật đánh giá
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    if (editRating === 0 || editComment.trim() === '') {
-      alert('Vui lòng chọn số sao và nhập bình luận!');
-      return;
-    }
-
-    const updatedReviews = [...reviews];
-    updatedReviews[editIndex] = {
-      ...updatedReviews[editIndex],
-      rating: editRating,
-      comment: editComment,
-      date: new Date().toLocaleDateString(), // Cập nhật ngày
-    };
-    setReviews(updatedReviews);
-    setEditIndex(null);
-    setEditRating(0);
-    setEditComment('');
-    setIsFormVisible(false);
-  };
-
-  // Xử lý hủy chỉnh sửa
-  const handleCancelEdit = () => {
-    setEditIndex(null);
-    setEditRating(0);
-    setEditComment('');
-    setIsFormVisible(false);
   };
 
   return (
     <div className="rest-review-form-container">
       <h2>Đánh giá nhà hàng</h2>
 
-      {/* Form nhập đánh giá - Chỉ hiển thị nếu isFormVisible là true */}
-      {isFormVisible && (
-        <form onSubmit={editIndex !== null ? handleUpdate : handleSubmit} className="rest-review-form">
+      {hasOrdered && user ? (
+        <form onSubmit={handleSubmit} className="rest-review-form">
           <div className="rest-rating-input">
             <label>Đánh giá của bạn:</label>
             <div className="rest-stars">
@@ -105,8 +77,8 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
                 return (
                   <span
                     key={index}
-                    className={`rest-star ${starValue <= (hoverRating || (editIndex !== null ? editRating : rating)) ? 'filled' : ''}`}
-                    onClick={() => (editIndex !== null ? setEditRating(starValue) : setRating(starValue))}
+                    className={`rest-star ${starValue <= (hoverRating || rating) ? 'filled' : ''}`}
+                    onClick={() => setRating(starValue)}
                     onMouseEnter={() => setHoverRating(starValue)}
                     onMouseLeave={() => setHoverRating(0)}
                   >
@@ -120,8 +92,8 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
           <div className="rest-comment-input">
             <label>Bình luận:</label>
             <textarea
-              value={editIndex !== null ? editComment : comment}
-              onChange={(e) => (editIndex !== null ? setEditComment(e.target.value) : setComment(e.target.value))}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               placeholder="Nhập bình luận của bạn..."
               rows="4"
               required
@@ -129,25 +101,19 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
           </div>
           <div className="rest-form-actions">
             <button type="submit" className="rest-submit-btn">
-              {editIndex !== null ? 'Cập nhật đánh giá' : 'Gửi đánh giá'}
+              Gửi đánh giá
             </button>
-            {editIndex !== null && (
-              <button
-                type="button"
-                className="rest-cancel-btn"
-                onClick={handleCancelEdit}
-              >
-                Hủy
-              </button>
-            )}
           </div>
         </form>
+      ) : (
+        <p>Bạn cần đặt hàng và đăng nhập để gửi đánh giá.</p>
       )}
 
-      {/* Hiển thị danh sách đánh giá */}
       <div className="rest-reviews-list">
         <h3>Các đánh giá ({reviews.length})</h3>
-        {reviews.length > 0 ? (
+        {loading ? (
+          <p>Đang tải đánh giá...</p>
+        ) : reviews.length > 0 ? (
           reviews.map((review, index) => (
             <div key={index} className="rest-review-item">
               <div className="rest-review-header">
@@ -162,23 +128,6 @@ const RestaurantReviewForm = ({ restaurantId, existingReviews }) => {
                 ))}
               </div>
               <p className="rest-review-comment">{review.comment}</p>
-              {/* Chỉ hiển thị nút "Sửa" và "Xóa" nếu đánh giá thuộc về người dùng hiện tại */}
-              {review.user === currentUser && (
-                <div className="rest-review-actions">
-                  <button
-                    className="rest-edit-btn"
-                    onClick={() => handleEdit(index)}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    className="rest-delete-btn"
-                    onClick={() => handleDelete(index)}
-                  >
-                    Xóa
-                  </button>
-                </div>
-              )}
             </div>
           ))
         ) : (

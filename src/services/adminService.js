@@ -2,107 +2,182 @@ import axios from '../config/axios';
 
 // ========== ADMIN: Quản lý Người dùng ==========
 
-// Lấy danh sách tất cả người dùng
 export const fetchAllUsers = async () => {
-  const res = await axios.get('/api/admin/users');
-  return res.data.data;
+  try {
+    const res = await axios.get('/api/admin/users');
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách người dùng:", error);
+    throw error;
+  }
 };
 
-// Tạo mới tài khoản Owner
 export const createOwner = async (data) => {
-  return await axios.post('/api/admin/users/owner', data);
+  try {
+    const res = await axios.post('/api/admin/users/owner', data);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi tạo tài khoản Owner:", error);
+    throw error;
+  }
 };
 
-// Lấy thông tin chi tiết người dùng theo ID
 export const getUserDetails = async (userId) => {
-  const res = await axios.get(`/api/admin/users/${userId}`);
-  return res.data.data;
+  try {
+    const res = await axios.get(`/api/admin/users/${userId}`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết người dùng:", error);
+    throw error;
+  }
 };
 
-// ========== ADMIN: Quản lý Loại Nhà Hàng (Restaurant Type) ==========
+// ========== ADMIN: Quản lý Loại Nhà Hàng ==========
 
-// Tạo mới loại nhà hàng
 export const createRestaurantType = async (formData) => {
-  return await axios.post('/api/admin/restaurant-types', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  try {
+    const res = await axios.post('/api/admin/restaurant-types', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi tạo loại nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Cập nhật loại nhà hàng
 export const updateRestaurantType = async (restaurantTypeId, formData) => {
-  return await axios.put(`/api/admin/restaurant-types/${restaurantTypeId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  try {
+    const res = await axios.put(`/api/admin/restaurant-types/${restaurantTypeId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật loại nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Xoá loại nhà hàng
 export const deleteRestaurantType = async (restaurantTypeId) => {
-  return await axios.delete(`/api/admin/restaurant-types/${restaurantTypeId}`);
+  try {
+    const res = await axios.delete(`/api/admin/restaurant-types/${restaurantTypeId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa loại nhà hàng:", error);
+    throw error;
+  }
 };
 
 // ========== ADMIN: Quản lý Nhà Hàng ==========
 
-// Lấy danh sách tất cả nhà hàng (có phân trang và lọc trạng thái)
 export const fetchAllRestaurants = async (page = 0, size = 20, status = "") => {
-  const params = new URLSearchParams({ page, size });
-  if (status) params.append("status", status);
-  return await axios.get(`/api/admin/restaurants?${params.toString()}`);
+  try {
+    const params = new URLSearchParams({ page, size });
+    if (status) params.append("status", status);
+    const res = await axios.get(`/api/admin/restaurants?${params.toString()}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Cập nhật trạng thái nhà hàng
 export const updateRestaurantStatus = async (restaurantId, newStatus) => {
-  return await axios.put(`/api/admin/restaurants/${restaurantId}/status`, null, {
-    params: { status: newStatus },
-  });
+  try {
+    const res = await axios.put(`/api/admin/restaurants/${restaurantId}/status`, null, {
+      params: { status: newStatus },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trạng thái nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Lấy chi tiết nhà hàng theo ID
 export const fetchRestaurantById = async (restaurantId) => {
-  return await axios.get(`/api/admin/restaurants/${restaurantId}`);
+  try {
+    const res = await axios.get(`/api/admin/restaurants/${restaurantId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết nhà hàng:", error);
+    throw error;
+  }
 };
 
-// Xoá nhà hàng
 export const deleteRestaurant = async (restaurantId) => {
-  return await axios.delete(`/api/admin/restaurants/${restaurantId}`);
+  try {
+    const res = await axios.delete(`/api/admin/restaurants/${restaurantId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa nhà hàng:", error);
+    throw error;
+  }
 };
 
-// ========== ADMIN: Quản lý Danh Mục Chính (Main Category) ==========
+// ========== ADMIN: Quản lý Danh Mục Chính ==========
 
-// Tạo danh mục chính
 export const createMainCategory = async (data) => {
-  return await axios.post('/api/admin/main-categories', data);
+  try {
+    const res = await axios.post('/api/admin/main-categories', data);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi tạo danh mục chính:", error);
+    throw error;
+  }
 };
 
-// Cập nhật danh mục chính
 export const updateMainCategory = async (id, data) => {
-  return await axios.put(`/api/admin/main-categories/${id}`, data);
+  try {
+    const res = await axios.put(`/api/admin/main-categories/${id}`, data);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật danh mục chính:", error);
+    throw error;
+  }
 };
 
-// Xoá danh mục chính
 export const deleteMainCategory = async (id) => {
-  return await axios.delete(`/api/admin/main-categories/${id}`);
+  try {
+    const res = await axios.delete(`/api/admin/main-categories/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa danh mục chính:", error);
+    throw error;
+  }
 };
 
 // ========== ADMIN: Quản lý Đơn hàng ==========
 
-// Lấy tất cả đơn hàng (có phân trang)
 export const fetchAdminOrders = async (page = 0, size = 10) => {
-  const res = await axios.get('/api/admin/orders', {
-    params: { page, size },
-  });
-  return res.data.data;
+  try {
+    const res = await axios.get('/api/admin/orders', {
+      params: { page, size },
+    });
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+    throw error;
+  }
 };
 
-// Lọc đơn hàng theo trạng thái
 export const fetchAdminOrdersByStatus = async (status, page = 0, size = 10) => {
-  const res = await axios.get('/api/admin/orders/status', {
-    params: { status, page, size },
-  });
-  return res.data.data;
+  try {
+    const res = await axios.get('/api/admin/orders/status', {
+      params: { status, page, size },
+    });
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lọc đơn hàng theo trạng thái:", error);
+    throw error;
+  }
 };
 
-// Lấy chi tiết đơn hàng theo ID
 export const fetchAdminOrderDetails = async (orderId) => {
-  const res = await axios.get(`/api/admin/orders/${orderId}`);
-  return res.data.data;
-};
+  try {
+    const res = await axios.get(`/api/admin/orders/${orderId}`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
+    throw error;
+  }
+};  

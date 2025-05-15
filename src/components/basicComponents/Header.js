@@ -5,12 +5,14 @@ import { UserContext } from "../../contexts/UserContext";
 import { FaHeart, FaShoppingBag } from "react-icons/fa";
 import "../../assets/styles/home/Navbar.css";
 import RestaurantCart from "../Restaurants/RestaurantCart";
+import { fetchMainCategories } from "../../services/menuItemService";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [showCartDropdown, setShowCartDropdown] = useState(false); //t
-  const cartRef = useRef(); //t
+  const [showCartDropdown, setShowCartDropdown] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const cartRef = useRef();
   const dropdownRef = useRef();
   const userRef = useRef();
   const navigate = useNavigate();
@@ -19,6 +21,16 @@ const Header = () => {
   const userName = user?.fullName || user?.email || "Người dùng";
 
   useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchMainCategories();
+        setCategories(data || []);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục món ăn:", error);
+      }
+    };
+    loadCategories();
+
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
@@ -27,7 +39,6 @@ const Header = () => {
         setShowUserDropdown(false);
       }
       if (cartRef.current && !cartRef.current.contains(e.target)) {
-        //t
         setShowCartDropdown(false);
       }
     };
@@ -64,16 +75,15 @@ const Header = () => {
             </span>
             {showDropdown && (
               <div className="dropdown-menu">
-                <Link to="/food-category/mon-nuoc">Món Nước</Link>
-                <Link to="/food-category/mon-kho">Món Khô</Link>
-                <Link to="/food-category/mon-hap-luoc">Món Hấp - Luộc</Link>
-                <Link to="/food-category/mon-chien-nuong">
-                  Món Chiên - Nướng
-                </Link>
-                <Link to="/food-category/mon-kho-to">Món Kho</Link>
-                <Link to="/food-category/mon-goi-nom">Món Gỏi - Nộm</Link>
-                <Link to="/food-category/mon-chay">Món Chay</Link>
-                <Link to="/food-category/mon-trang-mieng">Món Tráng Miệng</Link>
+                <Link to="/all-dishes">Tất cả món ăn</Link>
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/food-category/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
               </div>
             )}
             {isLogin && (
@@ -114,7 +124,6 @@ const Header = () => {
                 {showUserDropdown && (
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
-                    <Link to="/reservation-history">Đơn Đặt</Link>
                     {user?.role === "ADMIN" && (
                       <Link to="/admin/restaurants">Quản lý Admin</Link>
                     )}

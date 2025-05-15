@@ -6,11 +6,6 @@ import { addFavoriteRestaurant } from "../../services/userService";
 import { UserContext } from "../../contexts/UserContext";
 import FavoriteButton from "../basicComponents/FavoriteButton";
 
-const getImageUrl = (filename) => {
-  if (!filename) return "/fallback.jpg"; // ảnh mặc định nếu thiếu
-  return `http://localhost:8080/uploads/${filename}`;
-};
-
 const renderStars = (rating) => {
   const full = Math.floor(rating);
   const half = rating % 1 !== 0;
@@ -32,7 +27,7 @@ const formatNumber = (num) => {
   return num.toString();
 };
 
-const RestaurantCard = ({ id, image, name, rating, address, visits }) => {
+const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits }) => {
   const { isLogin } = useContext(UserContext);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -53,20 +48,20 @@ const RestaurantCard = ({ id, image, name, rating, address, visits }) => {
         restaurantId={id}
       />
       <img
-        src={getImageUrl(image)}
+        src={thumbnailUrl || "/fallback.jpg"}
         alt={name}
         className="restaurant-image"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = "/fallback.jpg"; // fallback nếu lỗi ảnh
+          e.target.src = "/fallback.jpg";
         }}
       />
 
       <div className="restaurant-details">
         <h3>{name}</h3>
         <div className="restaurant-meta">
-          {renderStars(rating)}
-          <span className="visit-count">{formatNumber(visits)} lượt đến</span>
+          {renderStars(averageRating)}
+          <span className="visit-count">{formatNumber(visits || 0)} lượt đến</span>
         </div>
         {address && <p className="restaurant-address">{address}</p>}
         <Link to={`/restaurant/${id}`}>

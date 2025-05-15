@@ -33,6 +33,8 @@ Owner:
 
 thanh điều hướng cho cố định bên trên màn hình.
 
+thống kê tổng doanh thu/lợi nhuận.
+
 ADMIN:
     loại nhà hàng: chỉ cho thêm/sửa
     main-category: chỉ cho thêm/sửa
@@ -52,3 +54,12 @@ Owner:
     quản lí đánh giá:
         + đánh giá nhà hàng.
         + thêm giao diện đánh giá món ăn  (lọc nhà hàng / món ăn).
+
+
+LƯU Ý: HIỂN THỊ HẾT HẾT THÔNG TIN  TRẢ VỀ TỪ API.
+
+lỗi:
+chỉnh sửa lại thống kê.
+tổng quan.
+Chỉnh sửa thông tin chuyển khoản (owner)
+public: chỉnh sửa lại các trang: all dishes, all restaurants, navbar.

@@ -1,36 +1,42 @@
 import React, { useState } from "react";
-import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
+import { searchRestaurants } from "../../services/restaurantService";
 import "../../assets/styles/home/LocationSearchBar.css";
 
 const LocationSearchBar = () => {
-  const [city, setCity] = useState("Hồ Chí Minh");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
-  const handleSearch = () => {
-    console.log("Tìm kiếm:", city, searchTerm);
-    // Bạn có thể gọi API hoặc điều hướng tại đây
+  const handleSearch = async () => {
+    try {
+      const response = await searchRestaurants({ restaurantName: searchTerm });
+      setSearchResults(response.data?.content || []);
+    } catch (error) {
+      console.error("Lỗi tìm kiếm:", error);
+      setSearchResults([]);
+    }
   };
 
   return (
     <div className="location-search-bar">
-      <div className="city-select">
-        <FaMapMarkerAlt className="icon" />
-        <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-          <option value="Hà Nội">Hà Nội</option>
-          <option value="Đà Nẵng">Đà Nẵng</option>
-        </select>
-      </div>
       <input
         type="text"
-        placeholder="Nhập nhà hàng bạn muốn đến..."
+        placeholder="Nhập nhà hàng bạn muốn tìm..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button onClick={handleSearch}>
-        <FaSearch className="icon" />
-        <span>Tìm kiếm</span>
-      </button>
+      <button onClick={handleSearch}>Tìm kiếm</button>
+      {searchResults.length > 0 && (
+        <div className="search-results">
+          <h4>Kết quả tìm kiếm:</h4>
+          <ul>
+            {searchResults.map((restaurant) => (
+              <li key={restaurant.id}>
+                <a href={`/restaurant/${restaurant.id}`}>{restaurant.name}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

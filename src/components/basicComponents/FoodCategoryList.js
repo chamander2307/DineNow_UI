@@ -1,34 +1,32 @@
-import React from "react";
-import "../../assets/styles/home/FilterBar.css"; // dùng chung CSS
-import buffet from "../../assets/img/buffet.png";
-import lau from "../../assets/img/lau.png";
-import nuong from "../../assets/img/nuong.png";
-import haisan from "../../assets/img/haisan.png";
-import quannhau from "../../assets/img/quannhau.png";
-import nhat from "../../assets/img/nhat.png";
-import viet from "../../assets/img/viet.png";
-import han from "../../assets/img/han.png";
-import chay from "../../assets/img/chay.png";
-
-const foodTypes = [
-  { icon: buffet, label: "Buffet" },
-  { icon: lau, label: "Lẩu" },
-  { icon: nuong, label: "Nướng" },
-  { icon: haisan, label: "Hải sản" },
-  { icon: quannhau, label: "Quán nhậu" },
-  { icon: nhat, label: "Món Nhật" },
-  { icon: viet, label: "Món Việt" },
-  { icon: han, label: "Món Hàn" },
-  { icon: chay, label: "Món chay" },
-];
+import React, { useState, useEffect } from "react";
+import "../../assets/styles/home/FilterBar.css";
+import { fetchRestaurantTypes } from "../../services/restaurantService";
 
 const FoodCategoryList = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchRestaurantTypes();
+        setCategories(data || []);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục nhà hàng:", error);
+      }
+    };
+    loadCategories();
+  }, []);
+
   return (
     <div className="food-category-list">
-      {foodTypes.map((type, index) => (
-        <div className="food-category-item" key={index}>
-          <img className="circle-img" src={type.icon} alt={type.label} />
-          <span>{type.label}</span>
+      {categories.map((category) => (
+        <div className="food-category-item" key={category.id}>
+          <img
+            className="circle-img"
+            src={category.imageUrl && category.imageUrl !== "http://localhost:8080/uploads/null" ? category.imageUrl : "/fallback.jpg"}
+            alt={category.name}
+          />
+          <span>{category.name}</span>
         </div>
       ))}
     </div>

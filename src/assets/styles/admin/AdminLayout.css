@@ -2,6 +2,11 @@
   display: flex;
   min-height: 100vh;
 }
+.admin-content {
+  flex: 1;
+  padding: 24px;
+  overflow-x: hidden;
+}
 
 .admin-sidebar {
   width: 240px;

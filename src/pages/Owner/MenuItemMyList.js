@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import OwnerLayout from "./OwnerLayout";
-
 import MenuItemFormModal from "../../components/Owner/MenuItemFormModal";
-
+import MenuItemDetailModal from "../../components/Owner/MenuItemDetailModal";
 import {
   getFullMenuByOwner,
   deleteMenuItem,
   updateMenuItemAvailability,
 } from "../../services/menuItemService";
-
 import { fetchRestaurantsByOwner } from "../../services/restaurantService";
-// import "../../assets/styles/owner/MenuItemList.css";
 
 const MenuItemMyList = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -18,6 +15,9 @@ const MenuItemMyList = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadRestaurants();
@@ -30,47 +30,51 @@ const MenuItemMyList = () => {
   }, [selectedRestaurantId]);
 
   const loadRestaurants = async () => {
+    setLoading(true);
     try {
       const res = await fetchRestaurantsByOwner();
-      const data = res.data.data;
+      const data = res?.data || [];
       setRestaurants(data);
       if (data.length > 0) {
         setSelectedRestaurantId(data[0].id);
       }
     } catch (err) {
-      alert("Không thể tải danh sách nhà hàng");
-      console.error(err);
+      alert("Không thể tải danh sách nhà hàng.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadMenuItems = async (restaurantId) => {
-    try {
-      const res = await getFullMenuByOwner(restaurantId);
-      setMenuItems(Array.isArray(res.data.data) ? res.data.data : []);
-    } catch (err) {
-      alert("Không thể tải danh sách món ăn");
-      console.error(err);
-    }
-  };
-
+  setLoading(true);
+  try {
+    setMenuItems([]);
+    const res = await getFullMenuByOwner(restaurantId);
+    setMenuItems(Array.isArray(res.data) ? res.data : []);
+  } catch (err) {
+    alert("Không thể tải danh sách món ăn.");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xoá món ăn này?")) return;
+    if (!window.confirm("Bạn có chắc chắn muốn xóa món ăn này?")) return;
     try {
       await deleteMenuItem(id);
+      alert("Xóa món ăn thành công.");
       loadMenuItems(selectedRestaurantId);
     } catch (err) {
-      alert("Không thể xoá món ăn");
-      console.error(err);
+      alert("Không thể xóa món ăn: " + (err.response?.data?.message || err.message));
     }
   };
 
   const handleToggleAvailable = async (item) => {
     try {
       await updateMenuItemAvailability(item.id, !item.available);
+      alert("Cập nhật trạng thái thành công.");
       loadMenuItems(selectedRestaurantId);
     } catch (err) {
-      alert("Không thể cập nhật trạng thái");
-      console.error(err);
+      alert("Không thể cập nhật trạng thái: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -82,11 +86,11 @@ const MenuItemMyList = () => {
           <select
             value={selectedRestaurantId || ""}
             onChange={(e) => setSelectedRestaurantId(e.target.value)}
+            disabled={loading || !restaurants.length}
           >
+            <option value="" disabled>Chọn nhà hàng</option>
             {restaurants.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
+              <option key={r.id} value={r.id}>{r.name}</option>
             ))}
           </select>
           <button
@@ -95,57 +99,63 @@ const MenuItemMyList = () => {
               setEditingItem(null);
               setShowFormModal(true);
             }}
+            disabled={loading || !selectedRestaurantId}
           >
             + Tạo món ăn mới
           </button>
         </div>
       </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Ảnh</th>
-            <th>Tên</th>
-            <th>Giá</th>
-            <th>Phục vụ</th>
-            <th>Danh mục</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {menuItems.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <img
-                  src={item.imageUrl || "/fallback.jpg"}
-                  alt={item.name}
-                  width={60}
-                  height={60}
-                  style={{ objectFit: "cover", borderRadius: 4 }}
-                />
-              </td>
-              <td>{item.name}</td>
-              <td>{Number(item.price).toLocaleString()}đ</td>
-              <td>{item.available ? "Còn phục vụ" : "Tạm ngưng"}</td>
-              <td>{item.category?.name || "Không có"}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    setEditingItem(item);
-                    setShowFormModal(true);
-                  }}
-                >
-                  Sửa
-                </button>
-                <button onClick={() => handleDelete(item.id)}>Xoá</button>
-                <button onClick={() => handleToggleAvailable(item)}>
-                  {item.available ? "Ngưng phục vụ" : "Mở lại"}
-                </button>
-              </td>
+      {loading ? (
+        <div className="loading-spinner" style={{ textAlign: "center", padding: "20px" }}>
+          <span>Đang tải...</span>
+        </div>
+      ) : menuItems.length === 0 ? (
+        <p style={{ textAlign: "center", padding: "20px" }}>Không có món ăn nào.</p>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Ảnh</th>
+              <th>Tên</th>
+              <th>Giá</th>
+              <th>Phục vụ</th>
+              <th>Danh mục</th>
+              <th>Thao tác</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {menuItems.map((item) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>
+                  <img
+                    src={item.imageUrl || "/fallback.jpg"}
+                    alt={item.name || "Món ăn"}
+                    width={60}
+                    height={60}
+                    style={{ objectFit: "cover", borderRadius: 4 }}
+                    onError={(e) => { e.target.src = "/fallback.jpg"; }}
+                  />
+                </td>
+                <td>{item.name}</td>
+                <td>{item.price ? Number(item.price).toLocaleString() + "đ" : "N/A"}</td>
+                <td>{item.available ? "Còn phục vụ" : "Tạm ngưng"}</td>
+                <td>{item.category?.name || "Không có"}</td>
+                <td>
+                  <button onClick={() => { setSelectedItem(item); setShowDetailModal(true); }}>Chi tiết</button>
+                  <button onClick={() => { setEditingItem(item); setShowFormModal(true); }}>Sửa</button>
+                  <button onClick={() => handleDelete(item.id)}>Xóa</button>
+                  <button onClick={() => handleToggleAvailable(item)}>
+                    {item.available ? "Ngưng phục vụ" : "Mở lại"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {showFormModal && (
         <MenuItemFormModal
@@ -156,6 +166,14 @@ const MenuItemMyList = () => {
             loadMenuItems(selectedRestaurantId);
             setShowFormModal(false);
           }}
+        />
+      )}
+
+      {showDetailModal && (
+        <MenuItemDetailModal
+          isOpen={showDetailModal}
+          onClose={() => setShowDetailModal(false)}
+          item={selectedItem}
         />
       )}
     </OwnerLayout>
