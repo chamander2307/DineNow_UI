@@ -13,55 +13,8 @@ import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
 import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
 import { addFavoriteRestaurant, removeFavoriteRestaurant } from '../../services/userService';
-import { UserContext } from '../../contexts/UserContext';
-
-// Custom hook để quản lý giỏ hàng
-const useCart = (restaurantId) => {
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('cart'))?.[restaurantId] || {};
-    } catch {
-      return {};
-    }
-  });
-
-  useEffect(() => {
-    try {
-      const storedCart = JSON.parse(localStorage.getItem('cart')) || {};
-      storedCart[restaurantId] = cart;
-      localStorage.setItem('cart', JSON.stringify(storedCart));
-    } catch (error) {
-      console.error('Lỗi khi lưu giỏ hàng:', error);
-    }
-  }, [cart, restaurantId]);
-
-  const addToCart = useCallback((dishId) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      [dishId]: (prevCart[dishId] || 0) + 1,
-    }));
-  }, []);
-
-  const increaseQuantity = useCallback((dishId) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      [dishId]: prevCart[dishId] + 1,
-    }));
-  }, []);
-
-  const decreaseQuantity = useCallback((dishId) => {
-    setCart((prevCart) => {
-      const newQuantity = prevCart[dishId] - 1;
-      if (newQuantity <= 0) {
-        const { [dishId]: _, ...rest } = prevCart;
-        return rest;
-      }
-      return { ...prevCart, [dishId]: newQuantity };
-    });
-  }, []);
-
-  return { cart, addToCart, increaseQuantity, decreaseQuantity };
-};
+import { createOrder } from '../../services/orderService';
+import { UserContext } from '../../contexts/UserContext'; // Đảm bảo import UserContext
 
 // Hàm hiển thị sao đánh giá
 const renderStars = (rating) => {
@@ -175,7 +128,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
 const RestaurantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLogin } = useContext(UserContext);
+  const { isLogin } = useContext(UserContext); // Sử dụng UserContext ở đây
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -186,8 +139,53 @@ const RestaurantDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [cart, setCart] = useState(() => {
+    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+    return savedCart[id] || {};
+  });
 
-  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart(id);
+  // Định nghĩa các hàm trước khi sử dụng
+  const addToCart = useCallback(async (dishId) => {
+    try {
+      let newQuantity;
+      setCart(prev => {
+        newQuantity = (prev[dishId] || 0) + 1;
+        return {
+          ...prev,
+          [dishId]: newQuantity,
+        };
+      });
+      const orderData = {
+        reservationTime: new Date().toISOString(),
+        numberOfPeople: 1,
+        numberOfChild: 0,
+        numberPhone: '0386299573',
+        orderItems: [{ menuItemId: dishId, quantity: newQuantity }],
+      };
+      await createOrder(id, orderData);
+    } catch (err) {
+      setError('Lỗi khi thêm vào giỏ hàng');
+      console.error('Lỗi khi thêm vào giỏ:', err);
+    }
+  }, [id]);
+
+  const increaseQuantity = useCallback((dishId) => {
+    setCart(prev => ({
+      ...prev,
+      [dishId]: prev[dishId] + 1,
+    }));
+  }, []);
+
+  const decreaseQuantity = useCallback((dishId) => {
+    setCart(prev => {
+      const newQuantity = prev[dishId] - 1;
+      if (newQuantity <= 0) {
+        const { [dishId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [dishId]: newQuantity };
+    });
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -205,6 +203,17 @@ const RestaurantDetail = () => {
     };
     loadData();
   }, [id]);
+
+  useEffect(() => {
+    try {
+      const storedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+      storedCart[id] = cart;
+      sessionStorage.setItem('cart', JSON.stringify(storedCart));
+      console.log('Dữ liệu giỏ hàng đã lưu vào sessionStorage:', { [id]: cart });
+    } catch (error) {
+      console.error('Lỗi khi lưu giỏ hàng:', error);
+    }
+  }, [cart, id]);
 
   const toggleLike = useCallback(async () => {
     if (!isLogin) {
@@ -404,9 +413,9 @@ const RestaurantDetail = () => {
                 className="highlight-slider"
                 onSlideChange={() => setIsDragging(true)}
                 onTransitionEnd={() => setIsDragging(false)}
-                speed={1000} 
+                speed={1000}
                 autoplay={{
-                  delay: 4000, 
+                  delay: 4000,
                   disableOnInteraction: false,
                 }}
                 breakpoints={{

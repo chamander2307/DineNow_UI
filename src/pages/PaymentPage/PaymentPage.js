@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../../assets/styles/Restaurant/PaymentPage.css';
+import { createOrder } from '../../services/orderService';
 
 import restaurant1 from '../../assets/img/restaurant1.jpg';
-// Dữ liệu giả lập (thay thế bằng dữ liệu thực tế từ ứng dụng của bạn)
+
+// Dữ liệu giả lập
 const mockRestaurant = {
   name: 'Nhà hàng B',
   address: '456 Đường Ẩm Thực, TP. HCM',
   image: restaurant1,
 };
 
-// Dữ liệu món ăn đã chọn (giả lập, bổ sung số lượng mặc định)
 const mockSelectedItems = [
   { id: '4', name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, quantity: 1 },
   { id: '5', name: 'Cơm Thố Gà + Ốp La', price: 37000, quantity: 1 },
@@ -18,15 +19,26 @@ const mockSelectedItems = [
 ];
 
 const PaymentPage = () => {
-  // Lấy dữ liệu từ useLocation (nếu bạn truyền dữ liệu qua state từ trang trước)
   const location = useLocation();
-  const { restaurant = mockRestaurant, selectedItems: initialItems = mockSelectedItems } = location.state || {};
+  const navigate = useNavigate();
 
-  // State để quản lý danh sách món ăn đã chọn (bao gồm số lượng)
+  // Lấy dữ liệu từ state
+  const { selectedItems: initialItemsData = [{ restaurant: mockRestaurant, dishes: mockSelectedItems }] } = location.state || {};
+
+  // Lấy restaurant và dishes từ selectedItems
+  const restaurant = initialItemsData[0]?.restaurant || mockRestaurant;
+  const initialItems = initialItemsData[0]?.dishes.map(item => ({
+    id: item.id,
+    name: item.name,
+    quantity: item.quantity,
+    price: parseFloat(item.price) || 0, // Đảm bảo price là số, mặc định là 0 nếu không có
+  })) || mockSelectedItems;
+
+  // State để quản lý danh sách món ăn đã chọn
   const [selectedItems, setSelectedItems] = useState(initialItems);
 
   // Tính tổng tiền dựa trên số lượng
-  const totalPrice = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = selectedItems.reduce((total, item) => total + ((parseFloat(item.price) || 0) * item.quantity), 0);
 
   // State để quản lý thông tin đặt chỗ
   const [numberOfAdults, setNumberOfAdults] = useState('');
@@ -34,11 +46,13 @@ const PaymentPage = () => {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [note, setNote] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('VNPay'); // State cho hình thức thanh toán
+  const [paymentMethod, setPaymentMethod] = useState('VNPay');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Xử lý thay đổi số lượng
   const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity < 1) return; // Không cho phép số lượng nhỏ hơn 1
+    if (newQuantity < 1) return;
     setSelectedItems(
       selectedItems.map((item) =>
         item.id === id ? { ...item, quantity: parseInt(newQuantity) } : item
@@ -52,44 +66,62 @@ const PaymentPage = () => {
   };
 
   // Xử lý thanh toán
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
-    // Kiểm tra thông tin bắt buộc
+    setLoading(true);
+    setError('');
+
     if (!numberOfAdults && !numberOfChildren) {
-      alert('Vui lòng nhập số người lớn hoặc số trẻ em!');
+      setError('Vui lòng nhập số người lớn hoặc số trẻ em!');
+      setLoading(false);
       return;
     }
     if (!date || !time) {
-      alert('Vui lòng nhập đầy đủ thông tin đặt chỗ (ngày đến, giờ đến)!');
+      setError('Vui lòng nhập đầy đủ thông tin đặt chỗ (ngày đến, giờ đến)!');
+      setLoading(false);
       return;
     }
 
-    // Đảm bảo số lượng là số hợp lệ (ít nhất 0)
     const adults = parseInt(numberOfAdults) || 0;
     const children = parseInt(numberOfChildren) || 0;
     if (adults + children === 0) {
-      alert('Vui lòng nhập ít nhất một người (người lớn hoặc trẻ em)!');
+      setError('Vui lòng nhập ít nhất một người (người lớn hoặc trẻ em)!');
+      setLoading(false);
       return;
     }
 
-    // Giả lập gọi API thanh toán
-    console.log(`Thanh toán bằng ${paymentMethod} với thông tin:`, {
-      restaurant,
-      selectedItems,
-      totalPrice,
-      numberOfAdults: adults,
-      numberOfChildren: children,
-      date,
-      time,
-      note,
-      paymentMethod,
-    });
-    alert('Đơn hàng đã được gửi đến nhà hàng!');
+    try {
+      const reservationDateTime = new Date(`${date}T${time}`).toISOString();
+      const orderData = {
+        reservationTime: reservationDateTime,
+        numberOfPeople: adults,
+        numberOfChild: children,
+        numberPhone: '0386299573',
+        note: note || '',
+        orderItems: selectedItems.map(item => ({
+          menuItemId: item.id,
+          quantity: item.quantity,
+        })),
+      };
+
+      await createOrder(restaurant.id, orderData);
+
+      const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+      delete savedCart[restaurant.id];
+      sessionStorage.setItem('cart', JSON.stringify(savedCart));
+
+      alert('Đơn hàng đã được gửi đến nhà hàng thành công!');
+      navigate('/');
+    } catch (err) {
+      setError('Lỗi khi gửi đơn hàng: ' + err.message);
+      console.error('Lỗi khi thanh toán:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="payment-page">
-      {/* Bên trái: Thông tin nhà hàng và món ăn */}
       <div className="payment-left">
         <h2>Thông tin đơn hàng</h2>
         <div className="restaurant-info">
@@ -102,7 +134,7 @@ const PaymentPage = () => {
             <li key={item.id} className="selected-item">
               <div className="item-details">
                 <span>{item.name}</span>
-                <span>{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
+                <span>{((parseFloat(item.price) || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
               </div>
               <div className="item-actions">
                 <input
@@ -127,10 +159,9 @@ const PaymentPage = () => {
         </div>
       </div>
 
-      {/* Bên phải: Form thanh toán */}
       <div className="payment-right">
+        {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handlePayment} className="payment-form">
-          {/* Thông tin đặt chỗ */}
           <div className="booking-info">
             <h3>Thông tin đặt chỗ</h3>
             <div className="form-group">
@@ -140,7 +171,7 @@ const PaymentPage = () => {
                 value={numberOfAdults}
                 onChange={(e) => setNumberOfAdults(e.target.value)}
                 min="0"
-                required={!(parseInt(numberOfChildren) > 0)} // Bắt buộc nếu không có trẻ em
+                required={!(parseInt(numberOfChildren) > 0)}
               />
             </div>
             <div className="form-group">
@@ -150,7 +181,7 @@ const PaymentPage = () => {
                 value={numberOfChildren}
                 onChange={(e) => setNumberOfChildren(e.target.value)}
                 min="0"
-                required={!(parseInt(numberOfAdults) > 0)} // Bắt buộc nếu không có người lớn
+                required={!(parseInt(numberOfAdults) > 0)}
               />
             </div>
             <div className="form-group">
@@ -159,7 +190,7 @@ const PaymentPage = () => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]} // Không cho phép chọn ngày trong quá khứ
+                min={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
@@ -170,7 +201,7 @@ const PaymentPage = () => {
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 required
-                step="900" // Bước 15 phút
+                step="900"
               />
             </div>
             <div className="form-group">
@@ -184,7 +215,6 @@ const PaymentPage = () => {
             </div>
           </div>
 
-          {/* Thanh toán */}
           <div className="payment-info">
             <h3>Thanh toán</h3>
             <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
@@ -201,7 +231,9 @@ const PaymentPage = () => {
             </div>
           </div>
 
-          <button type="submit" className="payment-btn">Đặt bàn</button>
+          <button type="submit" className="payment-btn" disabled={loading}>
+            {loading ? 'Đang xử lý...' : 'Thanh toán'}
+          </button>
         </form>
       </div>
     </div>
