@@ -76,6 +76,7 @@ const AdminMainCategoryManager = () => {
           <thead>
             <tr>
               <th>Tên danh mục</th>
+              <th>Mô tả</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -83,9 +84,9 @@ const AdminMainCategoryManager = () => {
             {categories.map((c) => (
               <tr key={c.id}>
                 <td>{c.name}</td>
+                <td>{c.description}</td>
                 <td>
-                  <button onClick={() => openEditModal(c)}>Sửa</button>
-                  <button onClick={() => handleDelete(c.id)}>Xoá</button>
+                  <button class="button-update" onClick={() => openEditModal(c)}>Sửa</button>
                 </td>
               </tr>
             ))}

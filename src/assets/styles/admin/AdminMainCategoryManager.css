@@ -20,6 +20,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
+  grid-template-columns: 40% 40% 20% !important;
   margin-top: 12px;
 }
 
@@ -29,7 +30,14 @@
   padding: 8px 12px;
   text-align: left;
 }
-
+.button-update{
+  background-color: #518cfa !important;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 .admin-table th {
   background-color: #f2f2f2;
 }

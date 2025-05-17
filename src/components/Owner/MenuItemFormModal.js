@@ -1,304 +1,175 @@
 import React, { useState, useEffect } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import Select from "react-select";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { NumericFormat } from "react-number-format";
 import {
-  createRestaurant,
-  updateRestaurant,
-  fetchRestaurantTypes,
-  fetchRestaurantTiers,
-  fetchRestaurantsByOwner,
-} from "../../services/restaurantService";
-import "../../assets/styles/owner/OwnerRestaurant.css";
+  createMenuItem,
+  updateMenuItem,
+} from "../../services/menuItemService";
+import { getFoodCategoriesByRestaurant } from "../../services/foodCategoryService";
+import "../../assets/styles/owner/MenuItem.css";
 
 // Cấu hình Modal
 Modal.setAppElement("#root");
 
-const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh }) => {
+const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuItems, onSuccess }) => {
+  console.log("MenuItemFormModal rendered, isOpen:", isOpen, "restaurantId:", restaurantId);
+
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
+    price: "",
     description: "",
-    typeId: null,
-    restaurantTierId: null,
-    addressDetail: "",
-    images: [],
+    categoryId: null,
+    image: null,
   });
-  const [imageFiles, setImageFiles] = useState([]);
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [restaurantTypes, setRestaurantTypes] = useState([]);
-  const [restaurantTiers, setRestaurantTiers] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [selectedWard, setSelectedWard] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Tải dữ liệu ban đầu khi modal mở
+  // Tải danh mục của nhà hàng
   useEffect(() => {
-    const loadData = async () => {
+    const loadCategories = async () => {
       try {
-        console.log("Tải dữ liệu ban đầu...");
-        await Promise.all([
-          loadRestaurantTypes(),
-          loadRestaurantTiers(),
-          loadProvinces(),
-        ]);
+        console.log(`Fetching food categories for restaurant ID: ${restaurantId}...`);
+        const res = await getFoodCategoriesByRestaurant(restaurantId);
+        console.log("Food categories response:", res);
+        if (!res || res.length === 0) {
+          console.warn("No food categories found for this restaurant.");
+          toast.warn("Không có danh mục nào để chọn. Vui lòng tạo danh mục cho nhà hàng trước.");
+        }
+        setCategories(res.map((cat) => ({ value: cat.id, label: cat.name })));
       } catch (err) {
-        toast.error(`Không thể tải dữ liệu: ${err.message || "Lỗi không xác định"}`);
+        console.error("Error loading food categories:", err);
+        console.error("Error response:", err.response?.data);
+        toast.error(`Không thể tải danh mục: ${err.message || "Lỗi không xác định"}`);
       }
     };
-    if (isOpen) {
-      loadData();
+    if (isOpen && restaurantId) {
+      console.log("Modal is open, loading food categories");
+      loadCategories();
     }
-  }, [isOpen]);
+  }, [isOpen, restaurantId]);
 
-  // Cập nhật form khi chỉnh sửa nhà hàng
+  // Cập nhật form khi chỉnh sửa
   useEffect(() => {
-    if (restaurant) {
-      console.log("Cập nhật form cho nhà hàng:", restaurant.id);
-      const addressParts = restaurant.address?.split(", ") || [];
+    if (initialData) {
+      console.log("Populating form with initialData:", initialData);
       setFormData({
-        name: restaurant.name || "",
-        phone: restaurant.phone || "",
-        description: restaurant.description || "",
-        typeId: restaurant.type?.id || null,
-        restaurantTierId: restaurant.restaurantTierId || null,
-        addressDetail: addressParts[0] || "",
-        images: restaurant.imageUrls || [],
+        name: initialData.name || "",
+        price: initialData.price ? String(initialData.price) : "",
+        description: initialData.description || "",
+        categoryId: initialData.category?.id || null,
+        image: null,
       });
-
-      const autoFillAddress = async () => {
-        try {
-          const provinceName = addressParts[addressParts.length - 1] || "";
-          const districtName = addressParts[addressParts.length - 2] || "";
-          const wardName = addressParts[addressParts.length - 3] || "";
-
-          const provinceRes = await fetch("https://provinces.open-api.vn/api/p/");
-          const provincesData = await provinceRes.json();
-          const matchedProvince = provincesData.find((p) => p.name === provinceName);
-          if (matchedProvince) {
-            setSelectedProvince({ value: matchedProvince.code, label: matchedProvince.name });
-
-            const districtRes = await fetch(`https://provinces.open-api.vn/api/p/${matchedProvince.code}?depth=2`);
-            const districtData = await districtRes.json();
-            const matchedDistrict = districtData.districts.find((d) => d.name === districtName);
-            if (matchedDistrict) {
-              setSelectedDistrict({ value: matchedDistrict.code, label: matchedDistrict.name });
-
-              const wardRes = await fetch(`https://provinces.open-api.vn/api/d/${matchedDistrict.code}?depth=2`);
-              const wardData = await wardRes.json();
-              const matchedWard = wardData.wards.find((w) => w.name === wardName);
-              if (matchedWard) {
-                setSelectedWard({ value: matchedWard.code, label: matchedWard.name });
-              }
-              setWards(wardData.wards.map((w) => ({ value: w.code, label: w.name })));
-            }
-            setDistricts(districtData.districts.map((d) => ({ value: d.code, label: d.name })));
-          }
-        } catch (err) {
-          toast.error(`Không thể điền địa chỉ: ${err.message || "Lỗi không xác định"}`);
-        }
-      };
-      autoFillAddress();
+      setImageFile(null);
     } else {
-      console.log("Reset form cho nhà hàng mới");
+      console.log("Resetting form for new menu item");
       setFormData({
         name: "",
-        phone: "",
+        price: "",
         description: "",
-        typeId: null,
-        restaurantTierId: null,
-        addressDetail: "",
-        images: [],
+        categoryId: null,
+        image: null,
       });
-      setSelectedProvince(null);
-      setSelectedDistrict(null);
-      setSelectedWard(null);
-      setImageFiles([]);
+      setImageFile(null);
     }
-  }, [restaurant]);
-
-  const loadRestaurantTypes = async () => {
-    try {
-      const res = await fetchRestaurantTypes();
-      setRestaurantTypes(res.map((type) => ({ value: type.id, label: type.name })));
-    } catch (err) {
-      toast.error(`Không thể tải loại nhà hàng: ${err.message || "Lỗi không xác định"}`);
-    }
-  };
-
-  const loadRestaurantTiers = async () => {
-    try {
-      const res = await fetchRestaurantTiers();
-      if (!res || res.length === 0) {
-        toast.warn("Không có cấp độ nhà hàng.");
-        setRestaurantTiers([]);
-        return;
-      }
-      setRestaurantTiers(res.map((tier) => ({ value: tier.id, label: tier.name })));
-    } catch (err) {
-      toast.error(`Không thể tải cấp độ nhà hàng: ${err.message || "Lỗi không xác định"}`);
-    }
-  };
-
-  const loadProvinces = async () => {
-    try {
-      const res = await fetch("https://provinces.open-api.vn/api/p/");
-      const data = await res.json();
-      setProvinces(data.map((p) => ({ value: p.code, label: p.name })));
-    } catch (err) {
-      toast.error(`Không thể tải tỉnh: ${err.message || "Lỗi không xác định"}`);
-    }
-  };
-
-  const loadDistricts = async (provinceCode) => {
-    try {
-      const res = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-      const data = await res.json();
-      setDistricts(data.districts.map((d) => ({ value: d.code, label: d.name })));
-      setWards([]);
-    } catch (err) {
-      toast.error(`Không thể tải huyện: ${err.message || "Lỗi không xác định"}`);
-    }
-  };
-
-  const loadWards = async (districtCode) => {
-    try {
-      const res = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-      const data = await res.json();
-      setWards(data.wards.map((w) => ({ value: w.code, label: w.name })));
-    } catch (err) {
-      toast.error(`Không thể tải xã: ${err.message || "Lỗi không xác định"}`);
-    }
-  };
+  }, [initialData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Input changed: ${name} = ${value}`);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImageFiles(files);
-    console.log("Ảnh đã chọn:", files.map((f) => f.name));
+    const file = e.target.files[0];
+    console.log("Image selected:", file?.name, "Size:", file?.size, "Type:", file?.type);
+    setImageFile(file);
   };
 
-  const handleSelectChange = (selected, fieldName) => {
-    setFormData((prev) => ({ ...prev, [fieldName]: selected ? selected.value : null }));
+  const handleSelectChange = (selected) => {
+    console.log("Category selected:", selected);
+    setFormData((prev) => ({ ...prev, categoryId: selected ? selected.value : null }));
+  };
+
+  const handlePriceChange = (values) => {
+    const { value } = values;
+    console.log("Price changed:", value);
+    setFormData((prev) => ({ ...prev, price: value || "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submit, ngăn GET mặc định");
+    console.log("Form submitted, validating...");
 
-    // Kiểm tra các trường bắt buộc
-    if (!formData.name) {
-      toast.error("Vui lòng nhập tên nhà hàng.");
-      return;
-    }
-    if (!formData.phone) {
-      toast.error("Vui lòng nhập số điện thoại.");
-      return;
-    }
-    if (!formData.typeId) {
-      toast.error("Vui lòng chọn loại nhà hàng.");
-      return;
-    }
-    if (!formData.restaurantTierId && !restaurant?.id) {
-      toast.error("Vui lòng chọn cấp độ nhà hàng.");
-      return;
-    }
-    if (!selectedProvince) {
-      toast.error("Vui lòng chọn tỉnh.");
-      return;
-    }
-    if (!formData.description) {
-      toast.error("Vui lòng nhập mô tả nhà hàng.");
-      return;
-    }
-    if (imageFiles.length === 0 && !restaurant?.id) {
-      toast.error("Vui lòng chọn ít nhất một ảnh.");
-      return;
-    }
-
-    // Kiểm tra định dạng số điện thoại
-    const phoneRegex = /^0[0-9]{9}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      toast.error("Số điện thoại không hợp lệ (0xxxxxxxxx).");
-      return;
-    }
-
-    // Kiểm tra tên nhà hàng trùng
-    try {
-      console.log("Kiểm tra tên nhà hàng trùng...");
-      const ownerRestaurants = await fetchRestaurantsByOwner();
-      const existingRestaurants = ownerRestaurants?.data || [];
-      const isDuplicate = existingRestaurants.some(
-        (r) => r.name.trim().toLowerCase() === formData.name.trim().toLowerCase() && r.id !== restaurant?.id
-      );
-      if (isDuplicate) {
-        toast.error("Tên nhà hàng đã tồn tại.");
-        return;
-      }
-    } catch (err) {
-      toast.error(`Không thể kiểm tra tên nhà hàng: ${err.message || "Lỗi không xác định"}`);
-      return;
-    }
-
-    // Tạo địa chỉ đầy đủ
-    const fullAddress = [
-      formData.addressDetail,
-      selectedWard?.label,
-      selectedDistrict?.label,
-      selectedProvince?.label,
-    ].filter(Boolean).join(", ");
-
-    if (!fullAddress) {
-      toast.error("Vui lòng nhập địa chỉ đầy đủ.");
-      return;
-    }
-
-    // Tạo payload
-    const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("phone", formData.phone);
-    payload.append("address", fullAddress);
-    payload.append("description", formData.description);
-    payload.append("typeId", formData.typeId.toString());
-    if (!restaurant?.id) {
-      payload.append("restaurantTierId", formData.restaurantTierId.toString());
-    }
-    imageFiles.forEach((image, index) => {
-      if (image instanceof File) {
-        payload.append("images", image);
-        console.log(`Thêm ảnh ${index + 1}: ${image.name}`);
-      }
+    // Kiểm tra tên món ăn trùng lặp
+    const normalizedInputName = formData.name.trim().replace(/\s+/g, " ").toLowerCase();
+    const isDuplicate = menuItems.some((item) => {
+      const normalizedExistingName = item.name?.trim().replace(/\s+/g, " ").toLowerCase();
+      return normalizedExistingName === normalizedInputName && item.id !== initialData?.id;
     });
 
-    console.log("Payload:", [...payload.entries()]);
+    if (isDuplicate) {
+      console.log("Tên món ăn đã tồn tại:", formData.name);
+      alert("Tên món ăn đã tồn tại."); // Thay toast.error bằng alert
+      return;
+    }
+
+    if (!formData.name) {
+      console.log("Validation failed: Missing name");
+      toast.error("Vui lòng nhập tên món ăn.");
+      return;
+    }
+    if (!formData.price || isNaN(formData.price) || Number(formData.price) <= 0) {
+      console.log("Validation failed: Invalid price", formData.price);
+      toast.error("Vui lòng nhập giá hợp lệ.");
+      return;
+    }
+    if (!formData.categoryId) {
+      console.log("Validation failed: Missing categoryId");
+      toast.error("Vui lòng chọn danh mục.");
+      return;
+    }
+    if (!imageFile && !initialData?.imageUrl) {
+      console.log("Validation failed: Missing image");
+      toast.error("Vui lòng chọn ảnh cho món ăn.");
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append("name", formData.name);
+    payload.append("price", formData.price);
+    payload.append("description", formData.description || "");
+    payload.append("category", formData.categoryId.toString());
+    if (imageFile) {
+      payload.append("imageUrl", imageFile);
+    }
+
+    console.log("Payload prepared:", [...payload.entries()]);
 
     try {
       setLoading(true);
-      if (restaurant?.id) {
-        console.log(`Gửi PUT /api/owner/restaurants/${restaurant.id}`);
-        await updateRestaurant(restaurant.id, payload);
-        toast.success("Cập nhật nhà hàng thành công!");
+      if (initialData) {
+        console.log(`Updating menu item ID: ${initialData.id}`);
+        const response = await updateMenuItem(initialData.id, payload);
+        console.log("Update response:", response);
+        toast.success("Cập nhật món ăn thành công!");
       } else {
-        console.log("Gửi POST /api/owner/restaurants");
-        await createRestaurant(payload);
-        toast.success("Tạo nhà hàng thành công!");
+        console.log(`Creating new menu item for restaurant ID: ${restaurantId}`);
+        const response = await createMenuItem(restaurantId, payload);
+        console.log("Create response:", response);
+        toast.success("Tạo món ăn thành công!");
       }
-      onRefresh();
-      onClose();
+      onSuccess();
     } catch (err) {
+      console.error("Error submitting form:", err);
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
       const errorMessage = err.response?.data?.message || err.message || "Lỗi không xác định";
-      console.error("Lỗi API:", err.response?.data || err);
-      toast.error(`Lỗi khi lưu nhà hàng: ${errorMessage}`);
+      toast.error(`Lỗi khi lưu món ăn: ${errorMessage}`);
     } finally {
+      console.log("Submission finished, setting loading to false");
       setLoading(false);
     }
   };
@@ -307,28 +178,23 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="modal-box"
-      overlayClassName="modal-overlay"
+      className="ReactModal__Content"
+      overlayClassName="ReactModal__Overlay"
     >
       <div className="modal-header">
-        <h2>{restaurant ? "Sửa nhà hàng" : "Thêm nhà hàng"}</h2>
-        <button className="close-btn" onClick={onClose}>×</button>
+        <h2>{initialData ? "Sửa món ăn" : "Thêm món ăn"}</h2>
+        <button className="close-btn" onClick={onClose}>
+          ×
+        </button>
       </div>
 
-      {formData.description && (
-        <div className="description-preview">
-          <h3>Mô tả (Xem trước):</h3>
-          <div className="description-content" dangerouslySetInnerHTML={{ __html: formData.description }} />
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} method="POST" className="modal-content">
+      <form onSubmit={handleSubmit} className="modal-content">
         <div className="form-group">
-          <label>Tên nhà hàng</label>
+          <label>Tên món ăn</label>
           <input
             className="form-input"
             name="name"
-            placeholder="Nhập tên nhà hàng"
+            placeholder="Nhập tên món ăn"
             value={formData.name}
             onChange={handleChange}
             required
@@ -336,116 +202,63 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh }) => {
         </div>
 
         <div className="form-group">
-          <label>Số điện thoại</label>
-          <input
+          <label>Giá (VNĐ)</label>
+          <NumericFormat
             className="form-input"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Nhập số điện thoại"
+            thousandSeparator={true}
+            suffix=" VNĐ"
+            placeholder="Nhập giá (VD: 50,000 VNĐ)"
+            value={formData.price}
+            onValueChange={handlePriceChange}
+            allowNegative={false}
             required
           />
         </div>
 
         <div className="form-group">
-          <label>Loại nhà hàng</label>
+          <label>Danh mục</label>
           <Select
             className="select-input"
-            placeholder="Chọn loại nhà hàng"
-            value={restaurantTypes.find((type) => type.value === formData.typeId) || null}
-            options={restaurantTypes}
-            onChange={(selected) => handleSelectChange(selected, "typeId")}
+            placeholder="Chọn danh mục"
+            value={categories.find((cat) => cat.value === formData.categoryId) || null}
+            options={categories}
+            onChange={handleSelectChange}
             required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Cấp độ</label>
-          <Select
-            className="select-input"
-            placeholder="Chọn cấp độ"
-            value={restaurantTiers.find((tier) => tier.value === formData.restaurantTierId) || null}
-            options={restaurantTiers}
-            onChange={(selected) => handleSelectChange(selected, "restaurantTierId")}
-            required={!restaurant?.id}
-            isDisabled={restaurant?.id}
-          />
-        </div>
-
-        <div className="address-group">
-          <label>Địa chỉ</label>
-          <Select
-            className="select-input"
-            placeholder="Chọn tỉnh"
-            value={selectedProvince}
-            options={provinces}
-            onChange={(selected) => {
-              setSelectedProvince(selected);
-              setSelectedDistrict(null);
-              setSelectedWard(null);
-              loadDistricts(selected.value);
-            }}
-            required
-          />
-          <Select
-            className="select-input"
-            placeholder="Chọn huyện"
-            value={selectedDistrict}
-            options={districts}
-            onChange={(selected) => {
-              setSelectedDistrict(selected);
-              setSelectedWard(null);
-              loadWards(selected.value);
-            }}
-            isDisabled={!selectedProvince}
-          />
-          <Select
-            className="select-input"
-            placeholder="Chọn xã"
-            value={selectedWard}
-            options={wards}
-            onChange={(selected) => setSelectedWard(selected)}
-            isDisabled={!selectedDistrict}
-          />
-          <input
-            className="form-input"
-            name="addressDetail"
-            placeholder="Số nhà, đường"
-            value={formData.addressDetail}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Hình ảnh hiện tại</label>
-          <div className="image-preview">
-            {formData.images.length > 0 ? (
-              formData.images.map((url, index) => (
-                <img key={index} src={url} alt={`Hình ảnh ${index + 1}`} className="image-preview-img" />
-              ))
-            ) : (
-              <p>Không có hình ảnh.</p>
-            )}
-          </div>
-          <input
-            type="file"
-            name="images"
-            multiple
-            onChange={handleImageChange}
-            className="file-input"
-            required={!restaurant?.id && imageFiles.length === 0}
           />
         </div>
 
         <div className="form-group">
           <label>Mô tả</label>
-          <CKEditor
-            editor={ClassicEditor}
-            data={formData.description || ""}
-            config={{
-              toolbar: ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "|", "undo", "redo"],
-            }}
-            onChange={(event, editor) => setFormData({ ...formData, description: editor.getData() })}
+          <textarea
+            className="form-input"
+            name="description"
+            placeholder="Nhập mô tả"
+            value={formData.description}
+            onChange={handleChange}
+            rows={4}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Ảnh món ăn</label>
+          {initialData?.imageUrl && (
+            <div className="image-preview">
+              <div className="image-wrapper">
+                <img
+                  src={initialData.imageUrl}
+                  alt="Ảnh hiện tại"
+                  className="image-preview-img"
+                />
+              </div>
+            </div>
+          )}
+          <input
+            type="file"
+            name="image"
+            onChange={handleImageChange}
+            className="file-input"
+            accept="image/*"
+            required={!initialData?.imageUrl}
           />
         </div>
 
@@ -453,10 +266,13 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh }) => {
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? "Đang xử lý..." : "Lưu"}
           </button>
-          <button type="button" className="cancel-btn" onClick={onClose}>Hủy</button>
+          <button type="button" className="cancel-btn" onClick={onClose}>
+            Hủy
+          </button>
         </div>
       </form>
     </Modal>
   );
 };
-export default RestaurantFormModal;
+
+export default MenuItemFormModal;

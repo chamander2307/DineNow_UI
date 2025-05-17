@@ -72,6 +72,14 @@ const Sidebar = () => {
             Thống kê doanh thu
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to="/admin/Profit-dashboard"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Thống kê lợi nhuận
+          </NavLink>
+        </li>
       </ul>
     </div>
   );

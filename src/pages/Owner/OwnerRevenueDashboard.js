@@ -242,7 +242,7 @@ const OwnerRevenueDashboard = () => {
                   <YAxis />
                   <Tooltip formatter={(value) => `${value.toLocaleString()} VND`} />
                   <Legend />
-                  <Bar dataKey="totalRevenue" name="Doanh thu" fill="#f4a261" />
+                  <Bar dataKey="totalRevenue" name="Doanh thu" fill="#0099FF	" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -250,7 +250,7 @@ const OwnerRevenueDashboard = () => {
               <h3>Chi tiết doanh thu</h3>
               <table className="admin-table">
                 <thead>
-                  <tr>
+                  <tr >
                     <th>Tháng/Năm</th>
                     <th>Số đơn hàng</th>
                     <th>Doanh thu (VND)</th>

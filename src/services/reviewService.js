@@ -19,6 +19,27 @@ export const fetchMenuItemReviews = async (menuItemId, page = 0, size = 10) => {
     return [];
   }
 };
+
+// Lấy tất cả đánh giá món ăn (PUBLIC)
+export const fetchAllMenuItemReviews = async (menuItemId, page = 0, size = 10) => {
+  try {
+    const response = await axios.get(
+      `/api/reviews/menu-items/${menuItemId}/all`,
+      {
+        params: { page, size },
+      }
+    );
+    const data = response?.data?.data;
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy tất cả đánh giá món ăn:",
+      error?.response?.data?.message || error.message
+    );
+    return [];
+  }
+};
+
 // Thêm đánh giá món ăn
 export const addMenuItemReview = async (menuItemId, reviewData) => {
   try {
@@ -36,7 +57,7 @@ export const addMenuItemReview = async (menuItemId, reviewData) => {
   }
 };
 
-// Lấy danh sách đánh giá nhà hàng (OWNER)
+// Lấy danh sách đánh giá nhà hàng (OWNER hoặc PUBLIC)
 export const fetchRestaurantReviews = async (
   restaurantId,
   page = 0,

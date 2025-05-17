@@ -1,6 +1,6 @@
 .restaurant-page {
   padding: 40px 20px;
-  max-width: 1200px;
+  max-width: 1700px;
   margin: 0 auto;
 }
 
@@ -14,6 +14,26 @@
 /* Không căn giữa, lưới tự giãn, cách nhau 12px */
 .restaurant-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, minmax(280px, 1fr));
+  justify-content: center;
+}
+.restaurant-page {
+  padding: 40px 20px 40px 60px; /* 60px left, 20px right, 40px top/bottom */
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.restaurant-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #333;
+  text-align: center;
+}
+
+.restaurant-list {
+  display: grid;
+  grid-template-columns: repeat(4, 330px);
   gap: 12px;
+  justify-content: center;
 }

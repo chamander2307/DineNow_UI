@@ -6,16 +6,17 @@ import FilterBar from "../../components/basicComponents/FilterBar";
 import FoodCategoryList from "../../components/basicComponents/FoodCategoryList";
 import HighlightSlider from "../../components/basicComponents/HighlightSlider";
 import DishCard from "../../components/Dish/DishCard";
-import featuredDishes from "../../data/featuredDishes"; // Tạm giữ tĩnh
 import RestaurantCard from "../../components/Restaurants/RestaurantCard";
 import RelatedArticles from "../../components/RelatedArticles";
 import { fetchListOfFeaturedRestaurants } from "../../services/restaurantService";
+import { fetchFeaturedMenuItems } from "../../services/menuItemService";
 
 const Home = () => {
   const [featuredRestaurants, setFeaturedRestaurants] = useState([]);
+  const [featuredDishes, setFeaturedDishes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Lấy danh sách nhà hàng nổi bật từ API
+  // Fetch featured restaurants
   useEffect(() => {
     const loadFeaturedRestaurants = async () => {
       try {
@@ -23,11 +24,25 @@ const Home = () => {
         setFeaturedRestaurants(response.data || []);
       } catch (error) {
         console.error("Lỗi khi lấy nhà hàng nổi bật:", error);
-      } finally {
-        setLoading(false);
       }
     };
-    loadFeaturedRestaurants();
+
+    // Fetch featured dishes
+    const loadFeaturedDishes = async () => {
+      try {
+        const response = await fetchFeaturedMenuItems();
+        setFeaturedDishes(response.data || []);
+      } catch (error) {
+        console.error("Lỗi khi lấy món ăn nổi bật:", error);
+      }
+    };
+
+    const loadData = async () => {
+      await Promise.all([loadFeaturedRestaurants(), loadFeaturedDishes()]);
+      setLoading(false);
+    };
+
+    loadData();
   }, []);
 
   const sliderSettings = {
@@ -58,13 +73,17 @@ const Home = () => {
             Khám phá hàng loạt món ăn ngon hấp dẫn mỗi ngày
           </p>
         </div>
-        <Slider {...sliderSettings} className="horizontal-slider">
-          {featuredDishes.map((dish) => (
-            <div key={dish.id} className="slider-card-item">
-              <DishCard dish={dish} />
-            </div>
-          ))}
-        </Slider>
+        {loading ? (
+          <p>Đang tải món ăn nổi bật...</p>
+        ) : (
+          <Slider {...sliderSettings} className="horizontal-slider">
+            {featuredDishes.map((dish) => (
+              <div key={dish.id} className="slider-card-item">
+                <DishCard dish={dish} />
+              </div>
+            ))}
+          </Slider>
+        )}
       </section>
 
       <section className="section">
