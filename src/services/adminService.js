@@ -104,17 +104,17 @@ export const fetchRestaurantById = async (restaurantId) => {
   }
 };
 
-export const deleteRestaurant = async (restaurantId) => {
+// ========== ADMIN: Quản lý Danh Mục Chính ==========
+
+export const fetchAllMainCategories = async () => {
   try {
-    const res = await axios.delete(`/api/admin/restaurants/${restaurantId}`);
-    return res.data;
+    const res = await axios.get('/api/admin/main-categories');
+    return res.data.data;
   } catch (error) {
-    console.error("Lỗi khi xóa nhà hàng:", error);
+    console.error("Lỗi khi lấy danh sách danh mục chính:", error);
     throw error;
   }
 };
-
-// ========== ADMIN: Quản lý Danh Mục Chính ==========
 
 export const createMainCategory = async (data) => {
   try {
@@ -180,4 +180,16 @@ export const fetchAdminOrderDetails = async (orderId) => {
     console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
     throw error;
   }
-};  
+};
+
+// ========== ADMIN: Dashboard ==========
+
+export const fetchAdminDashboardData = async () => {
+  try {
+    const res = await axios.get('/api/admin/dashboard');
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu dashboard admin:", error);
+    throw error;
+  }
+};

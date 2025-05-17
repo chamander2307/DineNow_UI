@@ -1,10 +1,11 @@
 /* =========================
    1. SLIDER STYLES
 ========================= */
+/* Unchanged, as provided previously */
 .slider-card-item {
-  width: 300px;
-  max-width: 300px;
-  padding: 0 12px;
+  width: 330px;
+  max-width: 330px;
+  padding: 0 8px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -12,7 +13,7 @@
 
 .horizontal-slider {
   margin-bottom: 60px;
-  padding: 0 16px;
+  padding: 0 16px 0 60px;
   overflow: hidden;
 }
 
@@ -90,7 +91,8 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  height: 100%;
+  height: 400px; /* Increased to fit additional content */
+  width: 330px;
   display: flex;
   flex-direction: column;
 }
@@ -101,14 +103,16 @@
 
 .dish-image-container {
   position: relative;
-  width: 100%;
-  height: 180px;
+  width: 330px;
+  height: 200px;
+  overflow: hidden;
 }
 
 .dish-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -150,15 +154,17 @@
 }
 
 .dish-details {
-  padding: 10px;
+  padding: 12px; /* Slightly increased for spacing */
   text-align: left;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.dish-details h3 {
+.dish-name {
   font-size: 15px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
   color: #333;
   line-height: 1.3;
   display: -webkit-box;
@@ -167,23 +173,64 @@
   overflow: hidden;
 }
 
+.dish-description {
+  font-size: 13px;
+  color: #555;
+  margin: 0 0 6px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dish-type {
+  font-size: 12px;
+  color: #777;
+  margin: 0 0 8px;
+  font-style: italic;
+}
+
+.dish-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto; /* Push to bottom of dish-details */
+}
+
 .price {
-  font-size: 14px;
+  font-size: 15px;
   color: #e74c3c;
-  font-weight: bold;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.rating {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #f1c40f; /* Yellow for filled stars */
 }
 
 /* =========================
    3. RESTAURANT CARD
 ========================= */
+/* Unchanged, as provided previously */
 .restaurant-item {
   background-color: #fff;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  width: 300px; /* Cố định chiều rộng */
-  height: 360px; /* Cố định chiều cao */
+  width: 330px;
+  height: 370px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -193,10 +240,17 @@
   transform: translateY(-6px);
 }
 
+.restaurant-image-container {
+  width: 330px;
+  height: 200px;
+  overflow: hidden;
+}
+
 .restaurant-image {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -244,15 +298,15 @@
   color: #555;
   margin: 4px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1; /* Đẩy nút xuống dưới */
+  flex-grow: 1;
 }
 
 .rc-button {
-  margin-top: auto; /* Đảm bảo nút ở dưới cùng */
+  margin-top: auto;
   padding: 8px 16px;
   background-color: #e74c3c;
   color: #fff;

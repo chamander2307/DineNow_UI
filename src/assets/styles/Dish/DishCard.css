@@ -2,7 +2,7 @@
   text-decoration: none;
   color: inherit;
   display: block;
-  width: 240px;
+  width: 330px;
 }
 
 .dish-item {
@@ -11,7 +11,7 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  height: 300px;
+  height: 370px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -21,10 +21,17 @@
   transform: translateY(-6px);
 }
 
+.dish-image-container {
+  width: 330px; /* Fixed width */
+  height: 200px; /* Fixed height */
+  overflow: hidden; /* Ensure no overflow */
+}
+
 .dish-image {
-  height: 180px;
   width: 100%;
-  object-fit: cover;
+  height: 100%;
+  object-fit: cover; /* Crop to fit container */
+  object-position: center; /* Center the image */
   display: block;
 }
 

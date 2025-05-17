@@ -1,34 +1,88 @@
 .all-dishes-page {
-    padding: 40px 40px;
-    background-color: #fefefe;
-  }
-  
-  .section-header.center {
-    text-align: center;
-    margin-bottom: 36px;
-  }
-  
-  .section-title {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    color: #222;
-  }
-  
-  .section-sub {
-    font-size: 16px;
-    color: #777;
-  }
-  
+  padding: 40px 20px 40px 60px; /* Match RestaurantList: 60px left, 20px right, 40px top/bottom */
+  max-width: 1600px; /* Match RestaurantList */
+  margin: 0 auto;
+  background-color: #fefefe; /* Retained for consistency */
+}
+
+.section-header.center {
+  text-align: center;
+  margin-bottom: 24px; /* Match RestaurantList's title margin */
+}
+
+.section-title {
+  font-size: 32px; /* Match RestaurantList */
+  font-weight: 800; /* Match RestaurantList */
+  margin: 0 0 8px; /* Consistent with RestaurantList */
+  color: #333; /* Match RestaurantList */
+}
+
+.section-sub {
+  font-size: 16px; /* Consistent with previous AllDishes */
+  color: #555; /* Match RestaurantList's muted tones */
+}
+
+.dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 330px); /* Match RestaurantList: 4 columns, 330px wide */
+  gap: 12px; /* Match RestaurantList */
+  justify-content: center; /* Match RestaurantList */
+}
+
+.error-message {
+  color: #ec1c24; /* Match app theme (e.g., FilterBar, FeaturedSection) */
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+}
+
+.loading {
+  text-align: center;
+  font-size: 16px;
+  color: #333; /* Match RestaurantList's color */
+  margin: 20px 0;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #555; /* Match section-sub */
+  margin: 20px 0;
+}
+
+/* Remove old banner styles */
+.banner,
+.banner-content {
+  display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
   .dishes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(3, 330px); /* Reduce to 3 columns */
   }
-  
-  /* Xoá banner cũ */
-  .banner,
-  .banner-content {
-    display: none !important;
+}
+
+@media (max-width: 900px) {
+  .dishes-grid {
+    grid-template-columns: repeat(2, 330px); /* Reduce to 2 columns */
   }
-  
+}
+
+@media (max-width: 600px) {
+  .all-dishes-page {
+    padding: 20px; /* Simplify padding for mobile */
+  }
+
+  .dishes-grid {
+    grid-template-columns: 330px; /* Single column */
+  }
+
+  .section-title {
+    font-size: 28px; /* Slightly smaller for mobile */
+  }
+
+  .section-sub {
+    font-size: 14px;
+  }
+}

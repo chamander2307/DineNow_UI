@@ -1,16 +1,5 @@
 import axios from "../config/axios";
 
-// Lấy thống kê doanh thu theo nhà hàng (OWNER)
-export const fetchRevenueStatsByRestaurant = async (restaurantId) => {
-  try {
-    const response = await axios.get(`/api/owner/restaurants/${restaurantId}/revenue`);
-    return response.data;
-  } catch (error) {
-    console.error("Lỗi khi lấy thống kê doanh thu:", error);
-    throw error;
-  }
-};
-
 // Lấy doanh thu theo tháng trong năm (OWNER)
 export const fetchMonthlyRevenue = async (restaurantId, year = new Date().getFullYear()) => {
   try {
