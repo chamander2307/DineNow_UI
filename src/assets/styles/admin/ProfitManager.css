@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.profit-manager {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.profit-manager h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.profit-manager .message {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.profit-manager .message.success {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+}
+.profit-manager .message.error {
+  color: #c62828;
+  background: #ffebee;
+  border-left: 4px solid #c62828;
+}
+
+.view-selector {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.view-selector label {
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+}
+.view-selector select {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+.view-selector select:focus {
+  outline: none;
+  border-color: #d6c9ff;
+}
+
+.time-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+.time-inputs input,
+.time-inputs select {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  transition: border-color 0.3s;
+}
+.time-inputs input:focus,
+.time-inputs select:focus {
+  outline: none;
+  border-color: #d6c9ff;
+}
+.time-inputs button {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #6b5b95;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.time-inputs button:hover {
+  background: #5a4b7d;
+}
+.time-inputs p {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+  font-weight: 500;
+}
+
+.profit-section {
+  margin-top: 0.75rem;
+}
+.profit-section h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.profit-section p {
+  font-size: 1rem;
+  color: #6b5b95;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.admin-table th {
+  background: linear-gradient(to bottom, #333, #444);
+  color: #fff;
+  font-weight: 500;
+}
+.admin-table td {
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+.admin-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+.admin-table tr:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .profit-manager {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  .view-selector {
+    grid-template-columns: 1fr;
+  }
+  .time-inputs {
+    grid-template-columns: 1fr;
+  }
+  .admin-table th,
+  .admin-table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+.profit-manager p:not(.message) {
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}

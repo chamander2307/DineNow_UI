@@ -2,12 +2,16 @@
   width: 240px;
   background-color: #f9f9f9;
   padding: 24px 20px;
-  height: calc(100vh - 60px); /* né header 60px */
+  height: calc(100vh - 60px);
   border-right: 1px solid #e0e0e0;
   box-sizing: border-box;
   flex-shrink: 0;
+  position: fixed;
+  top: 60px;
+  z-index: 950;
   overflow-y: auto;
-  margin-top: 10px; 
+  margin-top: 10px;
+  clip-path: polygon(0 0, 100% 0, 100% var(--clip-bottom, 100%), 0 var(--clip-bottom, 100%)); /* Cắt phần dưới */
 }
 
 .admin-sidebar h2 {
@@ -45,5 +49,4 @@
 .admin-sidebar ul li a.active {
   background-color: #007bff;
   color: white;
-
 }

@@ -1,10 +1,10 @@
-import axios from '../config/axios';
+import axios from "../config/axios";
 
 // ========== ADMIN: Quản lý Người dùng ==========
 
 export const fetchAllUsers = async () => {
   try {
-    const res = await axios.get('/api/admin/users');
+    const res = await axios.get("/api/admin/users");
     return res.data.data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách người dùng:", error);
@@ -14,7 +14,7 @@ export const fetchAllUsers = async () => {
 
 export const createOwner = async (data) => {
   try {
-    const res = await axios.post('/api/admin/users/owner', data);
+    const res = await axios.post("/api/admin/users/owner", data);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tạo tài khoản Owner:", error);
@@ -36,8 +36,8 @@ export const getUserDetails = async (userId) => {
 
 export const createRestaurantType = async (formData) => {
   try {
-    const res = await axios.post('/api/admin/restaurant-types', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const res = await axios.post("/api/admin/restaurant-types", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data;
   } catch (error) {
@@ -48,9 +48,13 @@ export const createRestaurantType = async (formData) => {
 
 export const updateRestaurantType = async (restaurantTypeId, formData) => {
   try {
-    const res = await axios.put(`/api/admin/restaurant-types/${restaurantTypeId}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await axios.put(
+      `/api/admin/restaurant-types/${restaurantTypeId}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
     return res.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật loại nhà hàng:", error);
@@ -60,7 +64,9 @@ export const updateRestaurantType = async (restaurantTypeId, formData) => {
 
 export const deleteRestaurantType = async (restaurantTypeId) => {
   try {
-    const res = await axios.delete(`/api/admin/restaurant-types/${restaurantTypeId}`);
+    const res = await axios.delete(
+      `/api/admin/restaurant-types/${restaurantTypeId}`
+    );
     return res.data;
   } catch (error) {
     console.error("Lỗi khi xóa loại nhà hàng:", error);
@@ -84,9 +90,9 @@ export const fetchAllRestaurants = async (page = 0, size = 20, status = "") => {
 
 export const updateRestaurantStatus = async (restaurantId, newStatus) => {
   try {
-    const res = await axios.put(`/api/admin/restaurants/${restaurantId}/status`, null, {
-      params: { status: newStatus },
-    });
+    const res = await axios.put(
+      `/api/admin/restaurants/${restaurantId}?status=${newStatus}`
+    );
     return res.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật trạng thái nhà hàng:", error);
@@ -108,7 +114,7 @@ export const fetchRestaurantById = async (restaurantId) => {
 
 export const fetchAllMainCategories = async () => {
   try {
-    const res = await axios.get('/api/admin/main-categories');
+    const res = await axios.get("/api/admin/main-categories");
     return res.data.data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách danh mục chính:", error);
@@ -118,7 +124,7 @@ export const fetchAllMainCategories = async () => {
 
 export const createMainCategory = async (data) => {
   try {
-    const res = await axios.post('/api/admin/main-categories', data);
+    const res = await axios.post("/api/admin/main-categories", data);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tạo danh mục chính:", error);
@@ -150,7 +156,7 @@ export const deleteMainCategory = async (id) => {
 
 export const fetchAdminOrders = async (page = 0, size = 10) => {
   try {
-    const res = await axios.get('/api/admin/orders', {
+    const res = await axios.get("/api/admin/orders", {
       params: { page, size },
     });
     return res.data.data;
@@ -162,7 +168,7 @@ export const fetchAdminOrders = async (page = 0, size = 10) => {
 
 export const fetchAdminOrdersByStatus = async (status, page = 0, size = 10) => {
   try {
-    const res = await axios.get('/api/admin/orders/status', {
+    const res = await axios.get("/api/admin/orders/status", {
       params: { status, page, size },
     });
     return res.data.data;
@@ -186,10 +192,47 @@ export const fetchAdminOrderDetails = async (orderId) => {
 
 export const fetchAdminDashboardData = async () => {
   try {
-    const res = await axios.get('/api/admin/dashboard');
+    const res = await axios.get("/api/admin/dashboard");
     return res.data.data;
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu dashboard admin:", error);
+    throw error;
+  }
+};
+//========== ADMIN: Profits ==========
+export const fetchMonthlyRestaurantProfits = async (yearMonth) => {
+  try {
+    const res = await axios.get(
+      `/api/admin/profits/restaurants/monthly?yearMonth=${yearMonth}`
+    );
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê lợi nhuận nhà hàng theo tháng:", error);
+    throw error;
+  }
+};
+export const fetchTotalRestaurantProfits = async () => {
+  try {
+    const res = await axios.get("/api/admin/profits/restaurants/total");
+    return res.data.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê lợi nhuận nhà hàng theo năm:", error);
+    throw error;
+  }
+};
+
+export const fetchRangeRestaurantProfits = async (startMonth, endMonth) => {
+  try {
+    const res = await axios.get(
+      `/api/admin/profits/restaurants/monthly/range?startMonth=${startMonth}&endMonth=${endMonth}`
+    );
+    console.log("fetchRangeRestaurantProfits response:", res.data);
+    return res.data.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy thống kê lợi nhuận nhà hàng theo khoảng thời gian:",
+      error
+    );
     throw error;
   }
 };

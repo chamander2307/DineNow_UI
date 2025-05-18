@@ -1,45 +1,49 @@
 .footer {
-    background-color: #f75959;
-    color: #070d17;
-    margin-top: 40px;
-    padding: 32px 16px;
-  }
-  
-  .footer__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px;
-  }
-  
-  .footer__title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  
-  .footer__text {
-    color: #070a0f;
-    font-size: 0.875rem;
-    margin: 4px 0;
-  }
-  
-  .footer__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .footer__link {
-    font-size: 0.875rem;
-    color: #03060a;
-    text-decoration: none;
-    display: block;
-    margin-bottom: 4px;
-  }
-  
-  .footer__link:hover {
-    text-decoration: underline;
-  }
-  
+  background-color: #f75959;
+  color: #070d17;
+  margin-top: 10px; /* Giảm từ 20px xuống 10px */
+  padding: 8px 4px; /* Giảm từ 16px 8px xuống 8px 4px */
+  position: relative;
+  z-index: 950;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.footer__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+.footer__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.footer__text {
+  color: #070a0f;
+  font-size: 0.875rem;
+  margin: 4px 0;
+}
+
+.footer__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer__link {
+  font-size: 0.875rem;
+  color: #03060a;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.footer__link:hover {
+  text-decoration: underline;
+}

@@ -9,10 +9,18 @@ const OwnerSidebar = () => {
       <ul>
         <li>
           <NavLink
-            to="/owner/profile"
+            to="/owner/dashboard"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Tổng quan
+          </NavLink>
+        </li>
+        <li>
+          <NavLink 
+            to="/owner/food-category"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Danh mục món ăn
           </NavLink>
         </li>
         <li>
@@ -69,6 +77,14 @@ const OwnerSidebar = () => {
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Quản lý đơn hàng
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/owner/bank-account"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Tài khoản ngân hàng
           </NavLink>
         </li>
       </ul>

@@ -5,6 +5,7 @@ import {
   fetchAdminOrderDetails,
 } from "../../services/adminService";
 import AdminLayout from "./AdminLayout";
+import OrderDetailModal from "../../components/admin/OrderDetailModal";
 import "../../assets/styles/admin/AdminOrderManager.css";
 
 const AdminOrderManager = () => {
@@ -22,19 +23,30 @@ const AdminOrderManager = () => {
       const res = statusFilter
         ? await fetchAdminOrdersByStatus(statusFilter)
         : await fetchAdminOrders();
-      setOrders(res);
-    } catch {
+      console.log("API response:", res); // Debug dữ liệu
+      const data = Array.isArray(res) ? res : [];
+      setOrders(data);
+      setMessage(data.length === 0 ? "Không có đơn hàng" : "");
+    } catch (error) {
+      console.error("Error loading orders:", error);
       setMessage("Không thể tải đơn hàng");
+      setOrders([]);
     }
   };
 
   const viewOrderDetails = async (orderId) => {
     try {
       const detail = await fetchAdminOrderDetails(orderId);
-      setSelectedOrder(detail);
-    } catch {
+      console.log("Order details:", detail); // Debug chi tiết
+      setSelectedOrder(detail || null);
+    } catch (error) {
+      console.error("Error loading order details:", error);
       setMessage("Không thể tải chi tiết đơn hàng");
     }
+  };
+
+  const closeOrderDetails = () => {
+    setSelectedOrder(null);
   };
 
   return (
@@ -49,9 +61,8 @@ const AdminOrderManager = () => {
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="">Tất cả</option>
             <option value="PENDING">Chờ xử lý</option>
-            <option value="CONFIRMED">Đã xác nhận</option>
-            <option value="PAID">Đã thanh toán</option>
-            <option value="CANCELED">Đã huỷ</option>
+            <option value="APPROVED">Đã xác nhận</option>
+            <option value="REJECTED">Bị từ chối</option>
             <option value="FAILED">Thất bại</option>
             <option value="COMPLETED">Hoàn tất</option>
           </select>
@@ -70,41 +81,37 @@ const AdminOrderManager = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => (
-              <tr key={o.id}>
-                <td>{o.id}</td>
-                <td>{o.customerName}</td>
-                <td>{o.restaurantName}</td>
-                <td>{o.totalPrice?.toLocaleString()} đ</td>
-                <td>{o.status}</td>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
-                <td>
-                  <button onClick={() => viewOrderDetails(o.id)}>Xem</button>
-                </td>
+            {orders.length > 0 ? (
+              orders.map((o) => (
+                <tr key={o.id}>
+                  <td>{o.id || "N/A"}</td>
+                  <td>{o.reservation?.customerName || "N/A"}</td>
+                  <td>{o.reservation?.restaurantName || "N/A"}</td>
+                  <td>{o.totalPrice ? o.totalPrice.toLocaleString() : "0"} đ</td>
+                  <td>{o.status || "N/A"}</td>
+                  <td>
+                    {o.reservation?.reservationTime
+                      ? new Date(o.reservation.reservationTime).toLocaleString()
+                      : "N/A"}
+                  </td>
+                  <td>
+                    <button onClick={() => viewOrderDetails(o.id)}>Xem</button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7">Không có đơn hàng</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
 
-        {selectedOrder && (
-          <div className="order-detail-popup">
-            <h3>Chi tiết đơn hàng #{selectedOrder.id}</h3>
-            <p><strong>Khách hàng:</strong> {selectedOrder.customerName}</p>
-            <p><strong>Nhà hàng:</strong> {selectedOrder.restaurantName}</p>
-            <p><strong>Trạng thái:</strong> {selectedOrder.status}</p>
-            <p><strong>Thời gian:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
-            <p><strong>Món ăn:</strong></p>
-            <ul>
-              {selectedOrder.items?.map((item, i) => (
-                <li key={i}>
-                  {item.name} × {item.quantity} ({item.price?.toLocaleString()} đ)
-                </li>
-              ))}
-            </ul>
-            <p><strong>Tổng cộng:</strong> {selectedOrder.totalPrice?.toLocaleString()} đ</p>
-            <button onClick={() => setSelectedOrder(null)}>Đóng</button>
-          </div>
-        )}
+        <OrderDetailModal
+          isOpen={!!selectedOrder}
+          onClose={closeOrderDetails}
+          order={selectedOrder}
+        />
       </div>
     </AdminLayout>
   );

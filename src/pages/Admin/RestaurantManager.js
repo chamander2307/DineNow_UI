@@ -22,7 +22,7 @@ const RestaurantManager = () => {
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("PENDING");
   const [page, setPage] = useState(0);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -44,6 +44,7 @@ const RestaurantManager = () => {
       const res = await fetchAllRestaurants(page, 100, statusFilter);
       const list = Array.isArray(res.data) ? res.data : [];
       setAllRestaurants(list);
+      console.log("Danh sách nhà hàng:", list); // Debug
     } catch (err) {
       console.error("Lỗi tải danh sách nhà hàng:", err);
       setError("Không thể tải danh sách nhà hàng. Vui lòng thử lại.");
@@ -72,6 +73,7 @@ const RestaurantManager = () => {
     setError(null);
     try {
       const res = await fetchRestaurantById(restaurantId);
+      console.log("Chi tiết nhà hàng:", res.data); // Debug
       setSelectedRestaurant(res.data);
       setShowDetailModal(true);
     } catch (err) {
@@ -86,8 +88,10 @@ const RestaurantManager = () => {
     setLoading(true);
     setError(null);
     try {
+      console.log("Cập nhật trạng thái:", { id, status }); // Debug
       await updateRestaurantStatus(id, status);
       setShowDetailModal(false);
+      setSelectedRestaurant(null);
       await loadRestaurants();
     } catch (err) {
       console.error("Lỗi duyệt nhà hàng:", err);
@@ -160,7 +164,9 @@ const RestaurantManager = () => {
                         src={r.thumbnailUrl || "/fallback.jpg"}
                         alt={r.name || "Nhà hàng"}
                         className="thumbnail"
-                        onError={(e) => { e.target.src = "/fallback.jpg"; }}
+                        onError={(e) => {
+                          e.target.src = "/fallback.jpg";
+                        }}
                       />
                     </td>
                     <td>{r.name || "—"}</td>
@@ -190,7 +196,10 @@ const RestaurantManager = () => {
         {showDetailModal && selectedRestaurant && (
           <RestaurantDetailModal
             restaurant={selectedRestaurant}
-            onClose={() => setShowDetailModal(false)}
+            onClose={() => {
+              setShowDetailModal(false);
+              setSelectedRestaurant(null);
+            }}
             onApprove={handleApprove}
           />
         )}

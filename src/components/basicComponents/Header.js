@@ -124,6 +124,9 @@ const Header = () => {
                 {showUserDropdown && (
                   <div className="dropdown-menu user-dropdown">
                     <Link to="/profile">Tài Khoản</Link>
+                    {user?.role === "CUSTOMER" && (
+                      <Link to="/reservation-history">Lịch Sử Đặt Bàn</Link>
+                    )}
                     {user?.role === "ADMIN" && (
                       <Link to="/admin/restaurants">Quản lý Admin</Link>
                     )}
