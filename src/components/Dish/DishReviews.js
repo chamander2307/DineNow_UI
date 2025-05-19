@@ -22,15 +22,36 @@ const DishReviews = ({ menuItemId }) => {
 
   const [reviewList, setReviewList] = useState([]);
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState(''); // Đổi tên từ content thành comment
   const [hoverRating, setHoverRating] = useState(0);
   const [isFormVisible, setIsFormVisible] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadReviews = async () => {
-      const data = await fetchAllMenuItemReviews(menuItemId);
-      setReviewList(data);
+      setLoading(true);
+      setError(null);
+      try {
+        console.log('menuItemId:', menuItemId); // Debug ID
+        const data = await fetchAllMenuItemReviews(menuItemId);
+        console.log('Dữ liệu từ fetchAllMenuItemReviews:', data);
+        const reviews = Array.isArray(data) ? data : [];
+        const processedReviews = reviews.map(review => ({
+          author: review.reviewerName || 'Ẩn danh', // Ánh xạ từ reviewerName
+          date: review.reviewDate || new Date().toISOString(), // Ánh xạ từ reviewDate
+          comment: review.comment || 'Không có nội dung', // Sử dụng comment
+          rating: review.rating || 0,
+        }));
+        setReviewList(processedReviews);
+      } catch (err) {
+        console.error('Lỗi khi tải đánh giá:', err);
+        setError('Không thể tải danh sách đánh giá. Vui lòng thử lại.');
+      } finally {
+        setLoading(false);
+      }
     };
+
     if (menuItemId) loadReviews();
   }, [menuItemId]);
 
@@ -47,21 +68,35 @@ const DishReviews = ({ menuItemId }) => {
     }
 
     const newReview = {
-  rating,
-  content: comment,
-};
+      rating,
+      comment, // Gửi comment, API tự thêm reviewerName và reviewDate
+    };
 
-const result = await addMenuItemReview(menuItemId, newReview);
-if (result) {
-  setReviewList([result, ...reviewList]);
-  setRating(0);
-  setComment('');
-  setIsFormVisible(false);
-} else {
-  alert('Không thể gửi đánh giá. Vui lòng thử lại.');
-}
-
+    try {
+      const result = await addMenuItemReview(menuItemId, newReview);
+      if (result) {
+        const processedResult = {
+          ...result,
+          author: result.reviewerName || currentUser,
+          date: result.reviewDate || new Date().toISOString(),
+          comment: result.comment || comment,
+          rating: result.rating || rating,
+        };
+        setReviewList([processedResult, ...reviewList]);
+        setRating(0);
+        setComment('');
+        setIsFormVisible(false);
+      } else {
+        alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+      }
+    } catch (err) {
+      console.error('Lỗi khi gửi đánh giá:', err);
+      alert('Có lỗi xảy ra khi gửi đánh giá.');
+    }
   };
+
+  if (loading) return <p>Đang tải...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="dish-reviews">
@@ -111,13 +146,13 @@ if (result) {
             {reviewList.map((review, index) => (
               <li key={index} className="dish-review-item">
                 <div className="dish-review-header">
-                  <span className="dish-review-author">{review.author}</span>
-                  <span className="dish-review-date">{review.date}</span>
+                  <span className="dish-review-author">{review.author || 'Ẩn danh'}</span>
+                  <span className="dish-review-date">{review.date ? new Date(review.date).toLocaleDateString() : 'Chưa có ngày'}</span>
                 </div>
                 <div className="dish-review-rating">
                   {review.rating && <StarRating rating={review.rating} />}
                 </div>
-                <p className="dish-review-content">{review.content}</p>
+                <p className="dish-review-content">{review.comment || 'Không có nội dung'}</p>
               </li>
             ))}
           </ul>

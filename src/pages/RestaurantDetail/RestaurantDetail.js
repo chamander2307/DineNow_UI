@@ -97,7 +97,6 @@ const DishItem = ({
   );
 };
 
-// Trong RestaurantDetail.js, component DishDetail
 const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
   const handleAdd = useCallback((e) => {
     e.preventDefault();
@@ -182,6 +181,7 @@ const RestaurantDetail = () => {
     const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
     return savedCart[id] || {};
   });
+  const [isExpanded, setIsExpanded] = useState(false); // Thêm khai báo state
 
   // Kiểm tra trạng thái yêu thích khi component mount
   useEffect(() => {
