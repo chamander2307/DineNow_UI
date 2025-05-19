@@ -14,7 +14,7 @@ function AppContent() {
       <main className="main-content">
         <AppRoutes />
       </main>
-      {!isAdminOrOwner && <Footer />} {/* Chỉ hiển thị Footer nếu không phải admin/owner */}
+      {!isAdminOrOwner && <Footer />}
     </div>
   );
 }
