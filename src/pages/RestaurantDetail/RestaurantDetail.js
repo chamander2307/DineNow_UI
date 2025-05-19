@@ -11,10 +11,11 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
+import DishReviews from '../../components/Dish/DishReviews'; // Import DishReviews
 import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
-import { addFavoriteRestaurant, removeFavoriteRestaurant } from '../../services/userService';
+import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants } from '../../services/userService';
 import { createOrder } from '../../services/orderService';
-import { UserContext } from '../../contexts/UserContext'; // Đảm bảo import UserContext
+import { UserContext } from '../../contexts/UserContext';
 
 // Hàm hiển thị sao đánh giá
 const renderStars = (rating) => {
@@ -71,7 +72,7 @@ const DishItem = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, s
   );
 };
 
-// Component cho chi tiết món ăn
+// Trong RestaurantDetail.js, component DishDetail
 const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
   const handleAdd = useCallback((e) => {
     e.preventDefault();
@@ -119,6 +120,9 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
           </div>
         </div>
       </div>
+      <div className="dish-reviews-section">
+        <DishReviews menuItemId={dish.id} />
+      </div>
       <button className="back-btn" onClick={handleBack}>Quay lại</button>
     </div>
   );
@@ -128,7 +132,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
 const RestaurantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLogin } = useContext(UserContext); // Sử dụng UserContext ở đây
+  const { isLogin } = useContext(UserContext);
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -144,7 +148,55 @@ const RestaurantDetail = () => {
     return savedCart[id] || {};
   });
 
-  // Định nghĩa các hàm trước khi sử dụng
+  // Kiểm tra trạng thái yêu thích khi component mount
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      if (isLogin) {
+        try {
+          const favorites = await getFavoriteRestaurants();
+          const isRestaurantLiked = favorites.some(fav => fav.id === parseInt(id));
+          setIsLiked(isRestaurantLiked);
+        } catch (err) {
+          console.error('Lỗi khi kiểm tra trạng thái yêu thích:', err);
+        }
+      }
+    };
+    fetchFavoriteStatus();
+  }, [id, isLogin]);
+
+  // Tải dữ liệu nhà hàng và menu
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const restaurantData = await fetchRestaurantById(id);
+        setRestaurant(restaurantData);
+        const menuData = await fetchSimpleMenuByRestaurant(id);
+        setMenuItems(Array.isArray(menuData.data) ? menuData.data : []);
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu nhà hàng:', error);
+        setError('Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [id]);
+
+  // Lưu giỏ hàng vào sessionStorage
+  useEffect(() => {
+    try {
+      const storedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+      storedCart[id] = cart;
+      sessionStorage.setItem('cart', JSON.stringify(storedCart));
+      console.log('Dữ liệu giỏ hàng đã lưu vào sessionStorage:', { [id]: cart });
+    } catch (error) {
+      console.error('Lỗi khi lưu giỏ hàng:', error);
+    }
+  }, [cart, id]);
+
+  // Hàm xử lý giỏ hàng
   const addToCart = useCallback(async (dishId) => {
     try {
       let newQuantity;
@@ -187,50 +239,24 @@ const RestaurantDetail = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const restaurantData = await fetchRestaurantById(id);
-        setRestaurant(restaurantData);
-        const menuData = await fetchSimpleMenuByRestaurant(id);
-        setMenuItems(Array.isArray(menuData.data) ? menuData.data : []);
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu nhà hàng:', error);
-        setError('Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [id]);
-
-  useEffect(() => {
-    try {
-      const storedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
-      storedCart[id] = cart;
-      sessionStorage.setItem('cart', JSON.stringify(storedCart));
-      console.log('Dữ liệu giỏ hàng đã lưu vào sessionStorage:', { [id]: cart });
-    } catch (error) {
-      console.error('Lỗi khi lưu giỏ hàng:', error);
-    }
-  }, [cart, id]);
-
   const toggleLike = useCallback(async () => {
     if (!isLogin) {
       alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích.');
       return;
     }
     try {
-      if (isLiked) {
-        await removeFavoriteRestaurant(id);
-        setIsLiked(false);
-      } else {
+      const newIsLiked = !isLiked;
+      setIsLiked(newIsLiked);
+
+      if (newIsLiked) {
         await addFavoriteRestaurant(id);
-        setIsLiked(true);
+      } else {
+        await removeFavoriteRestaurant(id);
       }
     } catch (error) {
       console.error('Lỗi khi cập nhật danh sách yêu thích:', error);
       alert('Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.');
+      setIsLiked(!isLiked); // Rollback nếu API thất bại
     }
   }, [isLiked, isLogin, id]);
 

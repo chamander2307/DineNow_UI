@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import "../../assets/styles/Restaurant/RestaurantCard.css";
-import { addFavoriteRestaurant } from "../../services/userService";
+import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants } from "../../services/userService";
 import { UserContext } from "../../contexts/UserContext";
 import FavoriteButton from "../basicComponents/FavoriteButton";
 
@@ -31,13 +31,42 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits
   const { isLogin } = useContext(UserContext);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleFavoriteClick = () => {
+  // Lấy trạng thái yêu thích từ server khi component mount
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      if (isLogin) {
+        try {
+          const favorites = await getFavoriteRestaurants();
+          setIsFavorite(favorites.some(fav => fav.id === parseInt(id)));
+        } catch (err) {
+          console.error("Lỗi khi kiểm tra trạng thái yêu thích:", err);
+        }
+      }
+    };
+    fetchFavoriteStatus();
+  }, [id, isLogin]);
+
+  const handleFavoriteClick = async () => {
     if (!isLogin) {
       alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
       return;
     }
-    setIsFavorite(!isFavorite);
-    addFavoriteRestaurant(id);
+
+    try {
+      const newIsFavorite = !isFavorite;
+      setIsFavorite(newIsFavorite); // Cập nhật trạng thái ngay lập tức
+
+      if (newIsFavorite) {
+        await addFavoriteRestaurant(id);
+      } else {
+        await removeFavoriteRestaurant(id);
+      }
+    } catch (err) {
+      console.error("Lỗi khi thay đổi yêu thích:", err);
+      // Rollback trạng thái nếu API thất bại
+      setIsFavorite(!isFavorite);
+      alert("Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.");
+    }
   };
 
   return (

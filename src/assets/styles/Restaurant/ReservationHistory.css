@@ -49,20 +49,32 @@
     font-weight: 500;
   }
   
-  .status.đã-xác-nhận {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .status.đang-chờ {
-    background-color: #ffc107;
-    color: #333;
-  }
-  
-  .status.đã-hủy {
+  .status.đã-hủy,
+.status.thất-bại {
     background-color: #dc3545;
     color: white;
-  }
+}
+
+.status.đã-xác-nhận,
+.status.đã-thanh-toán {
+    background-color: #ff6f61;
+    color: white;
+}
+
+.status.hoàn-thành {
+    background-color: #28a745;
+    color: white;
+}
+
+.status.đang-chờ {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.status.không-xác-định {
+    background-color: #6c757d;
+    color: white;
+}
   
   .action-btn {
     display: inline-block;

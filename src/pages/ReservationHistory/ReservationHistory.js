@@ -8,7 +8,6 @@ const ReservationHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Hàm định dạng ngày thành dd-mm-yyyy
   const formatDate = (dateString) => {
     if (!dateString) return 'Không xác định';
     const date = new Date(dateString);
@@ -16,6 +15,19 @@ const ReservationHistory = () => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+
+  const localizeStatus = (status) => {
+    const statusMap = {
+      PENDING: 'Đang chờ',
+      PAID: 'Đã thanh toán',
+      COMPLETED: 'Hoàn thành',
+      CONFIRMED: 'Đã xác nhận',
+      CANCELLED: 'Đã hủy',
+      FAILED: 'Thất bại',
+      'Không xác định': 'Không xác định', // Fallback
+    };
+    return statusMap[status] || statusMap['Không xác định'];
   };
 
   useEffect(() => {
@@ -34,7 +46,7 @@ const ReservationHistory = () => {
           restaurant: {
             name: order.reservationSimpleResponse?.restaurantName || 'Không xác định',
           },
-          status: order.status || 'Không xác định',
+          status: localizeStatus(order.status || 'Không xác định'),
           date: formatDate(order.reservationSimpleResponse?.reservationTime),
           totalPrice: order.totalPrice || 0,
         }));

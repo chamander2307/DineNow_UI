@@ -145,7 +145,7 @@ const PaymentPage = () => {
                   className="quantity-input"
                 />
                 <button
-                  className="remove-btn"
+                  className="remove-btn111"
                   onClick={() => handleRemoveItem(item.id)}
                 >
                   Xóa
@@ -204,30 +204,13 @@ const PaymentPage = () => {
                 step="900"
               />
             </div>
-            <div className="form-group">
-              <label>Ghi chú:</label>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Nhập ghi chú (nếu có)..."
-                rows="3"
-              />
-            </div>
           </div>
 
           <div className="payment-info">
             <h3>Thanh toán</h3>
             <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
             <div className="payment-method">
-              <label>Hình thức thanh toán:</label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="payment-select"
-              >
-                <option value="VNPay">VNPay</option>
-                <option value="Thanh toán trực tiếp">Thanh toán trực tiếp</option>
-              </select>
+              <label>Hình thức thanh toán: VNPAY</label>
             </div>
           </div>
 

@@ -256,7 +256,7 @@ const RestaurantCart = () => {
                   className="checkout-btn"
                   onClick={() => handleCheckout(restaurant)}
                 >
-                  Thanh toán
+                  Đặt bàn ngay
                 </button>
               </>
             )}

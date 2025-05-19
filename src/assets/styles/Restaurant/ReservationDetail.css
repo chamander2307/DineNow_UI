@@ -134,8 +134,39 @@
   color: white;
 }
 
-/* Nút quay lại */
-.back-btn {
+/* Nút quay lại và hủy */
+.button-section {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn111 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #e74c3c; /* Màu đỏ cho nút hủy */
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 1; /* Đặt nút hủy bên phải */
+}
+
+.cancel-btn111:hover {
+  background-color: #c0392b; /* Màu đỏ đậm hơn khi hover */
+}
+
+.cancel-btn111:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.back-btn111 {
   display: inline-block;
   padding: 10px 20px;
   background-color: #3498db;
@@ -144,31 +175,10 @@
   border-radius: 5px;
   text-align: center;
   transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 0; /* Đặt nút quay lại bên trái */
 }
 
-.back-btn:hover {
+.back-btn111:hover {
   background-color: #2980b9;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .restaurant-info {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .restaurant-thumbnail {
-    width: 100%;
-    height: 150px;
-  }
-
-  .dishes-table,
-  .payment-table {
-    font-size: 14px;
-  }
-
-  .dish-imagess {
-    width: 40px;
-    height: 40px;
-  }
 }
