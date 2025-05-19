@@ -1,261 +1,465 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart } from 'react-icons/fa';
-import DishReviews from '../../components/Dish/DishReviews';
+import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import featuredDishes from '../../data/featuredDishes';
-import '../../assets/styles/Dish/DishDetail.css';
-import restaurant1 from '../../assets/img/restaurant1.jpg';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import '../../assets/styles/Restaurant/RestaurantDetail.css';
+import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
+import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
+import { addFavoriteRestaurant, removeFavoriteRestaurant } from '../../services/userService';
+import { UserContext } from '../../contexts/UserContext';
 
-// Dữ liệu mẫu
-const mockData = {
-  restaurant: {
-    id: '1',
-    name: 'Nhà hàng A',
-    address: '123 Đường ABC',
-    rating: 3.1,
-  },
-  dish: {
-    id: '1',
-    name: 'Món A',
-    description: 'Món A là một món ăn truyền thống nổi tiếng, được chế biến từ những nguyên liệu tươi ngon nhất. Thịt bò được chọn lọc kỹ càng, thái lát mỏng và hầm trong nước dùng thơm lừng suốt 12 giờ để giữ được độ mềm ngọt tự nhiên. Kết hợp với bánh phở mềm dai, rau thơm tươi mát và các loại gia vị đặc trưng, món ăn mang đến hương vị đậm đà, tinh tế, làm hài lòng mọi thực khách. Đây là lựa chọn hoàn hảo cho những ai yêu thích sự hòa quyện giữa truyền thống và hiện đại trong ẩm thực.',
-    rating: 4.5,
-    image: restaurant1,
-    restaurantImage: restaurant1,
-    reviews: [
-      { author: 'Người dùng 1', date: '2025-05-01', content: 'Rất ngon!', rating: 5 },
-      { author: 'Người dùng 2', date: '2025-05-02', content: 'Tạm được.', rating: 4 },
-    ],
-  },
-};
-
-// Hàm hiển thị sao đánh giá
-const renderStars = (rating) => {
-  const full = Math.floor(rating);
-  const half = rating % 1 !== 0;
-  const empty = 5 - full - (half ? 1 : 0);
-  const stars = [];
-  for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} />);
-  if (half) stars.push(<FaStarHalfAlt key="half" />);
-  for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} />);
-  return <div className="star-rating">{stars}</div>;
-};
-
-const DishDetail = () => {
-  const { dishId } = useParams();
-
-  // State để quản lý giỏ hàng
+// Custom hook để quản lý giỏ hàng
+const useCart = (restaurantId) => {
   const [cart, setCart] = useState(() => {
-    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
-    return savedCart[mockData.restaurant.id] || {};
-  });
-
-  // State để quản lý trạng thái yêu thích
-  const [isLiked, setIsLiked] = useState(() => {
-    const liked = JSON.parse(sessionStorage.getItem('likedDishes')) || {};
-    return liked[dishId] || false;
+    try {
+      return JSON.parse(localStorage.getItem('cart'))?.[restaurantId] || {};
+    } catch {
+      return {};
+    }
   });
 
   useEffect(() => {
-    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
-    savedCart[mockData.restaurant.id] = cart;
-    sessionStorage.setItem('cart', JSON.stringify(savedCart));
-  }, [cart]);
+    try {
+      const storedCart = JSON.parse(localStorage.getItem('cart')) || {};
+      storedCart[restaurantId] = cart;
+      localStorage.setItem('cart', JSON.stringify(storedCart));
+    } catch (error) {
+      console.error('Lỗi khi lưu giỏ hàng:', error);
+    }
+  }, [cart, restaurantId]);
 
-  useEffect(() => {
-    const liked = JSON.parse(sessionStorage.getItem('likedDishes')) || {};
-    liked[dishId] = isLiked;
-    sessionStorage.setItem('likedDishes', JSON.stringify(liked));
-  }, [isLiked, dishId]);
-
-  // Lấy dữ liệu từ mockData
-  const { dish, restaurant } = mockData;
-
-  // Kiểm tra món ăn
-  if (dish.id !== dishId) {
-    return <div>Món ăn không tồn tại.</div>;
-  }
-
-  // Hàm thêm món vào giỏ hàng
-  const addToCart = (dishId) => {
-    setCart(prevCart => ({
+  const addToCart = useCallback((dishId) => {
+    setCart((prevCart) => ({
       ...prevCart,
       [dishId]: (prevCart[dishId] || 0) + 1,
     }));
-  };
+  }, []);
 
-  // Hàm tăng số lượng món
-  const increaseQuantity = (dishId) => {
-    setCart(prevCart => ({
+  const increaseQuantity = useCallback((dishId) => {
+    setCart((prevCart) => ({
       ...prevCart,
       [dishId]: prevCart[dishId] + 1,
     }));
-  };
+  }, []);
 
-  // Hàm giảm số lượng món
-  const decreaseQuantity = (dishId) => {
-    setCart(prevCart => {
+  const decreaseQuantity = useCallback((dishId) => {
+    setCart((prevCart) => {
       const newQuantity = prevCart[dishId] - 1;
       if (newQuantity <= 0) {
         const { [dishId]: _, ...rest } = prevCart;
         return rest;
       }
-      return {
-        ...prevCart,
-        [dishId]: newQuantity,
-      };
+      return { ...prevCart, [dishId]: newQuantity };
     });
-  };
+  }, []);
 
-  // Hàm xử lý yêu thích
-  const toggleLike = () => setIsLiked(!isLiked);
+  return { cart, addToCart, increaseQuantity, decreaseQuantity };
+};
 
-  // Cấu hình slider
-  const sliderSettings = {
+// Hàm hiển thị sao đánh giá
+const renderStars = (rating) => {
+  const effectiveRating = Math.min(rating || 0, 5);
+  const full = Math.floor(effectiveRating);
+  const half = effectiveRating % 1 !== 0;
+  const empty = 5 - full - (half ? 1 : 0);
+  const stars = [];
+  for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} />);
+  if (half) stars.push(<FaStarHalfAlt key="half" />);
+  for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} />);
+  return (
+    <div className="dish-star-rating">
+      {stars}
+      <span className="dish-rating-number">({effectiveRating.toFixed(1)})</span>
+    </div>
+  );
+};
+
+// Component cho từng món ăn trong danh sách
+const DishItem = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, setSelectedDish }) => {
+  const handleClick = useCallback(() => setSelectedDish(dish), [dish, setSelectedDish]);
+  const handleAdd = useCallback((e) => {
+    e.preventDefault();
+    addToCart(dish.id);
+  }, [dish.id, addToCart]);
+  const handleIncrease = useCallback((e) => {
+    e.preventDefault();
+    increaseQuantity(dish.id);
+  }, [dish.id, increaseQuantity]);
+  const handleDecrease = useCallback((e) => {
+    e.preventDefault();
+    decreaseQuantity(dish.id);
+  }, [dish.id, decreaseQuantity]);
+
+  return (
+    <div className="dish-item" onClick={handleClick}>
+      <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
+      <div className="dish-details">
+        <h3>{dish.name}</h3>
+        {renderStars(dish.averageRating)}
+        <p className="price">{parseFloat(dish.price).toLocaleString()}đ</p>
+      </div>
+      {cart[dish.id] ? (
+        <div className="add-item-container">
+          <button className="remove-btn" onClick={handleDecrease}>−</button>
+          <span className="item-quantity">{cart[dish.id]}</span>
+          <button className="add-btn" onClick={handleIncrease}>+</button>
+        </div>
+      ) : (
+        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
+      )}
+    </div>
+  );
+};
+
+// Component cho chi tiết món ăn
+const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
+  const handleAdd = useCallback((e) => {
+    e.preventDefault();
+    addToCart(dish.id);
+  }, [dish.id, addToCart]);
+  const handleIncrease = useCallback((e) => {
+    e.preventDefault();
+    increaseQuantity(dish.id);
+  }, [dish.id, increaseQuantity]);
+  const handleDecrease = useCallback((e) => {
+    e.preventDefault();
+    decreaseQuantity(dish.id);
+  }, [dish.id, decreaseQuantity]);
+  const handleBack = useCallback((e) => {
+    e.preventDefault();
+    onBack();
+  }, [onBack]);
+
+  return (
+    <div className="dish-detail-section">
+      <div className="dish-section">
+        <div className="dish-images">
+          <img src={dish.imageUrl} alt={dish.name} />
+        </div>
+        <div className="dish-details">
+          <h2 className="dish-name">{dish.name}</h2>
+          <p className="dish-description">{dish.description || 'Món ăn này chưa có mô tả.'}</p>
+          <div className="dish-meta">
+            <div className="dish-rating">
+              {renderStars(dish.averageRating)}
+              <span className="rating-number">({dish.averageRating || 0})</span>
+            </div>
+          </div>
+          <p className="dish-price">{parseFloat(dish.price).toLocaleString()}đ</p>
+          <div className="dish-actions-Detail">
+            {cart[dish.id] ? (
+              <div className="add-item-container-Detail">
+                <button className="remove-btn-Detail" onClick={handleDecrease}>−</button>
+                <span className="item-quantity-Detail">{cart[dish.id]}</span>
+                <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
+              </div>
+            ) : (
+              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
+            )}
+          </div>
+        </div>
+      </div>
+      <button className="back-btn" onClick={handleBack}>Quay lại</button>
+    </div>
+  );
+};
+
+// Component chính
+const RestaurantDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { isLogin } = useContext(UserContext);
+  const [restaurant, setRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [selectedPrice, setSelectedPrice] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // State mới cho mở rộng mô tả
+
+  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart(id);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const restaurantData = await fetchRestaurantById(id);
+        setRestaurant(restaurantData);
+        const menuData = await fetchSimpleMenuByRestaurant(id);
+        setMenuItems(Array.isArray(menuData.data) ? menuData.data : []);
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu nhà hàng:', error);
+        setError('Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [id]);
+
+  const toggleLike = useCallback(async () => {
+    if (!isLogin) {
+      alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích.');
+      return;
+    }
+    try {
+      if (isLiked) {
+        await removeFavoriteRestaurant(id);
+        setIsLiked(false);
+      } else {
+        await addFavoriteRestaurant(id);
+        setIsLiked(true);
+      }
+    } catch (error) {
+      console.error('Lỗi khi cập nhật danh sách yêu thích:', error);
+      alert('Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.');
+    }
+  }, [isLiked, isLogin, id]);
+
+  const handleDishClick = useCallback((dish) => {
+    if (!isDragging) {
+      setSelectedDish(dish);
+    }
+  }, [isDragging]);
+
+  const handleBookTable = useCallback(() => {
+    const selectedItems = Object.keys(cart)
+      .map((dishId) => {
+        const dish = menuItems.find((item) => item.id === dishId);
+        if (!dish) return null;
+        return {
+          id: dish.id,
+          name: dish.name,
+          price: parseFloat(dish.price),
+          quantity: cart[dishId],
+        };
+      })
+      .filter(Boolean);
+
+    navigate('/payment', {
+      state: {
+        restaurant: {
+          name: restaurant?.name,
+          address: restaurant?.address,
+          image: restaurant?.imageUrls?.[0],
+        },
+        selectedItems: selectedItems.length > 0 ? selectedItems : [],
+      },
+    });
+  }, [cart, menuItems, navigate, restaurant]);
+
+  const restaurantSliderSettings = {
     dots: true,
     arrows: false,
     infinite: true,
-    speed: 500,
-    slidesToShow: 3,
+    speed: 1000,
+    slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
+    swipeToSlide: true,
+    touchThreshold: 10,
   };
 
-  return (
-    <div className="dish-detail">
-      {/* Phần đầu trang: ảnh nhà hàng và thông tin */}
-      <div className="restaurant-header1">
-        <div className="restaurant-image1">
-          <img src={dish.restaurantImage} alt="Nhà hàng" />
+  const priceRanges = [
+    { label: 'Tất cả', value: '' },
+    { label: 'Dưới 50K', value: 'under50' },
+    { label: '50K - 100K', value: '50to100' },
+    { label: 'Trên 100K', value: 'over100' },
+  ];
+
+  const MenuSection = useMemo(() => {
+    const categories = ['Tất cả', ...new Set(menuItems.map((item) => item.typeName || 'Không xác định').filter(Boolean))];
+    const filteredMenu = menuItems.filter((item) => {
+      const matchSearch = item.name?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchCategory = selectedCategory === 'Tất cả' || item.typeName === selectedCategory;
+      const price = parseFloat(item.price);
+      const matchPrice =
+        selectedPrice === '' ||
+        (selectedPrice === 'under50' && price < 50000) ||
+        (selectedPrice === '50to100' && price >= 50000 && price <= 100000) ||
+        (selectedPrice === 'over100' && price > 100000);
+      return matchSearch && matchCategory && matchPrice;
+    });
+
+    return (
+      <div className="menu-section-full">
+        <h2>Thực đơn</h2>
+        <ul className="categories-list-horizontal">
+          {categories.map((cat, i) => (
+            <li
+              key={i}
+              className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </li>
+          ))}
+        </ul>
+        <div className="price-filter">
+          <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
+            {priceRanges.map((range, idx) => (
+              <option key={idx} value={range.value}>
+                {range.label}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="restaurant-info">
-          <h1 className="restaurant-name">{restaurant.name}</h1>
-          <p className="restaurant-address">{restaurant.address}</p>
-          <div className="restaurant-meta">
-            <div className="restaurant-rating">
-              {renderStars(restaurant.rating)}
-              <span className="rating-number">({restaurant.rating})</span>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Tìm món..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="horizontal-dishes">
+          {filteredMenu.map((dish) => (
+            <DishItem
+              key={dish.id}
+              dish={dish}
+              cart={cart}
+              addToCart={addToCart}
+              increaseQuantity={increaseQuantity}
+              decreaseQuantity={decreaseQuantity}
+              setSelectedDish={setSelectedDish}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }, [menuItems, searchTerm, selectedCategory, selectedPrice, cart, addToCart, increaseQuantity, decreaseQuantity]);
+
+  if (loading) return <p>Đang tải...</p>;
+  if (error) return <p>{error}</p>;
+  if (!restaurant) return <p>Không tìm thấy nhà hàng.</p>;
+
+  return (
+    <div className="restaurant-detail">
+      <div className="restaurant-slider">
+        <Slider {...restaurantSliderSettings}>
+          {restaurant.imageUrls?.map((img, i) => (
+            <img key={i} src={img} alt={`slide-${i}`} className="slider-image" />
+          )) || <p>Không có hình ảnh</p>}
+        </Slider>
+      </div>
+
+      <div className="restaurant-info">
+        <div className="restaurant-details1">
+          <h1 className="rd-name">{restaurant.name}</h1>
+          <div className="rd-meta">
+            <div className="rd-rating">
+              {renderStars(restaurant.averageRating)}
+              <span className="rd-rating-number">({restaurant.averageRating || 0})</span>
             </div>
-            <button className="favorite-btn" onClick={toggleLike}>
-              {isLiked ? <FaHeart color="#e74c3c" /> : <FaRegHeart color="#ccc" />}
+            <div className="rd-visits">{(restaurant.visits || 0).toLocaleString()} lượt xem</div>
+          </div>
+          <div className="rd-tags">
+            <span className="rd-location">📍 {restaurant.address}</span>
+            <span className="rd-style">🍽 {restaurant.type?.name || 'Không xác định'}</span>
+          </div>
+          <div className="rd-description">
+            <h3>Giới thiệu</h3>
+            <div
+              className={`description-content ${isExpanded ? 'expanded' : ''}`}
+              dangerouslySetInnerHTML={{ __html: restaurant.description || 'Không có mô tả.' }}
+            />
+            {restaurant.description && restaurant.description.length > 100 && (
+              <button
+                className="toggle-description-btn"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+              </button>
+            )}
+          </div>
+          <div className="rd-actions">
+            <button className="book-btn" onClick={handleBookTable}>
+              Đặt bàn ngay
+            </button>
+            <button className="heart" onClick={toggleLike}>
+              {isLiked ? <FaHeart color="#ff6f61" /> : <FaRegHeart color="#ccc" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Món ăn: ảnh + thông tin */}
-      <div className="dish-section">
-        <div className="dish-image1">
-          <img src={dish.image} alt="Món ăn" />
-        </div>
-        <div className="dish-details">
-          <h2 className="dish-name">{dish.name}</h2>
-          <p className="dish-description">{dish.description}</p>
-          <div className="dish-meta">
-            <div className="dish-rating">
-              {renderStars(dish.rating)}
-              <span className="rating-number">({dish.rating})</span>
+      {selectedDish ? (
+        <DishDetail
+          dish={selectedDish}
+          cart={cart}
+          addToCart={addToCart}
+          increaseQuantity={increaseQuantity}
+          decreaseQuantity={decreaseQuantity}
+          onBack={() => setSelectedDish(null)}
+        />
+      ) : (
+        <>
+          {menuItems.length > 0 && (
+            <div className="highlight-slider-wrapper">
+              <h2 className="highlight-title">Món ăn nổi bật</h2>
+              <Swiper
+                slidesPerView={3}
+                spaceBetween={20}
+                centeredSlides
+                navigation
+                pagination={{ clickable: true }}
+                modules={[Navigation, Pagination, Autoplay]}
+                className="highlight-slider"
+                onSlideChange={() => setIsDragging(true)}
+                onTransitionEnd={() => setIsDragging(false)}
+                speed={1000}
+                autoplay={{
+                  delay: 4000,
+                  disableOnInteraction: false,
+                }}
+                breakpoints={{
+                  768: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                  },
+                }}
+              >
+                {menuItems.slice(0, 5).map((item) => (
+                  <SwiperSlide key={item.id}>
+                    <div className="highlight-slide">
+                      <img src={item.imageUrl} alt={item.name} className="highlight-image" />
+                      <div className="highlight-info">
+                        <h3 onClick={() => handleDishClick(item)} style={{ cursor: 'pointer' }}>
+                          {item.name}
+                        </h3>
+                        <p className="price">{parseFloat(item.price).toLocaleString()}đ</p>
+                        <button
+                          className="view-detail-btn"
+                          onClick={() => handleDishClick(item)}
+                        >
+                          Xem chi tiết
+                        </button>
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
+          )}
+          {MenuSection}
+          <div className="reviews-section-full">
+            <RestaurantReviewForm restaurantId={id} />
           </div>
-          <p className="dish-price">{dish.price?.toLocaleString() || '50,000'}đ</p>
-          <div className="dish-actions">
-            {cart[dish.id] ? (
-              <div className="quantity-controls">
-                <button className="decrease-btn" onClick={() => decreaseQuantity(dish.id)}>
-                  −
-                </button>
-                <span className="quantity">{cart[dish.id]}</span>
-                <button className="increase-btn" onClick={() => increaseQuantity(dish.id)}>
-                  +
-                </button>
-              </div>
-            ) : (
-              <button className="add-to-cart1" onClick={() => addToCart(dish.id)}>
-                Thêm món
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Đánh giá món ăn */}
-      <div className="reviews-section">
-        <DishReviews reviews={dish.reviews} />
-      </div>
-
-      {/* Gợi ý món ăn (Slider) */}
-      <div className="highlight-slider-wrapper">
-        <h2 className="highlight-title">Gợi ý món ăn</h2>
-        <Slider {...sliderSettings}>
-          {featuredDishes.map((dish) => (
-            <div key={dish.id} className="highlight-slide">
-              <Link to={`/dish/${dish.id}`} className="slider-item">
-                <img src={dish.image} alt={dish.name} className="highlight-image" />
-                <div className="highlight-info">
-                  <h3>{dish.name}</h3>
-                  <div className="rating-display">
-                    {renderStars(dish.rating || 0)}
-                    <span className="rating-number">({dish.rating || 0})</span>
-                  </div>
-                  <p className="price">{dish.price.toLocaleString()}đ</p>
-                </div>
-                {cart[dish.id] ? (
-                  <div className="add-item-container">
-                    <button
-                      className="remove-btn"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        decreaseQuantity(dish.id);
-                      }}
-                    >
-                      −
-                    </button>
-                    <span className="item-quantity">{cart[dish.id]}</span>
-                    <button
-                      className="add-btn"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        increaseQuantity(dish.id);
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="add-to-cart"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      addToCart(dish.id);
-                    }}
-                  >
-                    Thêm
-                  </button>
-                )}
-              </Link>
-            </div>
-          ))}
-        </Slider>
-      </div>
+        </>
+      )}
     </div>
   );
 };
 
-export default DishDetail;
+export default RestaurantDetail;

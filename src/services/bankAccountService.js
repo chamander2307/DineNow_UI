@@ -1,4 +1,4 @@
-import axios from "../config/axios";
+import axios from '../config/axios';
 
 // Tạo tài khoản ngân hàng
 export const createBankAccount = async (bankAccountData) => {

@@ -818,3 +818,15 @@
     font-size: 16px;
   }
 }
+.rd-description .collapsed {
+  max-height: 60px;
+  overflow: hidden;
+}
+
+.rd-description button {
+  background: none;
+  border: none;
+  color: #ff6f61;
+  cursor: pointer;
+  font-size: 14px;
+}

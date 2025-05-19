@@ -36,3 +36,35 @@ export const fetchMonthlyRevenueInRange = async (restaurantId, startDate, endDat
     throw error;
   }
 };
+//revernue admin
+export const fetchAdminMonthlyRevenue = async (month) => {
+  try {
+    const response = await axios.get(`/api/admin/revenues/restaurants/monthly`, { params: { month } });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy doanh thu theo tháng (admin):", error);
+    throw error;
+  }
+};
+
+export const fetchAdminTotalRevenue = async () => {
+  try {
+    const response = await axios.get(`/api/admin/revenues/restaurants/total`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy tổng doanh thu (admin):", error);
+    throw error;
+  }
+};
+
+export const fetchAdminRevenueInRange = async (startMonth, endMonth) => {
+  try {
+    const response = await axios.get(`/api/admin/revenues/restaurants/monthly/range`, {
+      params: { startMonth, endMonth },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy doanh thu trong khoảng thời gian (admin):", error);
+    throw error;
+  }
+};

@@ -20,9 +20,13 @@ const RestaurantTypeManager = () => {
   const loadTypes = async () => {
     try {
       const res = await fetchRestaurantTypes();
-      const list = Array.isArray(res.data.data) ? res.data.data : [];
-      setTypes(list);
-    } catch {
+      if (res.status === 200 && Array.isArray(res.data.data)) {
+        setTypes(res.data.data);
+      } else {
+        setMessage(res.data.message || "Dữ liệu không hợp lệ");
+      }
+    } catch (err) {
+      console.error("Error fetching types:", err);
       setMessage("Không thể tải loại nhà hàng");
     }
   };
@@ -30,10 +34,16 @@ const RestaurantTypeManager = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Xác nhận xoá?")) {
       try {
-        await deleteRestaurantType(id);
-        loadTypes();
-      } catch {
-        setMessage("Xoá thất bại");
+        const res = await deleteRestaurantType(id);
+        if (res.status === 200) {
+          loadTypes();
+          setMessage("Xoá thành công");
+        } else {
+          setMessage(res.data.message || "Xoá thất bại");
+        }
+      } catch (err) {
+        console.error("Error deleting type:", err);
+        setMessage(err || "Xoá thất bại");
       }
     }
   };
@@ -46,6 +56,16 @@ const RestaurantTypeManager = () => {
   const openEditModal = (type) => {
     setEditingData(type);
     setShowFormModal(true);
+  };
+
+  const handleSuccess = (msg) => {
+    loadTypes();
+    setShowFormModal(false);
+    setMessage(msg || "Thành công");
+  };
+
+  const checkDuplicateName = (name) => {
+    return types.some(type => type.name.toLowerCase() === name.toLowerCase());
   };
 
   return (
@@ -87,11 +107,9 @@ const RestaurantTypeManager = () => {
         {showFormModal && (
           <RestaurantTypeFormModal
             onClose={() => setShowFormModal(false)}
-            onSuccess={() => {
-              loadTypes();
-              setShowFormModal(false);
-            }}
+            onSuccess={handleSuccess}
             initialData={editingData}
+            checkDuplicateName={checkDuplicateName}
           />
         )}
       </div>

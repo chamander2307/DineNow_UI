@@ -36,20 +36,39 @@ const renderStars = (rating) => {
 };
 
 // Component cho từng món ăn trong danh sách
-const DishItem = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, setSelectedDish }) => {
-  const handleClick = useCallback(() => setSelectedDish(dish), [dish, setSelectedDish]);
-  const handleAdd = useCallback((e) => {
-    e.preventDefault();
-    addToCart(dish.id);
-  }, [dish.id, addToCart]);
-  const handleIncrease = useCallback((e) => {
-    e.preventDefault();
-    increaseQuantity(dish.id);
-  }, [dish.id, increaseQuantity]);
-  const handleDecrease = useCallback((e) => {
-    e.preventDefault();
-    decreaseQuantity(dish.id);
-  }, [dish.id, decreaseQuantity]);
+const DishItem = ({
+  dish,
+  cart,
+  addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+  setSelectedDish,
+}) => {
+  const handleClick = useCallback(
+    () => setSelectedDish(dish),
+    [dish, setSelectedDish]
+  );
+  const handleAdd = useCallback(
+    (e) => {
+      e.preventDefault();
+      addToCart(dish.id);
+    },
+    [dish.id, addToCart]
+  );
+  const handleIncrease = useCallback(
+    (e) => {
+      e.preventDefault();
+      increaseQuantity(dish.id);
+    },
+    [dish.id, increaseQuantity]
+  );
+  const handleDecrease = useCallback(
+    (e) => {
+      e.preventDefault();
+      decreaseQuantity(dish.id);
+    },
+    [dish.id, decreaseQuantity]
+  );
 
   return (
     <div className="dish-item" onClick={handleClick}>
@@ -61,12 +80,18 @@ const DishItem = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, s
       </div>
       {cart[dish.id] ? (
         <div className="add-item-container">
-          <button className="remove-btn" onClick={handleDecrease}>−</button>
+          <button className="remove-btn" onClick={handleDecrease}>
+            −
+          </button>
           <span className="item-quantity">{cart[dish.id]}</span>
-          <button className="add-btn" onClick={handleIncrease}>+</button>
+          <button className="add-btn" onClick={handleIncrease}>
+            +
+          </button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
+        <button className="add-to-cart" onClick={handleAdd}>
+          Thêm
+        </button>
       )}
     </div>
   );
@@ -99,23 +124,33 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
         </div>
         <div className="dish-details">
           <h2 className="dish-name">{dish.name}</h2>
-          <p className="dish-description">{dish.description || 'Món ăn này chưa có mô tả.'}</p>
+          <p className="dish-description">
+            {dish.description || "Món ăn này chưa có mô tả."}
+          </p>
           <div className="dish-meta">
             <div className="dish-rating">
               {renderStars(dish.averageRating)}
               <span className="rating-number">({dish.averageRating || 0})</span>
             </div>
           </div>
-          <p className="dish-price">{parseFloat(dish.price).toLocaleString()}đ</p>
+          <p className="dish-price">
+            {parseFloat(dish.price).toLocaleString()}đ
+          </p>
           <div className="dish-actions-Detail">
             {cart[dish.id] ? (
               <div className="add-item-container-Detail">
-                <button className="remove-btn-Detail" onClick={handleDecrease}>−</button>
+                <button className="remove-btn-Detail" onClick={handleDecrease}>
+                  −
+                </button>
                 <span className="item-quantity-Detail">{cart[dish.id]}</span>
-                <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
+                <button className="add-btn-Detail" onClick={handleIncrease}>
+                  +
+                </button>
               </div>
             ) : (
-              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
+              <button className="add-to-cart-Detail" onClick={handleAdd}>
+                Thêm
+              </button>
             )}
           </div>
         </div>
@@ -137,9 +172,9 @@ const RestaurantDetail = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Tất cả');
-  const [selectedPrice, setSelectedPrice] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const [selectedPrice, setSelectedPrice] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -175,8 +210,8 @@ const RestaurantDetail = () => {
         const menuData = await fetchSimpleMenuByRestaurant(id);
         setMenuItems(Array.isArray(menuData.data) ? menuData.data : []);
       } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu nhà hàng:', error);
-        setError('Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.');
+        console.error("Lỗi khi lấy dữ liệu nhà hàng:", error);
+        setError("Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.");
       } finally {
         setLoading(false);
       }
@@ -241,7 +276,7 @@ const RestaurantDetail = () => {
 
   const toggleLike = useCallback(async () => {
     if (!isLogin) {
-      alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích.');
+      alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
       return;
     }
     try {
@@ -260,16 +295,19 @@ const RestaurantDetail = () => {
     }
   }, [isLiked, isLogin, id]);
 
-  const handleDishClick = useCallback((dish) => {
-    if (!isDragging) {
-      setSelectedDish(dish);
-    }
-  }, [isDragging]);
+  const handleDishClick = useCallback(
+    (dish) => {
+      if (!isDragging) {
+        setSelectedDish(dish);
+      }
+    },
+    [isDragging]
+  );
 
   const handleBookTable = useCallback(() => {
     const selectedItems = Object.keys(cart)
       .map((dishId) => {
-        const dish = menuItems.find(item => item.id === dishId);
+        const dish = menuItems.find((item) => item.id === dishId);
         if (!dish) return null;
         return {
           id: dish.id,
@@ -280,7 +318,7 @@ const RestaurantDetail = () => {
       })
       .filter(Boolean);
 
-    navigate('/payment', {
+    navigate("/payment", {
       state: {
         restaurant: {
           name: restaurant?.name,
@@ -306,23 +344,33 @@ const RestaurantDetail = () => {
   };
 
   const priceRanges = [
-    { label: 'Tất cả', value: '' },
-    { label: 'Dưới 50K', value: 'under50' },
-    { label: '50K - 100K', value: '50to100' },
-    { label: 'Trên 100K', value: 'over100' },
+    { label: "Tất cả", value: "" },
+    { label: "Dưới 50K", value: "under50" },
+    { label: "50K - 100K", value: "50to100" },
+    { label: "Trên 100K", value: "over100" },
   ];
 
   const MenuSection = useMemo(() => {
-    const categories = ['Tất cả', ...new Set(menuItems.map(item => item.typeName || 'Không xác định').filter(Boolean))];
-    const filteredMenu = menuItems.filter(item => {
-      const matchSearch = item.name?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchCategory = selectedCategory === 'Tất cả' || item.typeName === selectedCategory;
+    const categories = [
+      "Tất cả",
+      ...new Set(
+        menuItems
+          .map((item) => item.typeName || "Không xác định")
+          .filter(Boolean)
+      ),
+    ];
+    const filteredMenu = menuItems.filter((item) => {
+      const matchSearch = item.name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchCategory =
+        selectedCategory === "Tất cả" || item.typeName === selectedCategory;
       const price = parseFloat(item.price);
       const matchPrice =
-        selectedPrice === '' ||
-        (selectedPrice === 'under50' && price < 50000) ||
-        (selectedPrice === '50to100' && price >= 50000 && price <= 100000) ||
-        (selectedPrice === 'over100' && price > 100000);
+        selectedPrice === "" ||
+        (selectedPrice === "under50" && price < 50000) ||
+        (selectedPrice === "50to100" && price >= 50000 && price <= 100000) ||
+        (selectedPrice === "over100" && price > 100000);
       return matchSearch && matchCategory && matchPrice;
     });
 
@@ -333,7 +381,9 @@ const RestaurantDetail = () => {
           {categories.map((cat, i) => (
             <li
               key={i}
-              className={`category-item ${selectedCategory === cat ? 'active' : ''}`}
+              className={`category-item ${
+                selectedCategory === cat ? "active" : ""
+              }`}
               onClick={() => setSelectedCategory(cat)}
             >
               {cat}
@@ -341,9 +391,14 @@ const RestaurantDetail = () => {
           ))}
         </ul>
         <div className="price-filter">
-          <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
+          <select
+            value={selectedPrice}
+            onChange={(e) => setSelectedPrice(e.target.value)}
+          >
             {priceRanges.map((range, idx) => (
-              <option key={idx} value={range.value}>{range.label}</option>
+              <option key={idx} value={range.value}>
+                {range.label}
+              </option>
             ))}
           </select>
         </div>
@@ -356,7 +411,7 @@ const RestaurantDetail = () => {
           />
         </div>
         <div className="horizontal-dishes">
-          {filteredMenu.map(dish => (
+          {filteredMenu.map((dish) => (
             <DishItem
               key={dish.id}
               dish={dish}
@@ -370,7 +425,16 @@ const RestaurantDetail = () => {
         </div>
       </div>
     );
-  }, [menuItems, searchTerm, selectedCategory, selectedPrice, cart, addToCart, increaseQuantity, decreaseQuantity]);
+  }, [
+    menuItems,
+    searchTerm,
+    selectedCategory,
+    selectedPrice,
+    cart,
+    addToCart,
+    increaseQuantity,
+    decreaseQuantity,
+  ]);
 
   if (loading) return <p>Đang tải...</p>;
   if (error) return <p>{error}</p>;
@@ -381,7 +445,12 @@ const RestaurantDetail = () => {
       <div className="restaurant-slider">
         <Slider {...restaurantSliderSettings}>
           {restaurant.imageUrls?.map((img, i) => (
-            <img key={i} src={img} alt={`slide-${i}`} className="slider-image" />
+            <img
+              key={i}
+              src={img}
+              alt={`slide-${i}`}
+              className="slider-image"
+            />
           )) || <p>Không có hình ảnh</p>}
         </Slider>
       </div>
@@ -392,7 +461,9 @@ const RestaurantDetail = () => {
           <div className="rd-meta">
             <div className="rd-rating">
               {renderStars(restaurant.averageRating)}
-              <span className="rd-rating-number">({restaurant.averageRating || 0})</span>
+              <span className="rd-rating-number">
+                ({restaurant.averageRating || 0})
+              </span>
             </div>
             <div className="rd-visits">
               {(restaurant.visits || 0).toLocaleString()} lượt xem
@@ -400,16 +471,34 @@ const RestaurantDetail = () => {
           </div>
           <div className="rd-tags">
             <span className="rd-location">📍 {restaurant.address}</span>
-            <span className="rd-style">🍽 {restaurant.type?.name || 'Không xác định'}</span>
+            <span className="rd-style">
+              🍽 {restaurant.type?.name || "Không xác định"}
+            </span>
           </div>
           <div className="rd-description">
             <h3>Giới thiệu</h3>
-            <div dangerouslySetInnerHTML={{ __html: restaurant.description || 'Không có mô tả.' }} />
+            <div
+              className={isExpanded ? "" : "collapsed"}
+              dangerouslySetInnerHTML={{
+                __html: restaurant.description || "Không có mô tả.",
+              }}
+            />
+            {restaurant.description && restaurant.description.length > 100 && (
+              <button onClick={() => setIsExpanded(!isExpanded)}>
+                {isExpanded ? "Thu gọn" : "Xem thêm"}
+              </button>
+            )}
           </div>
           <div className="rd-actions">
-            <button className="book-btn" onClick={handleBookTable}>Đặt bàn ngay</button>
+            <button className="book-btn" onClick={handleBookTable}>
+              Đặt bàn ngay
+            </button>
             <button className="heart" onClick={toggleLike}>
-              {isLiked ? <FaHeart color="#ff6f61" /> : <FaRegHeart color="#ccc" />}
+              {isLiked ? (
+                <FaHeart color="#ff6f61" />
+              ) : (
+                <FaRegHeart color="#ccc" />
+              )}
             </button>
           </div>
         </div>
@@ -454,12 +543,21 @@ const RestaurantDetail = () => {
                 {menuItems.slice(0, 5).map((item) => (
                   <SwiperSlide key={item.id}>
                     <div className="highlight-slide">
-                      <img src={item.imageUrl} alt={item.name} className="highlight-image" />
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="highlight-image"
+                      />
                       <div className="highlight-info">
-                        <h3 onClick={() => handleDishClick(item)} style={{ cursor: 'pointer' }}>
+                        <h3
+                          onClick={() => handleDishClick(item)}
+                          style={{ cursor: "pointer" }}
+                        >
                           {item.name}
                         </h3>
-                        <p className="price">{parseFloat(item.price).toLocaleString()}đ</p>
+                        <p className="price">
+                          {parseFloat(item.price).toLocaleString()}đ
+                        </p>
                         <button
                           className="view-detail-btn"
                           onClick={() => handleDishClick(item)}

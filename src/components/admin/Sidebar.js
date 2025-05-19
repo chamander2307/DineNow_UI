@@ -58,7 +58,7 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/feedback"
+            to="/admin/settlement"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Đối soát và thanh toán{" "}
@@ -74,7 +74,7 @@ const Sidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/Profit-dashboard"
+            to="/admin/profit"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Thống kê lợi nhuận

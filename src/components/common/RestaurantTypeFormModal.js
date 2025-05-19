@@ -5,7 +5,7 @@ import {
 } from "../../services/adminService";
 import "../../assets/styles/admin/RestaurantTypeFormModal.css";
 
-const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData }) => {
+const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplicateName }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -30,7 +30,7 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData }) => {
     if (name === "image") {
       const file = files[0];
       setFormData((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
+      setPreview(file ? URL.createObjectURL(file) : initialData?.imageUrl || null);
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -39,25 +39,50 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!initialData && checkDuplicateName && checkDuplicateName(formData.name)) {
+        setMessage("Tên loại nhà hàng đã tồn tại!");
+        return;
+      }
+
+      if (!initialData && !formData.image) {
+        setMessage("Vui lòng chọn ảnh!");
+        return;
+      }
+
       const data = new FormData();
       data.append("name", formData.name);
       data.append("description", formData.description);
       if (formData.image) {
-        data.append("image", formData.image);
+        data.append("imageUrl", formData.image);
+      } else if (initialData && !formData.image) {
+        data.append("imageUrl", initialData.imageUrl);
       }
 
+      let res;
       if (initialData) {
-        await updateRestaurantType(initialData.id, data);
-        setMessage("Cập nhật thành công");
+        res = await updateRestaurantType(initialData.id, data);
+        if (res && res.status === 200) {
+          onSuccess("Cập nhật thành công");
+        } else {
+          setMessage((res && res.data && res.data.message) || "Cập nhật thất bại");
+        }
       } else {
-        await createRestaurantType(data);
-        setMessage("Tạo mới thành công");
+        res = await createRestaurantType(data);
+        if (res && res.status === 200) {
+          onSuccess("Tạo mới thành công");
+        } else {
+          setMessage((res && res.data && res.data.message) || "Tạo mới thất bại");
+        }
       }
-
-      onSuccess();
-    } catch {
-      setMessage("Thao tác thất bại");
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      setMessage((err && err.message) || "Thao tác thất bại");
     }
+  };
+
+  const removeImage = () => {
+    setFormData((prev) => ({ ...prev, image: null }));
+    setPreview(initialData?.imageUrl || null);
   };
 
   return (
@@ -65,25 +90,48 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData }) => {
       <div className="modal">
         <h3>{initialData ? "Chỉnh sửa loại nhà hàng" : "Tạo loại nhà hàng"}</h3>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Tên loại"
-            required
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <textarea
-            name="description"
-            placeholder="Mô tả"
-            value={formData.description}
-            onChange={handleChange}
-          />
-          <input type="file" name="image" accept="image/*" onChange={handleChange} />
-          {preview && <img src={preview} alt="preview" className="preview" />}
+          <div>
+            <label htmlFor="name">Tên loại nhà hàng</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Nhập tên loại nhà hàng"
+              required
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="description">Mô tả</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Nhập mô tả"
+              value={formData.description}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="image">Ảnh đại diện</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              required={!initialData}
+            />
+            {preview && (
+              <div className="preview-container">
+                <img src={preview} alt="preview" className="preview" />
+                <button type="button" onClick={removeImage}>Xóa ảnh</button>
+              </div>
+            )}
+          </div>
           <div className="modal-actions">
             <button type="submit">{initialData ? "Cập nhật" : "Tạo mới"}</button>
-            <button type="button" onClick={onClose}>Huỷ</button>
+            <button type="button" onClick={onClose}>Hủy</button>
           </div>
           {message && <p className="message">{message}</p>}
         </form>

@@ -32,20 +32,32 @@ const isTokenExpired = (token) => {
 };
 
 instance.interceptors.request.use(async (config) => {
-  let token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
-  if (token && !isTokenExpired(token)) {
+  // Không có token, bỏ qua làm mới và gửi yêu cầu
+  if (!token) {
+    return config;
+  }
+
+  // Token hợp lệ, thêm header
+  if (!isTokenExpired(token)) {
     config.headers["Authorization"] = `Bearer ${token}`;
     return config;
   }
 
+  // Token hết hạn, làm mới
   if (!isRefreshing) {
     isRefreshing = true;
     try {
       const data = await refreshToken();
-      token = data?.accessToken;
-      localStorage.setItem("accessToken", token);
-      processQueue(null, token);
+      const newToken = data?.accessToken;
+      if (!newToken) {
+        throw new Error("Không nhận được accessToken mới");
+      }
+      localStorage.setItem("accessToken", newToken);
+      processQueue(null, newToken);
+      config.headers["Authorization"] = `Bearer ${newToken}`;
+      return config;
     } catch (error) {
       processQueue(error, null);
       localStorage.removeItem("accessToken");
@@ -56,10 +68,11 @@ instance.interceptors.request.use(async (config) => {
     }
   }
 
+  // Đang làm mới, xếp hàng yêu cầu
   return new Promise((resolve, reject) => {
     failedQueue.push({
-      resolve: (token) => {
-        config.headers["Authorization"] = `Bearer ${token}`;
+      resolve: (newToken) => {
+        config.headers["Authorization"] = `Bearer ${newToken}`;
         resolve(config);
       },
       reject,
@@ -71,17 +84,24 @@ instance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+    // Xử lý lỗi 401 hoặc 403, nhưng chỉ thử làm mới một lần
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       if (!isRefreshing) {
         isRefreshing = true;
         try {
           const data = await refreshToken();
-          const token = data?.accessToken;
-          localStorage.setItem("accessToken", token);
-          processQueue(null, token);
-          originalRequest.headers["Authorization"] = `Bearer ${token}`;
+          const newToken = data?.accessToken;
+          if (!newToken) {
+            throw new Error("Không nhận được accessToken mới");
+          }
+          localStorage.setItem("accessToken", newToken);
+          processQueue(null, newToken);
+          originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return instance(originalRequest);
         } catch (e) {
           processQueue(e, null);
@@ -93,16 +113,18 @@ instance.interceptors.response.use(
         }
       }
 
+      // Đang làm mới, xếp hàng yêu cầu
       return new Promise((resolve, reject) => {
         failedQueue.push({
-          resolve: (token) => {
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+          resolve: (newToken) => {
+            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             resolve(instance(originalRequest));
           },
           reject,
         });
       });
     }
+
     return Promise.reject(error);
   }
 );

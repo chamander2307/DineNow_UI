@@ -43,6 +43,11 @@ import OwnerRevenueDashboard from "../pages/Owner/OwnerRevenueDashboard";
 import OwnerOrderManager from "../pages/Owner/OwnerOrderManager";
 import AdminOrderManager from "../pages/Admin/AdminOrderManager";
 import OwnerMenuItemReviewList from "../pages/Owner/OwnerMenuItemReviewList";
+import FoodCategoryMyList from "../pages/Owner/FoodCategoryMyList";
+import BankAccountManager from "../pages/Owner/BankAccountManager";
+import OwnerDashboard from "../pages/Owner/OwnerDashboard";
+import SettlementPage from "../pages/Admin/SettlementPage";
+import AdminProfit from "../pages/Admin/AdminProfit";
 
 import Page404 from "../components/basicComponents/Page404";
 const AppRoutes = () => {
@@ -93,8 +98,11 @@ const AppRoutes = () => {
       <Route path="/owner/order" element={<OwnerOrderManager />} />
       <Route path="/admin/orders" element={<AdminOrderManager />} />
       <Route path="/owner/menu-item-review" element={<OwnerMenuItemReviewList />} />
-      
-
+      <Route path="/owner/food-category" element={<FoodCategoryMyList />} />
+      <Route path="/owner/bank-account" element={<BankAccountManager />} />
+      <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+      <Route path="/admin/settlement" element={<SettlementPage />} />
+      <Route path="/admin/profit" element={<AdminProfit />} />
       {/* Các trang không tìm thấy */}
       <Route path="*" element={<Page404 />} />
     </Routes>
