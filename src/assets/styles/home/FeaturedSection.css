@@ -353,3 +353,26 @@
   font-size: 18px;
   color: #e74c3c;
 }
+/* =========================
+   4. HIGHLIGHT SLIDER
+========================= */
+.highlight-slider-wrapper {
+  width: 100%;
+  max-width: 1120px; /* Giữ nguyên chiều ngang */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.highlight-slide {
+  width: 100%;
+  height: 560px; /* Giảm từ 700px xuống 20% */
+  overflow: hidden;
+}
+
+.highlight-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover; /* Kéo dãn ảnh, giữ tỷ lệ */
+  object-position: center;
+  display: block;
+} 

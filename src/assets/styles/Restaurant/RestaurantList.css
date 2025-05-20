@@ -1,39 +1,108 @@
-.restaurant-page {
-  padding: 40px 20px;
-  max-width: 1700px;
+/* RestaurantList.css */
+.rl-page {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 16px;
 }
 
-.restaurant-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #333;
-}
-
-/* Không căn giữa, lưới tự giãn, cách nhau 12px */
-.restaurant-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(280px, 1fr));
-  justify-content: center;
-}
-.restaurant-page {
-  padding: 40px 20px 40px 60px; /* 60px left, 20px right, 40px top/bottom */
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.restaurant-title {
-  font-size: 32px;
-  font-weight: 800;
-  margin-bottom: 24px;
-  color: #333;
+.rl-title {
+  font-size: 24px;
+  margin: 20px 0;
   text-align: center;
 }
 
-.restaurant-list {
-  display: grid;
-  grid-template-columns: repeat(4, 330px);
-  gap: 12px;
+/* Container cho danh sách thẻ */
+.rl-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px; 
+  overflow: hidden;
+  padding: 16px 0;
   justify-content: center;
+}
+
+/* Đảm bảo kích thước thẻ */
+.rl-card-item {
+  flex: 0 0 330px !important; 
+  height: 370px !important;
+  max-width: calc(33.333% - 32px * 2 / 3);
+  transition: transform 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+/* Hiệu ứng hover */
+.rl-card-item:hover {
+  transform: translateY(-4px);
+}
+
+/* Đảm bảo thẻ không bị co giãn */
+.rc-item {
+  width: 330px !important;
+  height: 370px !important;
+}
+
+/* Phân trang */
+.rl-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.rl-pagination button {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.rl-pagination button:hover {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.rl-pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.rl-pagination span {
+  font-size: 16px;
+  line-height: 32px;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .rl-card-container {
+    gap: 24px; 
+  }
+  .rl-card-item {
+    flex: 0 0 300px !important;
+    height: 350px !important;
+    max-width: calc(50% - 24px * 2 / 2);
+    margin-bottom: 12px; 
+  }
+  .rc-item {
+    width: 300px !important;
+    height: 350px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .rl-card-container {
+    gap: 16px;
+  }
+  .rl-card-item {
+    flex: 0 0 280px !important;
+    height: 330px !important;
+    max-width: calc(100% - 16px * 2);
+    margin-bottom: 8px;
+  }
+  .rc-item {
+    width: 280px !important;
+    height: 330px !important;
+  }
 }

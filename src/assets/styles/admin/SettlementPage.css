@@ -198,3 +198,52 @@
   color: #6b7280;
   font-style: italic;
 }
+.view-toggle {
+  margin-bottom: 20px;
+}
+.view-toggle button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  cursor: pointer;
+}
+.view-toggle button.active {
+  background-color: #007bff;
+  color: white;
+}
+.view-toggle {
+  margin-bottom: 20px;
+}
+.view-toggle button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  cursor: pointer;
+}
+.view-toggle button.active {
+  background-color: #007bff;
+  color: white;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  margin: 50px auto;
+}
+.modal h2 {
+  margin-top: 0;
+}
+.modal p {
+  margin: 10px 0;
+}
+.modal button {
+  padding: 10px 20px;
+  margin: 10px 5px;
+  cursor: pointer;
+}
+.error {
+  color: red;
+  margin: 10px 0;
+}

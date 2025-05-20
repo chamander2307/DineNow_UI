@@ -13,8 +13,10 @@ import {
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
   const location = useLocation();
 
+  // Fetch data
   useEffect(() => {
     const loadRestaurants = async () => {
       setLoading(true);
@@ -27,7 +29,7 @@ const RestaurantList = () => {
         let response;
         if (typeId) {
           console.log("Gọi API fetchRestaurantsByTypeId với typeId:", typeId);
-          response = await fetchRestaurantsByTypeId(typeId, 0, 10);
+          response = await fetchRestaurantsByTypeId(typeId, page, 10);
           setRestaurants(response.data || []);
         } else if (province || restaurantName) {
           const searchParams = { province, restaurantName };
@@ -36,7 +38,7 @@ const RestaurantList = () => {
           setRestaurants(response.data || []);
         } else {
           console.log("Gọi API fetchAllRestaurants");
-          response = await fetchAllRestaurants(0, 10);
+          response = await fetchAllRestaurants(page, 10);
           setRestaurants(response.data.content || []);
         }
       } catch (error) {
@@ -47,27 +49,45 @@ const RestaurantList = () => {
       }
     };
     loadRestaurants();
-  }, [location.search]);
+  }, [location.search, page]);
+
+  // Phân trang
+  const handleNextPage = () => setPage(page + 1);
+  const handlePrevPage = () => setPage(page > 0 ? page - 1 : 0);
 
   return (
     <div>
       <LocationSearchBar />
       <FilterBar />
-      <div className="restaurant-page">
-        <h1 className="restaurant-title">Danh Sách Nhà Hàng</h1>
+      <div className="rl-page">
+        <h1 className="rl-title">Danh Sách Nhà Hàng</h1>
         {loading ? (
           <p>Đang tải...</p>
         ) : (
-          <div className="restaurant-list">
+          <div className="rl-card-container">
             {restaurants.length > 0 ? (
               restaurants.map((item) => (
-                <RestaurantCard key={item.id} {...item} />
+                <div key={item.id} className="rl-card-item">
+                  <RestaurantCard
+                    {...item}
+                    thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"} // Fallback image
+                  />
+                </div>
               ))
             ) : (
               <p>Không có nhà hàng nào.</p>
             )}
           </div>
         )}
+        <div className="rl-pagination">
+          <button onClick={handlePrevPage} disabled={page === 0}>
+            Trang trước
+          </button>
+          <span>Trang {page + 1}</span>
+          <button onClick={handleNextPage} disabled={restaurants.length < 10}>
+            Trang sau
+          </button>
+        </div>
       </div>
     </div>
   );

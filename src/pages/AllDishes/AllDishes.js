@@ -26,8 +26,8 @@ const AllDishes = () => {
           maxPrice: params.get("maxPrice") ? Number(params.get("maxPrice")) : undefined,
         };
 
-        const response = await filterMenuItems(filterData, 0, 20); // Match old code's API call
-        setDishes(response.data || []); // Revert to old code's response handling
+        const response = await filterMenuItems(filterData, 0, 20);
+        setDishes(response.data || []);
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
         setError("Không tìm thấy món ăn phù hợp.");
@@ -41,22 +41,28 @@ const AllDishes = () => {
   return (
     <div>
       <FilterBar />
-      <div className="all-dishes-page full-width">
-        <div className="section-header center">
-          <h2 className="section-title">Tất Cả Món Ăn</h2>
-          <p className="section-sub">
+      <div className="ad-page">
+        <div className="ad-section-header center">
+          <h2 className="ad-section-title">Tất Cả Món Ăn</h2>
+          <p className="ad-section-sub">
             Khám phá hàng loạt món ăn ngon hấp dẫn mỗi ngày
           </p>
         </div>
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="ad-error-message">{error}</div>}
         {loading ? (
-          <p className="loading">Đang tải...</p>
+          <p className="ad-loading">Đang tải...</p>
         ) : dishes.length === 0 ? (
-          <p className="no-results">Không tìm thấy món ăn.</p>
+          <p className="ad-no-results">Không tìm thấy món ăn.</p>
         ) : (
-          <div className="dishes-grid">
+          <div className="ad-dishes-grid">
             {dishes.map((dish) => (
-              <DishCard key={dish.id} dish={dish} />
+              <DishCard
+                key={dish.id}
+                dish={{
+                  ...dish,
+                  thumbnailUrl: dish.thumbnailUrl || "https://via.placeholder.com/330x200", // Fallback image
+                }}
+              />
             ))}
           </div>
         )}

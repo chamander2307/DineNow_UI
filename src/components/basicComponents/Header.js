@@ -79,7 +79,7 @@ const Header = () => {
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    to={`/food-category/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    to={`/all-dishes?mainCategoryId=${category.id}`}
                   >
                     {category.name}
                   </Link>

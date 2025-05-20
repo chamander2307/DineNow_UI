@@ -1,88 +1,97 @@
-.all-dishes-page {
-  padding: 40px 20px 40px 60px; /* Match RestaurantList: 60px left, 20px right, 40px top/bottom */
-  max-width: 1600px; /* Match RestaurantList */
+/* AllDishes.css */
+.ad-page {
+  padding: 40px 20px 40px 60px; /* Đồng bộ RestaurantList */
+  max-width: 1600px;
   margin: 0 auto;
-  background-color: #fefefe; /* Retained for consistency */
+  background-color: #fefefe;
+  box-sizing: border-box;
 }
 
-.section-header.center {
+.ad-section-header.center {
   text-align: center;
-  margin-bottom: 24px; /* Match RestaurantList's title margin */
+  margin-bottom: 24px;
 }
 
-.section-title {
-  font-size: 32px; /* Match RestaurantList */
-  font-weight: 800; /* Match RestaurantList */
-  margin: 0 0 8px; /* Consistent with RestaurantList */
-  color: #333; /* Match RestaurantList */
+.ad-section-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #333;
 }
 
-.section-sub {
-  font-size: 16px; /* Consistent with previous AllDishes */
-  color: #555; /* Match RestaurantList's muted tones */
+.ad-section-sub {
+  font-size: 16px;
+  color: #555;
 }
 
-.dishes-grid {
+.ad-dishes-grid {
   display: grid;
-  grid-template-columns: repeat(4, 330px); /* Match RestaurantList: 4 columns, 330px wide */
-  gap: 12px; /* Match RestaurantList */
-  justify-content: center; /* Match RestaurantList */
+  grid-template-columns: repeat(4, 330px); /* 4 thẻ/hàng */
+  gap: 32px; /* Khoảng cách ngang và dọc */
+  justify-content: center;
 }
 
-.error-message {
-  color: #ec1c24; /* Match app theme (e.g., FilterBar, FeaturedSection) */
+.ad-dishes-grid > * {
+  margin-bottom: 24px; /* Thêm margin-bottom để tăng khoảng cách dọc (~56px tổng) */
+}
+
+.ad-error-message {
+  color: #ec1c24;
   text-align: center;
   font-size: 16px;
   margin: 20px 0;
 }
 
-.loading {
+.ad-loading {
   text-align: center;
   font-size: 16px;
-  color: #333; /* Match RestaurantList's color */
+  color: #333;
   margin: 20px 0;
 }
 
-.no-results {
+.ad-no-results {
   text-align: center;
   font-size: 16px;
-  color: #555; /* Match section-sub */
+  color: #555;
   margin: 20px 0;
 }
 
-/* Remove old banner styles */
-.banner,
-.banner-content {
-  display: none !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .dishes-grid {
-    grid-template-columns: repeat(3, 330px); /* Reduce to 3 columns */
+/* Responsive */
+@media (max-width: 1400px) {
+  .ad-dishes-grid {
+    grid-template-columns: repeat(3, 330px); /* 3 thẻ/hàng */
+    gap: 24px;
+  }
+  .ad-dishes-grid > * {
+    margin-bottom: 16px; /* Giảm khoảng cách dọc */
   }
 }
 
-@media (max-width: 900px) {
-  .dishes-grid {
-    grid-template-columns: repeat(2, 330px); /* Reduce to 2 columns */
+@media (max-width: 1000px) {
+  .ad-dishes-grid {
+    grid-template-columns: repeat(2, 330px); /* 2 thẻ/hàng */
+    gap: 20px;
+  }
+  .ad-dishes-grid > * {
+    margin-bottom: 12px;
   }
 }
 
 @media (max-width: 600px) {
-  .all-dishes-page {
-    padding: 20px; /* Simplify padding for mobile */
+  .ad-page {
+    padding: 20px; /* Giảm padding cho mobile */
   }
-
-  .dishes-grid {
-    grid-template-columns: 330px; /* Single column */
+  .ad-dishes-grid {
+    grid-template-columns: 330px; /* 1 thẻ/hàng */
+    gap: 16px;
   }
-
-  .section-title {
-    font-size: 28px; /* Slightly smaller for mobile */
+  .ad-dishes-grid > * {
+    margin-bottom: 8px;
   }
-
-  .section-sub {
+  .ad-section-title {
+    font-size: 28px;
+  }
+  .ad-section-sub {
     font-size: 14px;
   }
 }

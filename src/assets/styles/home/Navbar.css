@@ -163,6 +163,8 @@
   position: absolute;
   top: 100%;
   right: 0;
+  left: auto;
+  transform: none;
   margin-top: 8px;
   background-color: white;
   border-radius: 8px;

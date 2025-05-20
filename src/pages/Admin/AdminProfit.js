@@ -146,7 +146,6 @@ const ProfitManager = () => {
               <button onClick={loadRangeProfits}>Tìm kiếm</button>
             </>
           )}
-          {viewType === "total" && <p>Không cần chọn thời gian cho tổng lợi nhuận.</p>}
         </div>
 
         {currentProfits && currentProfits.totalProfit !== undefined && (

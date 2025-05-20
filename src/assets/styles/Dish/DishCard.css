@@ -1,47 +1,51 @@
-.dish-link {
+/* DishCard.css */
+.dc-link {
   text-decoration: none;
   color: inherit;
   display: block;
-  width: 330px;
+  width: 330px !important;
 }
 
-.dish-item {
+.dc-item {
   background-color: #fff;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  height: 370px;
-  width: 100%;
+  width: 330px !important; /* Kích thước cố định */
+  height: 370px !important; /* Tăng từ 330px lên 370px để đồng bộ */
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
-.dish-item:hover {
+.dc-item:hover {
   transform: translateY(-6px);
 }
 
-.dish-image-container {
-  width: 330px; /* Fixed width */
-  height: 200px; /* Fixed height */
-  overflow: hidden; /* Ensure no overflow */
+.dc-image-container {
+  width: 330px !important; /* Kích thước cố định */
+  height: 200px !important; /* Kích thước cố định */
+  overflow: hidden;
+  position: relative; /* Để chứa favorite-button */
 }
 
-.dish-image {
+.dc-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Crop to fit container */
-  object-position: center; /* Center the image */
+  object-fit: cover; /* Phóng to/thu nhỏ ảnh để vừa khung */
+  object-position: center; /* Căn giữa ảnh */
   display: block;
 }
 
-.dish-details {
+.dc-details {
   padding: 12px;
   text-align: left;
   flex: 1;
+  box-sizing: border-box;
 }
 
-.dish-details h3 {
+.dc-details h3 {
   font-size: 15px;
   font-weight: 700;
   margin: 0 0 6px;
@@ -53,9 +57,52 @@
   overflow: hidden;
 }
 
-.price {
+.dc-price {
   font-size: 14px;
   color: #e74c3c;
   font-weight: bold;
   margin: 0;
+}
+
+.dc-description {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dc-type {
+  font-size: 13px;
+  color: #777;
+  margin: 4px 0;
+}
+
+.dc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.dc-favorite-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.dc-favorite-button:hover {
+  background: rgba(255, 255, 255, 1);
 }

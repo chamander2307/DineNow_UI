@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import Slider from "react-slick";
+import React, { useState, useEffect, useRef } from "react";
 import "../../assets/styles/home/Home.css";
 import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
 import FilterBar from "../../components/basicComponents/FilterBar";
@@ -16,7 +15,10 @@ const Home = () => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch featured restaurants
+  const dishContainerRef = useRef(null);
+  const restaurantContainerRef = useRef(null);
+
+  // Fetch data
   useEffect(() => {
     const loadFeaturedRestaurants = async () => {
       try {
@@ -27,7 +29,6 @@ const Home = () => {
       }
     };
 
-    // Fetch featured dishes
     const loadFeaturedDishes = async () => {
       try {
         const response = await fetchFeaturedMenuItems();
@@ -45,18 +46,30 @@ const Home = () => {
     loadData();
   }, []);
 
-  const sliderSettings = {
-    dots: true,
-    infinite: false,
-    speed: 700,
-    arrows: true,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      { breakpoint: 1280, settings: { slidesToShow: 3 } },
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
-    ],
+  // Hàm cuộn cho món ăn
+  const scrollDishNext = () => {
+    if (dishContainerRef.current) {
+      dishContainerRef.current.scrollBy({ left: 330 + 16, behavior: "smooth" });
+    }
+  };
+
+  const scrollDishPrev = () => {
+    if (dishContainerRef.current) {
+      dishContainerRef.current.scrollBy({ left: -(330 + 16), behavior: "smooth" });
+    }
+  };
+
+  // Hàm cuộn cho nhà hàng
+  const scrollRestaurantNext = () => {
+    if (restaurantContainerRef.current) {
+      restaurantContainerRef.current.scrollBy({ left: 330 + 16, behavior: "smooth" });
+    }
+  };
+
+  const scrollRestaurantPrev = () => {
+    if (restaurantContainerRef.current) {
+      restaurantContainerRef.current.scrollBy({ left: -(330 + 16), behavior: "smooth" });
+    }
   };
 
   return (
@@ -66,52 +79,68 @@ const Home = () => {
       <FoodCategoryList />
       <HighlightSlider />
 
-      <section className="section">
-        <div className="section-header center">
-          <h2 className="section-title">Món Ăn Nổi Bật</h2>
-          <p className="section-sub">
+      <section className="home-section">
+        <div className="home-section-header center">
+          <h2 className="home-section-title">Món Ăn Nổi Bật</h2>
+          <p className="home-section-sub">
             Khám phá hàng loạt món ăn ngon hấp dẫn mỗi ngày
           </p>
         </div>
         {loading ? (
           <p>Đang tải món ăn nổi bật...</p>
         ) : (
-          <Slider {...sliderSettings} className="horizontal-slider">
-            {featuredDishes.map((dish) => (
-              <div key={dish.id} className="slider-card-item">
-                <DishCard dish={dish} />
-              </div>
-            ))}
-          </Slider>
+          <div className="home-card-section">
+            <button className="home-scroll-button prev" onClick={scrollDishPrev}>
+              ❮
+            </button>
+            <div className="home-card-container" ref={dishContainerRef}>
+              {featuredDishes.slice(0, 15).map((dish) => (
+                <div key={dish.id} className="home-card-item">
+                  <DishCard dish={dish} />
+                </div>
+              ))}
+            </div>
+            <button className="home-scroll-button next" onClick={scrollDishNext}>
+              ❯
+            </button>
+          </div>
         )}
       </section>
 
-      <section className="section">
-        <div className="section-header center">
-          <h2 className="section-title">Nhà Hàng Nổi Bật</h2>
-          <p className="section-sub">Khám phá những nhà hàng nổi bật nhất</p>
+      <section className="home-section">
+        <div className="home-section-header center">
+          <h2 className="home-section-title">Nhà Hàng Nổi Bật</h2>
+          <p className="home-section-sub">Khám phá những nhà hàng nổi bật nhất</p>
         </div>
         {loading ? (
           <p>Đang tải nhà hàng nổi bật...</p>
         ) : (
-          <Slider {...sliderSettings} className="horizontal-slider">
-            {featuredRestaurants.map((restaurant) => (
-              <div key={restaurant.id} className="slider-card-item">
-                <RestaurantCard
-                  id={restaurant.id}
-                  thumbnailUrl={restaurant.thumbnailUrl}
-                  name={restaurant.name}
-                  averageRating={restaurant.averageRating}
-                  address={restaurant.address}
-                  visits={restaurant.visits || 0}
-                />
-              </div>
-            ))}
-          </Slider>
+          <div className="home-card-section">
+            <button className="home-scroll-button prev" onClick={scrollRestaurantPrev}>
+              ❮
+            </button>
+            <div className="home-card-container" ref={restaurantContainerRef}>
+              {featuredRestaurants.slice(0, 15).map((restaurant) => (
+                <div key={restaurant.id} className="home-card-item">
+                  <RestaurantCard
+                    id={restaurant.id}
+                    thumbnailUrl={restaurant.thumbnailUrl || "https://via.placeholder.com/330x200"} // Fallback image
+                    name={restaurant.name}
+                    averageRating={restaurant.averageRating}
+                    address={restaurant.address}
+                    visits={restaurant.visits || 0}
+                  />
+                </div>
+              ))}
+            </div>
+            <button className="home-scroll-button next" onClick={scrollRestaurantNext}>
+              ❯
+            </button>
+          </div>
         )}
       </section>
 
-      <section className="section">
+      <section className="home-section">
         <RelatedArticles />
       </section>
     </div>

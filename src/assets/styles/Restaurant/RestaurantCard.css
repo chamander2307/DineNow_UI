@@ -1,39 +1,41 @@
-.restaurant-item {
+.rc-item {
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
-  width: 330px;
-  height: 370px;
+  width: 330px !important; /* Cố định kích thước */
+  height: 370px !important; /* Cố định kích thước */
   display: flex;
   flex-direction: column;
   position: relative;
+  box-sizing: border-box;
 }
 
-.restaurant-item:hover {
+.rc-item:hover {
   transform: translateY(-4px);
 }
 
-.restaurant-image-container {
-  width: 330px; /* Fixed width */
-  height: 200px; /* Fixed height */
-  overflow: hidden; /* Ensure no overflow */
+.rc-image-container {
+  width: 330px !important; /* Cố định kích thước */
+  height: 200px !important; /* Cố định kích thước */
+  overflow: hidden;
 }
 
-.restaurant-image {
+.rc-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Crop to fit container */
-  object-position: center; /* Center the image */
+  object-fit: cover; /* Phóng to/thu nhỏ ảnh để vừa khung */
+  object-position: center; /* Căn giữa ảnh */
   display: block;
 }
 
-.restaurant-details {
+.rc-details {
   padding: 12px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  box-sizing: border-box;
 }
 
 .rc-name {
@@ -43,19 +45,19 @@
   color: #333;
 }
 
-.restaurant-meta {
+.rc-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 6px 0;
 }
 
-.star-icons {
+.rc-star-icons {
   display: flex;
   gap: 2px;
 }
 
-.visit-count {
+.rc-visit-count {
   font-size: 13px;
   color: #777;
   white-space: nowrap;
@@ -66,16 +68,16 @@
   margin-bottom: 4px;
 }
 
-.bold-price {
+.rc-bold-price {
   color: #e67e22;
   font-weight: bold;
 }
 
-.dim-price {
+.rc-dim-price {
   color: #ccc;
 }
 
-.restaurant-address {
+.rc-address {
   font-size: 13px;
   color: #555;
   margin: 4px 0;

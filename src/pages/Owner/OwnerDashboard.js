@@ -83,7 +83,7 @@ const COLORS = ["#4A90E2", "#50C878", "#FF6B6B", "#FFD166", "#A569BD"];
             </div>
 
             <div className="chart-section">
-              <h3>Phân bố dữ liệu</h3>
+              <h3>Biểu đồ tổng quan</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie

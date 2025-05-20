@@ -61,7 +61,7 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits
         <h3>{name}</h3>
         <div className="restaurant-meta">
           {renderStars(averageRating)}
-          <span className="visit-count">{formatNumber(visits || 0)} lượt đến</span>
+          <span className="visit-count">{formatNumber(visits || 0)} Lượt đặt</span>
         </div>
         {address && <p className="restaurant-address">{address}</p>}
         <Link to={`/restaurant/${id}`}>
