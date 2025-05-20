@@ -19,8 +19,21 @@ const RestaurantReviewForm = ({ restaurantId }) => {
     const loadData = async () => {
       try {
         // Lấy danh sách đánh giá
-        const reviewData = await fetchRestaurantReviews(restaurantId);
-        setReviews(reviewData || []);
+        const reviewResponse = await fetchRestaurantReviews(restaurantId);
+        console.log('Dữ liệu từ fetchRestaurantReviews:', reviewResponse); // Debug chi tiết
+        let reviewData;
+        if (Array.isArray(reviewResponse)) {
+          reviewData = reviewResponse; // Trường hợp cũ: mảng trực tiếp
+        } else {
+          reviewData = reviewResponse?.data?.data || []; // Trường hợp mới: object với data
+        }
+        const processedReviews = reviewData.map(review => ({
+          author: review.reviewerName || 'Ẩn danh',
+          date: review.reviewDate || new Date().toISOString(),
+          comment: review.comment || 'Không có nội dung',
+          rating: review.rating || 0,
+        }));
+        setReviews(processedReviews);
 
         // Kiểm tra đơn hàng
         if (user) {
@@ -29,6 +42,7 @@ const RestaurantReviewForm = ({ restaurantId }) => {
         }
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
+        setReviews([]); // Đảm bảo reviews không bị lỗi
       } finally {
         setLoading(false);
       }
@@ -47,15 +61,18 @@ const RestaurantReviewForm = ({ restaurantId }) => {
     const reviewData = { rating, comment };
     try {
       const newReview = await addRestaurantReview(restaurantId, reviewData);
-      if (newReview) {
-        setReviews([{
-          user: currentUser,
-          rating: newReview.rating,
-          comment: newReview.comment,
-          date: new Date().toLocaleDateString(),
-        }, ...reviews]);
+      if (newReview?.data) {
+        const processedReview = {
+          author: newReview.data.reviewerName || currentUser,
+          date: newReview.data.reviewDate || new Date().toISOString(),
+          comment: newReview.data.comment || comment,
+          rating: newReview.data.rating || rating,
+        };
+        setReviews([processedReview, ...reviews]);
         setRating(0);
         setComment('');
+      } else {
+        alert('Không thể gửi đánh giá. Vui lòng thử lại.');
       }
     } catch (error) {
       console.error('Lỗi khi gửi đánh giá:', error);
@@ -117,8 +134,8 @@ const RestaurantReviewForm = ({ restaurantId }) => {
           reviews.map((review, index) => (
             <div key={index} className="rest-review-item">
               <div className="rest-review-header">
-                <span className="rest-review-user">{review.user}</span>
-                <span className="rest-review-date">{review.date}</span>
+                <span className="rest-review-user">{review.author || 'Ẩn danh'}</span>
+                <span className="rest-review-date">{review.date ? new Date(review.date).toLocaleDateString() : 'Chưa có ngày'}</span>
               </div>
               <div className="rest-review-rating">
                 {[...Array(5)].map((_, i) => (
@@ -127,7 +144,7 @@ const RestaurantReviewForm = ({ restaurantId }) => {
                   </span>
                 ))}
               </div>
-              <p className="rest-review-comment">{review.comment}</p>
+              <p className="rest-review-comment">{review.comment || 'Không có nội dung'}</p>
             </div>
           ))
         ) : (

@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/img/DineNow_2.svg";
 import { UserContext } from "../../contexts/UserContext";
-import { FaHeart, FaShoppingBag } from "react-icons/fa";
+import { FaHeart, FaShoppingBag, FaTimes } from "react-icons/fa";
 import "../../assets/styles/home/Navbar.css";
 import RestaurantCart from "../Restaurants/RestaurantCart";
 import { fetchMainCategories } from "../../services/menuItemService";
@@ -10,11 +10,11 @@ import { fetchMainCategories } from "../../services/menuItemService";
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [showCartDropdown, setShowCartDropdown] = useState(false);
+  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false); // Thay showCartDropdown
   const [categories, setCategories] = useState([]);
-  const cartRef = useRef();
   const dropdownRef = useRef();
   const userRef = useRef();
+  const dialogRef = useRef(); // Ref cho dialog
   const navigate = useNavigate();
 
   const { isLogin, user, logout, loading } = useContext(UserContext);
@@ -38,13 +38,13 @@ const Header = () => {
       if (userRef.current && !userRef.current.contains(e.target)) {
         setShowUserDropdown(false);
       }
-      if (cartRef.current && !cartRef.current.contains(e.target)) {
-        setShowCartDropdown(false);
+      if (isCartDialogOpen && dialogRef.current && !dialogRef.current.contains(e.target)) {
+        setIsCartDialogOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isCartDialogOpen]);
 
   const handleLogout = () => {
     logout();
@@ -96,20 +96,34 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          <div className="cart-container" ref={cartRef}>
+          <div className="cart-container">
             <div
               className="cart-link"
-              onClick={() => setShowCartDropdown(!showCartDropdown)}
+              onClick={() => setIsCartDialogOpen(true)} // Mở dialog
             >
               <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
             </div>
-
-            {showCartDropdown && (
-              <div className="cart-dropdown">
-                <RestaurantCart restaurants={[]} />
-              </div>
-            )}
           </div>
+
+          {isCartDialogOpen && (
+            <>
+              <div className="cart-dialog-overlay" />
+              <div className="cart-dialog" ref={dialogRef}>
+                <div className="cart-dialog-header">
+                  <h3>Giỏ hàng</h3>
+                  <button
+                    className="cart-dialog-close"
+                    onClick={() => setIsCartDialogOpen(false)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+                <div className="cart-dialog-content">
+                  <RestaurantCart />
+                </div>
+              </div>
+            </>
+          )}
 
           {loading ? (
             <span style={{ color: "white", marginLeft: 12 }}>Đang tải...</span>

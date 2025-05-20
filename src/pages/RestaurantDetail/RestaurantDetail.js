@@ -1,85 +1,21 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
-  useCallback,
-} from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaStar,
-  FaStarHalfAlt,
-  FaRegStar,
-} from "react-icons/fa";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "../../assets/styles/Restaurant/RestaurantDetail.css";
-import RestaurantReviewForm from "../../components/Restaurants/RestaurantReviewForm";
-import {
-  fetchRestaurantById,
-  fetchSimpleMenuByRestaurant,
-} from "../../services/restaurantService";
-import {
-  addFavoriteRestaurant,
-  removeFavoriteRestaurant,
-} from "../../services/userService";
-import { UserContext } from "../../contexts/UserContext";
-
-// Custom hook để quản lý giỏ hàng
-const useCart = (restaurantId) => {
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cart"))?.[restaurantId] || {};
-    } catch {
-      return {};
-    }
-  });
-
-  useEffect(() => {
-    try {
-      const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
-      storedCart[restaurantId] = cart;
-      localStorage.setItem("cart", JSON.stringify(storedCart));
-    } catch (error) {
-      console.error("Lỗi khi lưu giỏ hàng:", error);
-    }
-  }, [cart, restaurantId]);
-
-  const addToCart = useCallback((dishId) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      [dishId]: (prevCart[dishId] || 0) + 1,
-    }));
-  }, []);
-
-  const increaseQuantity = useCallback((dishId) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      [dishId]: prevCart[dishId] + 1,
-    }));
-  }, []);
-
-  const decreaseQuantity = useCallback((dishId) => {
-    setCart((prevCart) => {
-      const newQuantity = prevCart[dishId] - 1;
-      if (newQuantity <= 0) {
-        const { [dishId]: _, ...rest } = prevCart;
-        return rest;
-      }
-      return { ...prevCart, [dishId]: newQuantity };
-    });
-  }, []);
-
-  return { cart, addToCart, increaseQuantity, decreaseQuantity };
-};
+import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import '../../assets/styles/Restaurant/RestaurantDetail.css';
+import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
+import DishReviews from '../../components/Dish/DishReviews'; // Import DishReviews
+import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
+import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants } from '../../services/userService';
+import { createOrder } from '../../services/orderService';
+import { UserContext } from '../../contexts/UserContext';
 
 // Hàm hiển thị sao đánh giá
 const renderStars = (rating) => {
@@ -161,43 +97,23 @@ const DishItem = ({
   );
 };
 
-// Component cho chi tiết món ăn
-const DishDetail = ({
-  dish,
-  cart,
-  addToCart,
-  increaseQuantity,
-  decreaseQuantity,
-  onBack,
-}) => {
-  const handleAdd = useCallback(
-    (e) => {
-      e.preventDefault();
-      addToCart(dish.id);
-    },
-    [dish.id, addToCart]
-  );
-  const handleIncrease = useCallback(
-    (e) => {
-      e.preventDefault();
-      increaseQuantity(dish.id);
-    },
-    [dish.id, increaseQuantity]
-  );
-  const handleDecrease = useCallback(
-    (e) => {
-      e.preventDefault();
-      decreaseQuantity(dish.id);
-    },
-    [dish.id, decreaseQuantity]
-  );
-  const handleBack = useCallback(
-    (e) => {
-      e.preventDefault();
-      onBack();
-    },
-    [onBack]
-  );
+const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
+  const handleAdd = useCallback((e) => {
+    e.preventDefault();
+    addToCart(dish.id);
+  }, [dish.id, addToCart]);
+  const handleIncrease = useCallback((e) => {
+    e.preventDefault();
+    increaseQuantity(dish.id);
+  }, [dish.id, increaseQuantity]);
+  const handleDecrease = useCallback((e) => {
+    e.preventDefault();
+    decreaseQuantity(dish.id);
+  }, [dish.id, decreaseQuantity]);
+  const handleBack = useCallback((e) => {
+    e.preventDefault();
+    onBack();
+  }, [onBack]);
 
   return (
     <div className="dish-detail-section">
@@ -238,9 +154,10 @@ const DishDetail = ({
           </div>
         </div>
       </div>
-      <button className="back-btn" onClick={handleBack}>
-        Quay lại
-      </button>
+      <div className="dish-reviews-section">
+        <DishReviews menuItemId={dish.id} />
+      </div>
+      <button className="back-btn" onClick={handleBack}>Quay lại</button>
     </div>
   );
 };
@@ -260,12 +177,33 @@ const RestaurantDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [cart, setCart] = useState(() => {
+    const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+    return savedCart[id] || {};
+  });
+  const [isExpanded, setIsExpanded] = useState(false); // Thêm khai báo state
 
-  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart(id);
+  // Kiểm tra trạng thái yêu thích khi component mount
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      if (isLogin) {
+        try {
+          const favorites = await getFavoriteRestaurants();
+          const isRestaurantLiked = favorites.some(fav => fav.id === parseInt(id));
+          setIsLiked(isRestaurantLiked);
+        } catch (err) {
+          console.error('Lỗi khi kiểm tra trạng thái yêu thích:', err);
+        }
+      }
+    };
+    fetchFavoriteStatus();
+  }, [id, isLogin]);
 
+  // Tải dữ liệu nhà hàng và menu
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const restaurantData = await fetchRestaurantById(id);
         setRestaurant(restaurantData);
@@ -281,22 +219,79 @@ const RestaurantDetail = () => {
     loadData();
   }, [id]);
 
+  // Lưu giỏ hàng vào sessionStorage
+  useEffect(() => {
+    try {
+      const storedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
+      storedCart[id] = cart;
+      sessionStorage.setItem('cart', JSON.stringify(storedCart));
+      console.log('Dữ liệu giỏ hàng đã lưu vào sessionStorage:', { [id]: cart });
+    } catch (error) {
+      console.error('Lỗi khi lưu giỏ hàng:', error);
+    }
+  }, [cart, id]);
+
+  // Hàm xử lý giỏ hàng
+  const addToCart = useCallback(async (dishId) => {
+    try {
+      let newQuantity;
+      setCart(prev => {
+        newQuantity = (prev[dishId] || 0) + 1;
+        return {
+          ...prev,
+          [dishId]: newQuantity,
+        };
+      });
+      const orderData = {
+        reservationTime: new Date().toISOString(),
+        numberOfPeople: 1,
+        numberOfChild: 0,
+        numberPhone: '0386299573',
+        orderItems: [{ menuItemId: dishId, quantity: newQuantity }],
+      };
+      await createOrder(id, orderData);
+    } catch (err) {
+      setError('Lỗi khi thêm vào giỏ hàng');
+      console.error('Lỗi khi thêm vào giỏ:', err);
+    }
+  }, [id]);
+
+  const increaseQuantity = useCallback((dishId) => {
+    setCart(prev => ({
+      ...prev,
+      [dishId]: prev[dishId] + 1,
+    }));
+  }, []);
+
+  const decreaseQuantity = useCallback((dishId) => {
+    setCart(prev => {
+      const newQuantity = prev[dishId] - 1;
+      if (newQuantity <= 0) {
+        const { [dishId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [dishId]: newQuantity };
+    });
+  }, []);
+
   const toggleLike = useCallback(async () => {
     if (!isLogin) {
       alert("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
       return;
     }
     try {
-      if (isLiked) {
-        await removeFavoriteRestaurant(id);
-        setIsLiked(false);
-      } else {
+      const newIsLiked = !isLiked;
+      setIsLiked(newIsLiked);
+
+      if (newIsLiked) {
         await addFavoriteRestaurant(id);
-        setIsLiked(true);
+      } else {
+        await removeFavoriteRestaurant(id);
       }
     } catch (error) {
-      console.error("Lỗi khi cập nhật danh sách yêu thích:", error);
-      alert("Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.");
+      console.error('Lỗi khi cập nhật danh sách yêu thích:', error);
+      alert('Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.');
+      setIsLiked(!isLiked); // Rollback nếu API thất bại
     }
   }, [isLiked, isLogin, id]);
 

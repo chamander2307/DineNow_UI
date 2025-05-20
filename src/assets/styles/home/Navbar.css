@@ -198,21 +198,73 @@
   font-weight: 500;
 }
 
-/* ===== Giỏ hàng dropdown ===== */
-.cart-container {
-  position: relative;
+/* Lớp phủ nền cho dialog */
+.cart-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
-.cart-dropdown {
-  position: absolute;
-  top: 110%;
-  right: 0;
-  width: 340px;
-  max-height: 500px;
-  overflow-y: auto;
+/* Dialog chính */
+.cart-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  padding: 12px;
-  z-index: 999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Header của dialog */
+.cart-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-dialog-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.cart-dialog-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+.cart-dialog-close:hover {
+  color: #000;
+}
+
+/* Nội dung của dialog */
+.cart-dialog-content {
+  padding: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-dialog {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .cart-dialog-header h3 {
+    font-size: 18px;
+  }
 }

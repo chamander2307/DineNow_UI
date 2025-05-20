@@ -1,49 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/styles/Restaurant/ReservationHistory.css';
-
-import restaurant1 from '../../assets/img/restaurant1.jpg';
-// Giả lập dữ liệu đơn đặt bàn
-const mockReservations = [
-  {
-    id: 1,
-    restaurant: {
-      image: restaurant1,
-      name: 'Nhà hàng Phở Việt',
-      address: '123 Đường Láng, Hà Nội',
-    },
-    status: 'Đã xác nhận',
-    date: '2025-04-20',
-  },
-  {
-    id: 2,
-    restaurant: {
-      image: restaurant1,
-      name: 'Quán Bún Bò Huế',
-      address: '456 Nguyễn Trãi, TP.HCM',
-    },
-    status: 'Đang chờ',
-    date: '2025-04-22',
-  },
-  {
-    id: 3,
-    restaurant: {
-      image: restaurant1,
-      name: 'Sushi Nhật Bản',
-      address: '789 Hai Bà Trưng, Đà Nẵng',
-    },
-    status: 'Đã hủy',
-    date: '2025-04-18',
-  },
-];
+import { getCustomerOrders } from '../../services/orderService';
 
 const ReservationHistory = () => {
   const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Không xác định';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const localizeStatus = (status) => {
+    const statusMap = {
+      PENDING: 'Đang chờ',
+      PAID: 'Đã thanh toán',
+      COMPLETED: 'Hoàn thành',
+      CONFIRMED: 'Đã xác nhận',
+      CANCELLED: 'Đã hủy',
+      FAILED: 'Thất bại',
+      'Không xác định': 'Không xác định', // Fallback
+    };
+    return statusMap[status] || statusMap['Không xác định'];
+  };
 
   useEffect(() => {
-    // Giả lập lấy dữ liệu đơn đặt bàn
-    setReservations(mockReservations);
+    const fetchReservations = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getCustomerOrders();
+        console.log('Raw API Response:', response);
+        const data = response.data || [];
+
+        console.log('API Response:', data);
+
+        const formattedReservations = data.map(order => ({
+          id: order.id,
+          restaurant: {
+            name: order.reservationSimpleResponse?.restaurantName || 'Không xác định',
+          },
+          status: localizeStatus(order.status || 'Không xác định'),
+          date: formatDate(order.reservationSimpleResponse?.reservationTime),
+          totalPrice: order.totalPrice || 0,
+        }));
+
+        setReservations(formattedReservations);
+      } catch (err) {
+        setError('Lỗi khi tải lịch sử đặt bàn: ' + err.message);
+        console.error('Lỗi khi lấy dữ liệu:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReservations();
   }, []);
+
+  if (loading) return <div className="text-center">Đang tải...</div>;
+  if (error) return <div className="text-center text-danger">{error}</div>;
 
   return (
     <div className="reservation-history-container">
@@ -52,9 +73,9 @@ const ReservationHistory = () => {
         <table className="reservation-table">
           <thead>
             <tr>
-              <th>Ảnh</th>
               <th>Tên nhà hàng</th>
-              <th>Địa chỉ</th>
+              <th>Ngày đặt</th>
+              <th>Tổng tiền</th>
               <th>Trạng thái</th>
               <th>Hành động</th>
             </tr>
@@ -62,15 +83,9 @@ const ReservationHistory = () => {
           <tbody>
             {reservations.map((reservation) => (
               <tr key={reservation.id}>
-                <td>
-                  <img
-                    src={reservation.restaurant.image}
-                    alt={reservation.restaurant.name}
-                    className="restaurant-images"
-                  />
-                </td>
                 <td>{reservation.restaurant.name}</td>
-                <td>{reservation.restaurant.address}</td>
+                <td>{reservation.date}</td>
+                <td>{reservation.totalPrice.toLocaleString('vi-VN')} VNĐ</td>
                 <td>
                   <span className={`status ${reservation.status.replace(' ', '-').toLowerCase()}`}>
                     {reservation.status}

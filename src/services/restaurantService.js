@@ -145,6 +145,17 @@ export const fetchSimpleMenuByRestaurant = async (restaurantId) => {
   }
 };
 
+// Lấy menu công khai theo nhà hàng (dùng trong RestaurantCart.js)
+export const getPublicMenuByRestaurant = async (restaurantId) => {
+  try {
+    const response = await axios.get(`/api/restaurants/${restaurantId}/menu`); // Giả định endpoint giống fetchSimpleMenuByRestaurant
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy menu công khai trong giỏ hàng:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 // ========== ADMIN ==========
 
 export const approveRestaurant = async (id, status) => {

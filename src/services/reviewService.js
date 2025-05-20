@@ -43,10 +43,12 @@ export const fetchAllMenuItemReviews = async (menuItemId, page = 0, size = 10) =
 // Thêm đánh giá món ăn
 export const addMenuItemReview = async (menuItemId, reviewData) => {
   try {
+    console.log('Dữ liệu gửi đi:', reviewData);
     const response = await axios.post(
       `/api/reviews/menu-items/${menuItemId}/add`,
       reviewData
     );
+    console.log('Phản hồi từ API:', response?.data);
     return response?.data?.data || null;
   } catch (error) {
     console.error(
@@ -56,6 +58,7 @@ export const addMenuItemReview = async (menuItemId, reviewData) => {
     return null;
   }
 };
+
 
 // Lấy danh sách đánh giá nhà hàng (OWNER hoặc PUBLIC)
 export const fetchRestaurantReviews = async (
