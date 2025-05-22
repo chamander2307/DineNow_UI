@@ -36,7 +36,19 @@ export const fetchMonthlyRevenueInRange = async (restaurantId, startDate, endDat
     throw error;
   }
 };
-//revernue admin
+
+// Lấy dữ liệu dashboard cho admin
+export const fetchAdminDashboard = async () => {
+  try {
+    const response = await axios.get(`/api/admin/dashboard`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu dashboard admin:", error);
+    throw error;
+  }
+};
+
+// Lấy doanh thu theo tháng (ADMIN)
 export const fetchAdminMonthlyRevenue = async (month) => {
   try {
     const response = await axios.get(`/api/admin/revenues/restaurants/monthly`, { params: { month } });
@@ -47,6 +59,7 @@ export const fetchAdminMonthlyRevenue = async (month) => {
   }
 };
 
+// Lấy tổng doanh thu (ADMIN)
 export const fetchAdminTotalRevenue = async () => {
   try {
     const response = await axios.get(`/api/admin/revenues/restaurants/total`);
@@ -57,6 +70,7 @@ export const fetchAdminTotalRevenue = async () => {
   }
 };
 
+// Lấy doanh thu trong khoảng thời gian (ADMIN)
 export const fetchAdminRevenueInRange = async (startMonth, endMonth) => {
   try {
     const response = await axios.get(`/api/admin/revenues/restaurants/monthly/range`, {
