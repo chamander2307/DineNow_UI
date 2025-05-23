@@ -84,7 +84,7 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
       </div>
 
       <form onSubmit={handleSubmit} className="modal-content">
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Tên danh mục</label>
           <input
             className="form-input"
@@ -108,10 +108,10 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width ">
           <label>Mô tả</label>
           <textarea
-            className="form-input"
+            className="form-input "
             name="description"
             placeholder="Nhập mô tả"
             value={formData.description}

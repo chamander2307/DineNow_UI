@@ -47,16 +47,15 @@ const OwnerReviewList = () => {
       setIsLoading(false);
     }
   };
+
   const loadReviews = async (restaurantId) => {
     setIsLoading(true);
     try {
       const res = await fetchRestaurantReviews(restaurantId);
-      // Đảm bảo res luôn là một mảng
       setReviews(Array.isArray(res) ? res : []);
     } catch (err) {
       console.error("Lỗi tải đánh giá", err);
       alert("Không thể tải danh sách đánh giá");
-      // Nếu có lỗi, đảm bảo setReviews là một mảng rỗng
       setReviews([]);
     } finally {
       setIsLoading(false);
@@ -80,7 +79,7 @@ const OwnerReviewList = () => {
         <h2>Quản lý Đánh giá Nhà hàng</h2>
         <div className="top-actions">
           <select
-            className="form-input"
+            className="select-input-custom"
             value={selectedRestaurantId || ""}
             onChange={(e) => setSelectedRestaurantId(e.target.value)}
           >
@@ -137,4 +136,4 @@ const OwnerReviewList = () => {
   );
 };
 
-export default OwnerReviewList;
+export default OwnerReviewList; 

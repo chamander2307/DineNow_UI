@@ -4,53 +4,61 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home/Home";
 
 // Auth
-import Login from "../pages/Auth/Login/Login";
-import Register from "../pages/Auth/Register/Register";
-import ResetPasswordFlow from "../pages/Auth/ForgotPassword/ForgotPassword";
-import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
-import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
 import ChangePassword from "../pages/Auth/ChangePassword/ChangePassword";
+import ForgotPassword from "../pages/Auth/ForgotPassword/ForgotPassword";
+import Login from "../pages/Auth/Login/Login";
+import OAuth2RedirectHandler from "../pages/Auth/OAuth2RedirectHandler";
+import Register from "../pages/Auth/Register/Register";
+import VerifyEmail from "../pages/Auth/VerifyEmail/VerifyEmail";
 
 // Người dùng
-import Profile from "../pages/Profile/Profile";
+import CartPage from "../pages/CartPage/CartPage";
 import FavoriteRestaurants from "../pages/FavoriteRestaurants/FavoriteRestaurants";
-import ReservationHistory from "../pages/ReservationHistory/ReservationHistory";
+import Profile from "../pages/Profile/Profile";
 import ReservationDetail from "../pages/ReservationDetail/ReservationDetail";
+import ReservationHistory from "../pages/ReservationHistory/ReservationHistory";
 
 // Nhà hàng & món ăn
-import RestaurantList from "../pages/RestaurantList/RestaurantList";
-import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
-import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
-import DishDetail from "../pages/DishDetail/DishDetail";
 import AllDishes from "../pages/AllDishes/AllDishes";
+<<<<<<< HEAD
 import OrderPage from "../pages/OrderPage/OrderPage";
+=======
+import DishDetail from "../pages/DishDetail/DishDetail";
+import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
+import RestaurantList from "../pages/RestaurantList/RestaurantList";
+import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
+>>>>>>> fa7c5437af7bc3c8c51f9f0e4ee9504123a9ac7d
 
 // Chính sách & Thanh toán
-import PolicyPage from "../pages/Policy/PolicyPage";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
+import PolicyPage from "../pages/Policy/PolicyPage";
 
-// Quản trị (admin + owner)
-import RestaurantManager from "../pages/Admin/RestaurantManager";
-import RestaurantMyList from "../pages/Owner/RestaurantMyList";
-import MenuItemMyList from "../pages/Owner/MenuItemMyList";
-import CartPage from "../pages/CartPage/CartPage";
-import RestaurantTypeManager from "../pages/Admin/RestaurantTypeManager";
-import UserManager from "../pages/Admin/UserManager";
-import RevenueDashboard from "../pages/Admin/RevenueDashboard";
+// Quản trị (admin)
+import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminMainCategoryManager from "../pages/Admin/AdminMainCategoryManager";
-import OwnerReservationList from "../pages/Owner/OwnerReservationList";
-import OwnerReviewList from "../pages/Owner/OwnerReviewList";
-import OwnerRevenueDashboard from "../pages/Owner/OwnerRevenueDashboard";
-import OwnerOrderManager from "../pages/Owner/OwnerOrderManager";
 import AdminOrderManager from "../pages/Admin/AdminOrderManager";
-import OwnerMenuItemReviewList from "../pages/Owner/OwnerMenuItemReviewList";
-import FoodCategoryMyList from "../pages/Owner/FoodCategoryMyList";
-import BankAccountManager from "../pages/Owner/BankAccountManager";
-import OwnerDashboard from "../pages/Owner/OwnerDashboard";
-import SettlementPage from "../pages/Admin/SettlementPage";
 import AdminProfit from "../pages/Admin/AdminProfit";
+import RestaurantManager from "../pages/Admin/RestaurantManager";
+import RestaurantTypeManager from "../pages/Admin/RestaurantTypeManager";
+import RevenueDashboard from "../pages/Admin/RevenueDashboard";
+import SettlementPage from "../pages/Admin/SettlementPage";
+import UserManager from "../pages/Admin/UserManager";
 
+// Quản trị (owner)
+import BankAccountManager from "../pages/Owner/BankAccountManager";
+import FoodCategoryMyList from "../pages/Owner/FoodCategoryMyList";
+import MenuItemMyList from "../pages/Owner/MenuItemMyList";
+import OwnerDashboard from "../pages/Owner/OwnerDashboard";
+import OwnerMenuItemReviewList from "../pages/Owner/OwnerMenuItemReviewList";
+import OwnerOrderManager from "../pages/Owner/OwnerOrderManager";
+import OwnerReservationList from "../pages/Owner/OwnerReservationList";
+import OwnerRevenueDashboard from "../pages/Owner/OwnerRevenueDashboard";
+import OwnerReviewList from "../pages/Owner/OwnerReviewList";
+import RestaurantMyList from "../pages/Owner/RestaurantMyList";
+
+// 404
 import Page404 from "../components/basicComponents/Page404";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -58,55 +66,56 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
 
       {/* Auth */}
+      <Route path="/change-password" element={<ChangePassword />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ResetPasswordFlow />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
       {/* Người dùng */}
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/cart" element={<CartPage />} />
       <Route path="/favorite-restaurants" element={<FavoriteRestaurants />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
-      <Route path="/change-password" element={<ChangePassword />} />
-      <Route path="/cart" element={<CartPage />} />
 
       {/* Nhà hàng & món ăn */}
+      <Route path="/all-dishes" element={<AllDishes />} />
+      <Route path="/dish/:dishId" element={<DishDetail />} />
       <Route path="/restaurant-list" element={<RestaurantList />} />
       <Route path="/restaurant/:id" element={<RestaurantDetail />} />
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
-      <Route path="/dish/:dishId" element={<DishDetail />} />
-      <Route path="/all-dishes" element={<AllDishes />} />
-      <Route path="/order" element={<OrderPage />} />
-
 
       {/* Chính sách & Thanh toán */}
-      <Route path="/policy" element={<PolicyPage />} />
       <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/policy" element={<PolicyPage />} />
 
-      {/* Quản trị */}
+      {/* Quản trị - Admin */}
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/main-category" element={<AdminMainCategoryManager />} />
+      <Route path="/admin/orders" element={<AdminOrderManager />} />
+      <Route path="/admin/profit" element={<AdminProfit />} />
       <Route path="/admin/restaurants" element={<RestaurantManager />} />
       <Route path="/admin/restaurant-types" element={<RestaurantTypeManager />} />
-      <Route path="/admin/users" element={<UserManager />} />
-      <Route path="/owner/restaurants" element={<RestaurantMyList />} />
-      <Route path="/owner/menu-items" element={<MenuItemMyList />} />
-      <Route path="/reservation/:id" element={<ReservationDetail />} />
       <Route path="/admin/revenue-dashboard" element={<RevenueDashboard />} />
-      <Route path="/admin/main-category" element={<AdminMainCategoryManager />} />
-      <Route path="/owner/menu-items/:restaurantId" element={<MenuItemMyList />} />
-      <Route path="/owner/reservation" element={<OwnerReservationList />} />
-      <Route path="/owner/review" element={<OwnerReviewList />} />
-      <Route path="/owner/revenue-dashboard" element={<OwnerRevenueDashboard />} />
-      <Route path="/owner/order" element={<OwnerOrderManager />} />
-      <Route path="/admin/orders" element={<AdminOrderManager />} />
-      <Route path="/owner/menu-item-review" element={<OwnerMenuItemReviewList />} />
-      <Route path="/owner/food-category" element={<FoodCategoryMyList />} />
+      <Route path="/admin/settlement" element={<SettlementPage />} />
+      <Route path="/admin/users" element={<UserManager />} />
+
+      {/* Quản trị - Owner */}
       <Route path="/owner/bank-account" element={<BankAccountManager />} />
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-      <Route path="/admin/settlement" element={<SettlementPage />} />
-      <Route path="/admin/profit" element={<AdminProfit />} />
-      {/* Các trang không tìm thấy */}
+      <Route path="/owner/food-category" element={<FoodCategoryMyList />} />
+      <Route path="/owner/menu-item-review" element={<OwnerMenuItemReviewList />} />
+      <Route path="/owner/menu-items" element={<MenuItemMyList />} />
+      <Route path="/owner/menu-items/:restaurantId" element={<MenuItemMyList />} />
+      <Route path="/owner/order" element={<OwnerOrderManager />} />
+      <Route path="/owner/reservation" element={<OwnerReservationList />} />
+      <Route path="/owner/restaurants" element={<RestaurantMyList />} />
+      <Route path="/owner/revenue-dashboard" element={<OwnerRevenueDashboard />} />
+      <Route path="/owner/review" element={<OwnerReviewList />} />
+
+      {/* Trang không tìm thấy */}
       <Route path="*" element={<Page404 />} />
     </Routes>
   );

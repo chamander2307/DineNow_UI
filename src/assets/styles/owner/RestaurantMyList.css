@@ -59,9 +59,10 @@
     text-align: left;
   }
   
-  .admin-table th {
-    background-color: #f2f2f2;
-  }
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #3c2f2f;
+}
   
   .admin-table button {
     padding: 4px 8px;

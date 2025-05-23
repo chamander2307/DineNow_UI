@@ -24,33 +24,21 @@ const Login = () => {
       console.log("Login API response:", res);
 
       const token = res?.data?.accessToken;
-      if (!token) {
-        throw new Error("Phản hồi không chứa accessToken");
-      }
-
-      localStorage.setItem("accessToken", token);
-
-      const profile = await getUserProfile();
-      console.log("Thông tin người dùng:", profile);
-      setUser(profile);
-      setIsLogin(true);
-
-      navigate("/");
-    } catch (err) {
-      console.error("Chi tiết lỗi:", err);
-
-      const status = err?.response?.status;
-      const message = err?.response?.data?.message;
-
-      if (status === 418) {
-        setError("Tài khoản chưa xác thực. Đang chuyển hướng...");
-        setTimeout(() => {
-          navigate(`/verify-email?email=${encodeURIComponent(email)}`);
-        }, 1500);
-        return;
-      }
-
-      switch (status) {
+      switch (res.status) {
+        case 200:
+          localStorage.setItem("accessToken", token);
+          const profile = await getUserProfile();
+          console.log("Thông tin người dùng:", profile);
+          setUser(profile);
+          setIsLogin(true);
+          navigate("/");
+          break;
+        case 418:
+          setError("Tài khoản chưa xác thực. Đang chuyển hướng...");
+          setTimeout(() => {
+            navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+          }, 1500);
+          break;
         case 401:
           setError("Email không hợp lệ.");
           break;
@@ -67,8 +55,13 @@ const Login = () => {
           setError("Lỗi máy chủ. Vui lòng thử lại sau.");
           break;
         default:
-          setError(message || "Đăng nhập thất bại.");
+          setError("Đăng nhập thất bại.");
       }
+    } catch (err) {
+      console.error("Chi tiết lỗi:", err);
+
+      const status = err?.response?.status;
+
     }
   };
 

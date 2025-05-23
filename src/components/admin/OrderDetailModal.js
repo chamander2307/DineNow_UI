@@ -7,7 +7,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
 
   const statusText = {
     PENDING: "Chờ xử lý",
-    APPROVED: "Đã xác nhận",
+    CONFIRMED: "Đã xác nhận", // Changed from APPROVED to CONFIRMED to match API
     REJECTED: "Bị từ chối",
     FAILED: "Thất bại",
     COMPLETED: "Hoàn tất",
@@ -38,7 +38,9 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
         <p>
           <strong>Thời gian đặt bàn:</strong>{" "}
           {order.reservation?.reservationTime
-            ? new Date(order.reservation.reservationTime).toLocaleString()
+            ? new Date(order.reservation.reservationTime).toLocaleString("vi-VN", {
+                timeZone: "Asia/Ho_Chi_Minh",
+              })
             : "N/A"}
         </p>
       </div>

@@ -249,8 +249,8 @@
   font-size: 0.95rem;
 }
 .admin-table th {
-  background: linear-gradient(to bottom, #333, #444);
-  color: #fff;
+  background-color: #f2f2f2;
+  color: #3c2f2f;
   font-weight: 500;
 }
 .admin-table td {

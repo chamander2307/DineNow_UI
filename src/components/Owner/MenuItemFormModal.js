@@ -112,7 +112,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
 
     if (isDuplicate) {
       console.log("Tên món ăn đã tồn tại:", formData.name);
-      alert("Tên món ăn đã tồn tại."); // Thay toast.error bằng alert
+      alert("Tên món ăn đã tồn tại.");
       return;
     }
 
@@ -189,7 +189,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
       </div>
 
       <form onSubmit={handleSubmit} className="modal-content">
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Tên món ăn</label>
           <input
             className="form-input"
@@ -201,10 +201,10 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Giá (VNĐ)</label>
           <NumericFormat
-            className="form-input"
+            className="form-input number-format"
             thousandSeparator={true}
             suffix=" VNĐ"
             placeholder="Nhập giá (VD: 50,000 VNĐ)"
@@ -215,7 +215,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Danh mục</label>
           <Select
             className="select-input"
@@ -227,7 +227,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Mô tả</label>
           <textarea
             className="form-input"
@@ -239,7 +239,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Ảnh món ăn</label>
           {initialData?.imageUrl && (
             <div className="image-preview">

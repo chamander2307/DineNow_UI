@@ -9,7 +9,7 @@ const Sidebar = () => {
       <ul>
         <li>
           <NavLink
-            to="/admin/feedback"
+            to="/admin/dashboard"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Tổng quan

@@ -117,7 +117,7 @@ const OwnerRevenueDashboard = () => {
               value={selectedRestaurantId || ""}
               onChange={(e) => setSelectedRestaurantId(e.target.value)}
               disabled={loading || !restaurants.length}
-              className="form-input"
+              className="select-input-custom"
             >
               <option value="" disabled>Chọn nhà hàng</option>
               {restaurants.map((r) => (

@@ -5,6 +5,7 @@ import OwnerLayout from "./OwnerLayout";
 import { fetchRestaurantsByOwner } from "../../services/restaurantService";
 import { fetchMenuItemsByRestaurant } from "../../services/menuItemService";
 import { fetchMenuItemReviews } from "../../services/reviewService";
+import Select from "react-select"; // Thêm import react-select
 
 const OwnerMenuItemReviewList = () => {
   const { user, loading } = useContext(UserContext);
@@ -101,46 +102,56 @@ const OwnerMenuItemReviewList = () => {
     }
   };
 
+  // Chuyển dữ liệu thành định dạng cho react-select
+  const restaurantOptions = restaurants.map((r) => ({
+    value: r.id,
+    label: r.name,
+  }));
+
+  const menuItemOptions = menuItems.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
+
+  // Tìm giá trị đã chọn cho react-select
+  const selectedRestaurantOption = restaurantOptions.find(
+    (option) => option.value === selectedRestaurantId
+  ) || null;
+
+  const selectedMenuItemOption = menuItemOptions.find(
+    (option) => option.value === selectedMenuItemId
+  ) || null;
+
   return (
     <OwnerLayout>
       <div className="manager-header">
         <h2>Quản lý Đánh giá Món ăn</h2>
         <div className="top-actions" style={{ display: "flex", gap: "16px" }}>
-          <div>
+          <div className="form-group">
             <label className="form-group label">Chọn nhà hàng:</label>
-            <select
-              className="form-input"
-              value={selectedRestaurantId || ""}
-              onChange={(e) => setSelectedRestaurantId(e.target.value)}
-              disabled={isLoading}
-            >
-              <option value="" disabled>
-                Chọn nhà hàng
-              </option>
-              {restaurants.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
+            <Select
+              className="select-input"
+              value={selectedRestaurantOption}
+              onChange={(selected) =>
+                setSelectedRestaurantId(selected ? selected.value : null)
+              }
+              options={restaurantOptions}
+              placeholder="Chọn nhà hàng"
+              isDisabled={isLoading}
+            />
           </div>
-          <div>
+          <div className="form-group">
             <label className="form-group label">Chọn món ăn:</label>
-            <select
-              className="form-input"
-              value={selectedMenuItemId || ""}
-              onChange={(e) => setSelectedMenuItemId(e.target.value)}
-              disabled={isLoading || !menuItems.length}
-            >
-              <option value="" disabled>
-                Chọn món ăn
-              </option>
-              {menuItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <Select
+              className="select-input"
+              value={selectedMenuItemOption}
+              onChange={(selected) =>
+                setSelectedMenuItemId(selected ? selected.value : null)
+              }
+              options={menuItemOptions}
+              placeholder="Chọn món ăn"
+              isDisabled={isLoading || !menuItems.length}
+            />
           </div>
         </div>
       </div>

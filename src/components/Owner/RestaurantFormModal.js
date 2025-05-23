@@ -10,7 +10,7 @@ import {
   fetchRestaurantTypes,
   fetchRestaurantTiers,
 } from "../../services/restaurantService";
-import "../../assets/styles/owner/OwnerRestaurant.css";
+import "../../assets/styles/owner/MenuItem.css"; 
 
 Modal.setAppElement("#root");
 
@@ -300,23 +300,15 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
     <Modal
       isOpen={isOpen}
       onRequestClose={handleClose}
-      className="modal-box"
-      overlayClassName="modal-overlay"
+      className="ReactModal__Content"
+      overlayClassName="ReactModal__Overlay"
     >
       <div className="modal-header">
         <h2>{restaurant ? "Sửa nhà hàng" : "Thêm nhà hàng"}</h2>
         <button className="close-btn" onClick={handleClose}>×</button>
       </div>
-
-      {formData.description && (
-        <div className="description-preview">
-          <h3>Mô tả (Xem trước):</h3>
-          <div className="description-content" dangerouslySetInnerHTML={{ __html: formData.description }} />
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} method="POST" className="modal-content">
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Tên nhà hàng</label>
           <input
             className="form-input"
@@ -328,7 +320,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Số điện thoại</label>
           <input
             className="form-input"
@@ -340,7 +332,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Loại nhà hàng</label>
           <Select
             className="select-input"
@@ -352,7 +344,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Cấp độ</label>
           <Select
             className="select-input"
@@ -365,56 +357,60 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
           />
         </div>
 
-        <div className="address-group">
+        <div className="form-group full-width">
           <label>Địa chỉ</label>
-          <Select
-            className="select-input"
-            placeholder="Chọn tỉnh"
-            value={selectedProvince}
-            options={provinces}
-            onChange={(selected) => {
-              setSelectedProvince(selected);
-              setSelectedDistrict(null);
-              setSelectedWard(null);
-              loadDistricts(selected.value);
-            }}
-            required
-          />
-          <Select
-            className="select-input"
-            placeholder="Chọn huyện"
-            value={selectedDistrict}
-            options={districts}
-            onChange={(selected) => {
-              setSelectedDistrict(selected);
-              setSelectedWard(null);
-              loadWards(selected.value);
-            }}
-            isDisabled={!selectedProvince}
-          />
-          <Select
-            className="select-input"
-            placeholder="Chọn xã"
-            value={selectedWard}
-            options={wards}
-            onChange={(selected) => setSelectedWard(selected)}
-            isDisabled={!selectedDistrict}
-          />
-          <input
-            className="form-input"
-            name="addressDetail"
-            placeholder="Số nhà, đường"
-            value={formData.addressDetail}
-            onChange={handleChange}
-          />
+          <div className="address-group">
+            <Select
+              className="select-input"
+              placeholder="Chọn tỉnh"
+              value={selectedProvince}
+              options={provinces}
+              onChange={(selected) => {
+                setSelectedProvince(selected);
+                setSelectedDistrict(null);
+                setSelectedWard(null);
+                loadDistricts(selected.value);
+              }}
+              required
+            />
+            <Select
+              className="select-input"
+              placeholder="Chọn huyện"
+              value={selectedDistrict}
+              options={districts}
+              onChange={(selected) => {
+                setSelectedDistrict(selected);
+                setSelectedWard(null);
+                loadWards(selected.value);
+              }}
+              isDisabled={!selectedProvince}
+            />
+            <Select
+              className="select-input"
+              placeholder="Chọn xã"
+              value={selectedWard}
+              options={wards}
+              onChange={(selected) => setSelectedWard(selected)}
+              isDisabled={!selectedDistrict}
+            />
+            <input
+              className="form-input"
+              name="addressDetail"
+              placeholder="Số nhà, đường"
+              value={formData.addressDetail}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Hình ảnh hiện tại</label>
           <div className="image-preview">
             {formData.images.length > 0 ? (
               formData.images.map((url, index) => (
-                <img key={index} src={url} alt={`Hình ảnh ${index + 1}`} className="image-preview-img" />
+                <div key={index} className="image-wrapper">
+                  <img src={url} alt={`Hình ảnh ${index + 1}`} className="image-preview-img" />
+                </div>
               ))
             ) : (
               <p>Không có hình ảnh.</p>
@@ -430,7 +426,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Mô tả</label>
           <CKEditor
             editor={ClassicEditor}

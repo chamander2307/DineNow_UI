@@ -39,10 +39,11 @@
     text-align: left;
   }
   
-  .admin-table th {
-    background-color: #f3f3f3;
-    font-weight: 600;
-  }
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #3c2f2f;
+  font-weight: 600;
+}
   
   .admin-table button {
     padding: 4px 10px;

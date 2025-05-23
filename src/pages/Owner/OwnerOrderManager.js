@@ -144,7 +144,7 @@ const loadOrdersByStatus = async () => {
           <select
             value={selectedRestaurantId}
             onChange={(e) => setSelectedRestaurantId(e.target.value)}
-            disabled={loadingOrders || !restaurants.length}
+            disabled={loadingOrders || !restaurants.length} className="select-input-custom"
           >
             <option value="" disabled>Chọn nhà hàng</option>
             {restaurants.map((restaurant) => (
