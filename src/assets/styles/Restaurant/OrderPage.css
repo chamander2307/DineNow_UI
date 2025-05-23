@@ -1,4 +1,4 @@
-.payment-page {
+.order-page { /* Đổi từ payment-page thành order-page */
   display: flex;
   max-width: 1200px;
   margin: 0 auto;
@@ -7,14 +7,14 @@
 }
 
 /* Bên trái: Thông tin đơn hàng */
-.payment-left {
+.order-left { /* Đổi từ payment-left thành order-left */
   flex: 1;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
 
-.payment-left h2 {
+.order-left h2 { /* Đổi từ payment-left thành order-left */
   font-size: 24px;
   margin-bottom: 20px;
   color: #333;
@@ -59,12 +59,40 @@
   flex: 1;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .item-details span:last-child {
   font-weight: bold;
   color: #e74c3c;
+  padding-right: 10px;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.remove-btn111 {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-btn111:hover {
+  background-color: #c0392b;
 }
 
 .total-price h3 {
@@ -72,21 +100,24 @@
   color: #333;
 }
 
-/* Bên phải: Thông tin thanh toán */
-.payment-right {
+/* Bên phải: Form thanh toán */
+.order-right { /* Đổi từ payment-right thành order-right */
   flex: 1;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
-.payment-right h2 {
+.order-right h2 { /* Đổi từ payment-right thành order-right */
   font-size: 24px;
   margin-bottom: 20px;
   color: #333;
+}
+
+.order-form { /* Đổi từ payment-form thành order-form */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .booking-info h3,
@@ -96,11 +127,37 @@
   color: #333;
 }
 
-.booking-info p,
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group .required {
+  color: #e74c3c;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
 .payment-info p {
   font-size: 16px;
   margin-bottom: 10px;
-  color: #555;
 }
 
 .payment-info span {
@@ -119,6 +176,14 @@
   color: #555;
 }
 
+.payment-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+}
+
 .payment-btn {
   padding: 10px 20px;
   background-color: #3498db;
@@ -133,28 +198,4 @@
 
 .payment-btn:hover {
   background-color: #2980b9;
-}
-
-.back-btn {
-  padding: 10px 20px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  align-self: center;
-  transition: background-color 0.3s ease;
-}
-
-.back-btn:hover {
-  background-color: #5a6268;
-}
-
-.alert-danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
 }

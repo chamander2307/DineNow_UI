@@ -23,6 +23,7 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
 import DishDetail from "../pages/DishDetail/DishDetail";
 import AllDishes from "../pages/AllDishes/AllDishes";
+import OrderPage from "../pages/OrderPage/OrderPage";
 
 // Chính sách & Thanh toán
 import PolicyPage from "../pages/Policy/PolicyPage";
@@ -77,6 +78,8 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
       <Route path="/dish/:dishId" element={<DishDetail />} />
       <Route path="/all-dishes" element={<AllDishes />} />
+      <Route path="/order" element={<OrderPage />} />
+
 
       {/* Chính sách & Thanh toán */}
       <Route path="/policy" element={<PolicyPage />} />

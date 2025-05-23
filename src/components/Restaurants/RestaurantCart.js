@@ -4,7 +4,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import '../../assets/styles/Restaurant/RestaurantCart.css';
 import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
 
-const RestaurantCart = () => {
+const RestaurantCart = ({ onCheckout }) => {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
   const [cartItems, setCartItems] = useState({});
@@ -193,7 +193,10 @@ const RestaurantCart = () => {
       return;
     }
 
-    navigate('/payment', { state: { selectedItems } });
+    navigate('/order', { state: { selectedItems } });
+    if (onCheckout) {
+      onCheckout(); // Đóng dialog sau khi navigate
+    }
   };
 
   if (loading) return <div className="text-center">Đang tải...</div>;

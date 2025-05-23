@@ -1,15 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHeart } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import '../../assets/styles/Restaurant/FavoriteRestaurants.css';
 import { getFavoriteRestaurants, removeFavoriteRestaurant } from '../../services/userService';
+import FavoriteButton from '../../components/basicComponents/FavoriteButton';
+
+const renderStars = (rating) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 !== 0;
+  const empty = 5 - full - (half ? 1 : 0);
+  const stars = [];
+
+  for (let i = 0; i < full; i++)
+    stars.push(<FaStar key={`full-${i}`} color="#f4c150" />);
+  if (half) stars.push(<FaStarHalfAlt key="half" color="#f4c150" />);
+  for (let i = 0; i < empty; i++)
+    stars.push(<FaRegStar key={`empty-${i}`} color="#ccc" />);
+
+  return <div className="fr-star-icons">{stars}</div>;
+};
+
+const formatNumber = (num) => {
+  if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+  if (num >= 1e3) return (num / 1e3).toFixed(2) + "k";
+  return num.toString();
+};
 
 const FavoriteRestaurants = () => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Lấy danh sách nhà hàng yêu thích từ API
   const loadFavorites = async () => {
     setLoading(true);
     try {
@@ -28,8 +49,9 @@ const FavoriteRestaurants = () => {
     loadFavorites();
   }, []);
 
-  // Xử lý bỏ thích nhà hàng
-  const handleUnlike = async (restaurantId) => {
+  const handleUnlike = async (restaurantId, e) => {
+    e.preventDefault();
+    e.stopPropagation();
     try {
       await removeFavoriteRestaurant(restaurantId);
       setFavorites(favorites.filter(fav => fav.id !== restaurantId));
@@ -49,22 +71,38 @@ const FavoriteRestaurants = () => {
       {favorites.length > 0 ? (
         <div className="restaurant-list">
           {favorites.map((restaurant) => (
-            <div key={restaurant.id} className="restaurant-card">
-              <img src={restaurant.thumbnailUrl || '/fallback.jpg'} alt={restaurant.name} className="restaurant-image" />
-              <div className="restaurant-content">
-                <div className="restaurant-header">
-                  <Link to={`/restaurant/${restaurant.id}`} className="restaurant-name">
-                    <h3>{restaurant.name}</h3>
-                  </Link>
-                  <button className="unlike-btn" onClick={() => handleUnlike(restaurant.id)}>
-                    <FaHeart color="#e74c3c" /> Bỏ thích
-                  </button>
-                </div>
-                <p className="restaurant-location">Vị trí: {restaurant.address.split(', ')[1] || 'Chưa có'}</p>
-                <p className="restaurant-style">Kiểu nhà hàng: {restaurant.type?.name || 'Chưa có'}</p>
-                <p className="restaurant-address">Địa chỉ: {restaurant.address || 'Chưa có'}</p>
+            <Link
+              key={restaurant.id}
+              to={`/restaurant/${restaurant.id}`}
+              className="fr-item"
+            >
+              <div className="fr-image-container">
+                <img
+                  src={restaurant.thumbnailUrl || '/fallback.jpg'}
+                  alt={restaurant.name}
+                  className="fr-image"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/fallback.jpg';
+                  }}
+                />
+                <FavoriteButton
+                  isActive={true}
+                  onClick={(e) => handleUnlike(restaurant.id, e)}
+                  restaurantId={restaurant.id}
+                />
               </div>
-            </div>
+              <div className="fr-details">
+                <h3 className="fr-name">{restaurant.name}</h3>
+                <div className="fr-meta">
+                  {renderStars(restaurant.averageRating || 0)}
+                  <span className="fr-visit-count">{formatNumber(restaurant.visits || 0)} Lượt đặt</span>
+                </div>
+                {restaurant.address && (
+                  <p className="fr-address">{restaurant.address}</p>
+                )}
+              </div>
+            </Link>
           ))}
         </div>
       ) : (

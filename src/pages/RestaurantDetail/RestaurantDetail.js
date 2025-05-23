@@ -318,7 +318,7 @@ const RestaurantDetail = () => {
       })
       .filter(Boolean);
 
-    navigate("/payment", {
+    navigate("/order", {
       state: {
         restaurant: {
           name: restaurant?.name,

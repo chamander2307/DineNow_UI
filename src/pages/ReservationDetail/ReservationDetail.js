@@ -69,7 +69,10 @@ const ReservationDetail = () => {
           date: order.reservationSimpleResponse?.reservationTime,
           time: order.reservationSimpleResponse?.reservationTime,
           guests: (order.reservationSimpleResponse?.numberOfPeople || 0) + (order.reservationSimpleResponse?.numberOfChild || 0),
-          payments: order.payments || [], // Xử lý trường hợp payments không tồn tại
+          payments: order.payments || [],
+          numberOfAdults: order.reservationSimpleResponse?.numberOfPeople || 0,
+          numberOfChildren: order.reservationSimpleResponse?.numberOfChild || 0,
+          note: order.note || '',
         };
 
         setReservation(mappedReservation);
@@ -99,6 +102,25 @@ const ReservationDetail = () => {
       } finally {
         setCancelLoading(false);
       }
+    }
+  };
+
+  const handleRebook = () => {
+    if (reservation && (reservation.status === 'FAILED' || reservation.status === 'CANCELLED')) {
+      const rebookData = {
+        selectedItems: reservation.dishes.map(dish => ({
+          id: dish.id,
+          name: dish.name,
+          quantity: dish.quantity,
+          price: dish.price,
+        })),
+        restaurant: {
+          name: reservation.restaurant.name,
+          address: reservation.restaurant.address,
+          image: reservation.restaurant.thumbnail || restaurant1,
+        },
+      };
+      navigate('/order', { state: { isRebook: true, ...rebookData } });
     }
   };
 
@@ -224,7 +246,7 @@ const ReservationDetail = () => {
         )}
       </div>
 
-      {/* Nút hủy và quay lại */}
+      {/* Nút hủy, đặt lại và quay lại */}
       <div className="button-section">
         {reservation.status === 'PENDING' && (
           <button
@@ -233,6 +255,14 @@ const ReservationDetail = () => {
             disabled={cancelLoading}
           >
             {cancelLoading ? 'Đang hủy...' : 'Hủy đơn hàng'}
+          </button>
+        )}
+        {(reservation.status === 'FAILED' || reservation.status === 'CANCELLED') && (
+          <button
+            onClick={handleRebook}
+            className="rebook-btn"
+          >
+            Đặt bàn lại
           </button>
         )}
         <Link to="/reservation-history" className="back-btn111">
