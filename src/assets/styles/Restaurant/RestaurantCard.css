@@ -4,8 +4,8 @@
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
-  width: 330px !important; /* Cố định kích thước */
-  height: 370px !important; /* Cố định kích thước */
+  width: 100%;
+  height: 370px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -17,16 +17,16 @@
 }
 
 .rc-image-container {
-  width: 330px !important; /* Cố định kích thước */
-  height: 200px !important; /* Cố định kích thước */
+  width: 100%;
+  height: 200px;
   overflow: hidden;
 }
 
 .rc-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Phóng to/thu nhỏ ảnh để vừa khung */
-  object-position: center; /* Căn giữa ảnh */
+  object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -63,20 +63,6 @@
   white-space: nowrap;
 }
 
-.rc-pricing {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.rc-bold-price {
-  color: #e67e22;
-  font-weight: bold;
-}
-
-.rc-dim-price {
-  color: #ccc;
-}
-
 .rc-address {
   font-size: 13px;
   color: #555;
@@ -106,16 +92,44 @@
   background-color: #c0392b;
 }
 
-.rc-detail-button {
-  margin: 10px;
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
+.rc-favorite-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
   cursor: pointer;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid transparent; /* Viền trong suốt mặc định */
+  background-color: transparent; /* Nền trong suốt mặc định */
+  transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
-.rc-detail-button:hover {
-  background-color: #218838;
+.rc-favorite-icon svg {
+  color: gray;
+}
+
+.rc-favorite-icon.active svg {
+  color: red;
+}
+
+.rc-favorite-icon:hover {
+  border: 2px solid #ccc;
+}
+
+.rc-favorite-icon:hover svg {
+  color: darkred;
+}
+
+.rc-favorite-icon:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+.rc-favorite-icon.active:hover {
+  background-color: white;
 }

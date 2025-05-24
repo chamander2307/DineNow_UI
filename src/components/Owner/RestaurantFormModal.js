@@ -10,8 +10,7 @@ import {
   fetchRestaurantTypes,
   fetchRestaurantTiers,
 } from "../../services/restaurantService";
-import "../../assets/styles/owner/MenuItem.css"; 
-
+import "../../assets/styles/owner/ModalForm.css"; 
 Modal.setAppElement("#root");
 
 const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restaurants }) => {

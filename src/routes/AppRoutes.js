@@ -39,7 +39,7 @@ import RestaurantTypeManager from "../pages/Admin/RestaurantTypeManager";
 import RevenueDashboard from "../pages/Admin/RevenueDashboard";
 import SettlementPage from "../pages/Admin/SettlementPage";
 import UserManager from "../pages/Admin/UserManager";
-
+import RestaurantTierManager from "../pages/Admin/RestaurantTierManager";
 // Quản trị (owner)
 import BankAccountManager from "../pages/Owner/BankAccountManager";
 import FoodCategoryMyList from "../pages/Owner/FoodCategoryMyList";
@@ -98,6 +98,7 @@ const AppRoutes = () => {
       <Route path="/admin/revenue-dashboard" element={<RevenueDashboard />} />
       <Route path="/admin/settlement" element={<SettlementPage />} />
       <Route path="/admin/users" element={<UserManager />} />
+      <Route path="/admin/restaurant-tier" element={<RestaurantTierManager/>}/>
 
       {/* Quản trị - Owner */}
       <Route path="/owner/bank-account" element={<BankAccountManager />} />

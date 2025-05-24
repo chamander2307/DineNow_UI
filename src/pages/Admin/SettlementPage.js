@@ -63,33 +63,35 @@ const SettlementPage = () => {
             Đã tất toán
           </button>
         </div>
-        <div className="filters">
-          <select
-            value={filters.year}
-            onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-          >
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-          </select>
-          <select
-            value={filters.month}
-            onChange={(e) => setFilters({ ...filters, month: e.target.value })}
-          >
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                Tháng {i + 1}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filters.periodIndex}
-            onChange={(e) => setFilters({ ...filters, periodIndex: e.target.value })}
-          >
-            <option value="1">Quý 1 (15 ngày đầu)</option>
-            <option value="2">Quý 2 (15 ngày cuối)</option>
-          </select>
-          <button onClick={handleFilterApply}>Áp dụng</button>
-        </div>
+        {viewMode === 'settled' && ( // Chỉ hiển thị bộ lọc khi ở chế độ 'settled'
+          <div className="filters">
+            <select
+              value={filters.year}
+              onChange={(e) => setFilters({ ...filters, year: e.target.value })}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <select
+              value={filters.month}
+              onChange={(e) => setFilters({ ...filters, month: e.target.value })}
+            >
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  Tháng {i + 1}
+                </option>
+              ))}
+            </select>
+            <select
+              value={filters.periodIndex}
+              onChange={(e) => setFilters({ ...filters, periodIndex: e.target.value })}
+            >
+              <option value="1">Quý 1 (15 ngày đầu)</option>
+              <option value="2">Quý 2 (15 ngày cuối)</option>
+            </select>
+            <button onClick={handleFilterApply}>Áp dụng</button>
+          </div>
+        )}
         {error && <div className="error">{error}</div>}
         {viewMode === 'unsettled' ? (
           <table>
@@ -163,6 +165,7 @@ const SettlementPage = () => {
   );
 };
 
+// SettlementModal giữ nguyên
 const SettlementModal = ({ restaurant, onClose }) => {
   const [details, setDetails] = useState(null);
   const [note, setNote] = useState(`Đã thanh toán quý 2 cho nhà hàng ID ${restaurant.restaurantId}`);
@@ -219,4 +222,3 @@ const SettlementModal = ({ restaurant, onClose }) => {
 };
 
 export default SettlementPage;
-

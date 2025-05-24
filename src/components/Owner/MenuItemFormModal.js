@@ -8,7 +8,7 @@ import {
   updateMenuItem,
 } from "../../services/menuItemService";
 import { getFoodCategoriesByRestaurant } from "../../services/foodCategoryService";
-import "../../assets/styles/owner/MenuItem.css";
+import "../../assets/styles/owner/ModalForm.css";
 
 // Cấu hình Modal
 Modal.setAppElement("#root");
@@ -183,9 +183,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
     >
       <div className="modal-header">
         <h2>{initialData ? "Sửa món ăn" : "Thêm món ăn"}</h2>
-        <button className="close-btn" onClick={onClose}>
-          ×
-        </button>
+        <button className="close-btn" onClick={onClose}>×</button>
       </div>
 
       <form onSubmit={handleSubmit} className="modal-content">
@@ -230,7 +228,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
         <div className="form-group full-width">
           <label>Mô tả</label>
           <textarea
-            className="form-input"
+            className="form-input form-input--textarea"
             name="description"
             placeholder="Nhập mô tả"
             value={formData.description}
@@ -266,9 +264,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? "Đang xử lý..." : "Lưu"}
           </button>
-          <button type="button" className="cancel-btn" onClick={onClose}>
-            Hủy
-          </button>
+          <button type="button" className="cancel-btn" onClick={onClose}>Hủy</button>
         </div>
       </form>
     </Modal>

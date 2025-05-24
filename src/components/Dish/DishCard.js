@@ -1,9 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import fallbackImage from "../../assets/img/fallback.jpg"; // Ảnh dự phòng
-import "../../assets/styles/Dish/DishCard.css"; // Dùng đúng CSS
+import { Link, useLocation } from "react-router-dom";
+import fallbackImage from "../../assets/img/fallback.jpg"; 
+import "../../assets/styles/Dish/DishCard.css";
 
-const DishCard = ({ dish }) => {
+const DishCard = ({ dish, restaurantId }) => {
   // Base URL cho ảnh từ server
   const BASE_URL = "http://localhost:8080";
 
@@ -33,12 +32,16 @@ const DishCard = ({ dish }) => {
     if (dish.imageUrl.startsWith("http")) {
       imageUrl = dish.imageUrl;
     } else {
-      imageUrl = `${BASE_URL}/uploads/${dish.imageUrl}`; // Sửa /Uploads/ thành /uploads/
+      imageUrl = `${BASE_URL}/Uploads/${dish.imageUrl}`;
     }
   }
 
   return (
-    <Link to={`/dish/${dish.id}`} className="dc-link">
+    <Link
+      to={`/restaurant/${restaurantId}`}
+      state={{ selectedDishId: dish.id }}
+      className="dc-link"
+    >
       <div className="dc-item">
         <div className="dc-image-container">
           <img
@@ -46,10 +49,9 @@ const DishCard = ({ dish }) => {
             alt={dish.name || "Món ăn"}
             className="dc-image"
             onError={(e) => {
-              e.target.src = fallbackImage; // Ảnh dự phòng nếu lỗi
+              e.target.src = fallbackImage;
             }}
           />
-          <button className="dc-favorite-button">❤️</button>
         </div>
         <div className="dc-details">
           <h3>{dish.name || "Chưa có tên"}</h3>

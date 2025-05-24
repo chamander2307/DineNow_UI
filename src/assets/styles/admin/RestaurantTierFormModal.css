@@ -1,0 +1,153 @@
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10010;
+  opacity: 1; /* Đảm bảo modal hiển thị ngay */
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Modal content */
+.modal {
+  background: #fffaf7;
+  padding: 20px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.modal h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #3c2f2f;
+  margin: 0 0 16px;
+}
+
+/* Close button (Windows-style) */
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #dc3545; /* Màu đỏ giống nút đóng Windows */
+  color: #fffaf7;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: #c82333; /* Màu đỏ đậm khi hover */
+}
+
+/* Form styles */
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal form div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3c2f2f;
+  line-height: 1.4;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #3c2f2f;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.modal input:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: #f4a261;
+}
+
+.modal textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Modal actions */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.modal-actions button[type="submit"]:hover {
+  background-color: #e76f51;
+}
+
+.modal-actions button[type="button"] {
+  background-color: #f0e6e2;
+  color: #3c2f2f;
+}
+
+.modal-actions button[type="button"]:hover {
+  background-color: #e8deda;
+}
+
+/* Message */
+.message {
+  padding: 8px 12px;
+  margin-top: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #e63946;
+  background-color: #ffe6e6;
+  border: 1px solid #e63946;
+  text-align: center;
+}
