@@ -86,7 +86,7 @@ const AppRoutes = () => {
       {/* Chính sách & Thanh toán */}
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/policy" element={<PolicyPage />} />
-
+      <Route path="/payment-status" element={<PaymentPage />} />
       {/* Quản trị - Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/main-category" element={<AdminMainCategoryManager />} />
