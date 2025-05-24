@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../../assets/styles/Restaurant/PaymentPage.css';
-import { createOrder } from '../../services/orderService';
+import { createPaymentUrl } from '../../services/paymentService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
-// Dữ liệu giả lập (dùng khi không có dữ liệu từ link)
+// Dữ liệu giả lập (dùng khi không có dữ liệu từ API)
 const mockRestaurant = {
   name: 'Nhà hàng B',
   address: '456 Đường Ẩm Thực, TP. HCM',
@@ -12,11 +12,10 @@ const mockRestaurant = {
 };
 
 const mockOrder = {
-  id: '12345',
-  reservationTime: '2025-05-23T14:30:00Z',
+  id: '12345', // Giả định orderId từ email
+  reservationTime: '2025-05-23T14:30:00Z', // Đồng bộ với thời gian giao trong email
   numberOfPeople: 4,
   numberOfChild: 2,
-  note: 'Bàn gần cửa sổ',
   dishes: [
     { id: '4', name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, quantity: 1 },
     { id: '5', name: 'Cơm Thố Gà + Ốp La', price: 37000, quantity: 1 },
@@ -28,7 +27,7 @@ const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Lấy dữ liệu từ query params hoặc state (giả định từ link email)
+  // Lấy orderId từ query params (từ đường dẫn email)
   const queryParams = new URLSearchParams(location.search);
   const orderId = queryParams.get('orderId') || mockOrder.id;
 
@@ -38,21 +37,22 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState(queryParams.get('paymentStatus') || null); // Khởi tạo từ callback
 
   // Tính tổng tiền
   const totalPrice = order?.dishes?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
 
-  // Lấy thông tin đơn hàng từ API (giả định)
+  // Lấy thông tin đơn hàng dựa trên orderId
   useEffect(() => {
     const fetchOrderDetails = async () => {
       setLoading(true);
       setError('');
       try {
-        // Giả định gọi API để lấy thông tin đơn hàng dựa trên orderId
+        // Giả định gọi API để lấy thông tin đơn hàng đã xác nhận
         // const response = await getOrderDetails(orderId);
         // const data = response.data;
 
-        // Dữ liệu giả lập thay thế cho API
+        // Dữ liệu giả lập thay thế cho API (đơn hàng đã xác nhận)
         const data = mockOrder;
 
         setOrder({
@@ -68,7 +68,6 @@ const PaymentPage = () => {
           })),
         });
 
-        // Giả định thông tin nhà hàng được lấy từ API
         setRestaurant(mockRestaurant);
       } catch (err) {
         setError('Lỗi khi tải thông tin đơn hàng: ' + err.message);
@@ -86,30 +85,29 @@ const PaymentPage = () => {
     setError('');
 
     try {
-      // Gọi API để xác nhận thanh toán (giả định)
-      const orderData = {
-        orderId: order.id,
-        reservationTime: order.reservationTime,
-        numberOfPeople: order.numberOfPeople,
-        numberOfChild: order.numberOfChild,
-        numberPhone: '0386299573',
-        orderItems: order.dishes.map(item => ({
-          menuItemId: item.id,
-          quantity: item.quantity,
-        })),
-      };
-
-      await createOrder(restaurant.id || 1, orderData); // Giả định restaurant.id nếu không có
-
-      alert('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
-      navigate('/reservation-history');
+      const paymentUrl = await createPaymentUrl(orderId);
+      window.location.href = paymentUrl; // Điều hướng đến URL thanh toán VNPAY
     } catch (err) {
-      setError('Lỗi khi thực hiện thanh toán: ' + err.message);
-      console.error('Lỗi khi thanh toán:', err);
+      setError('Lỗi khi tạo liên kết thanh toán: ' + err);
+      console.error('Lỗi khi tạo thanh toán:', err);
     } finally {
       setPaymentLoading(false);
     }
   };
+
+  // Xử lý hiển thị thông báo trạng thái thanh toán
+  useEffect(() => {
+    if (paymentStatus) {
+      if (paymentStatus === 'SUCCESS') {
+        alert('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
+        navigate('/reservation-history');
+      } else if (paymentStatus === 'FAILED') {
+        alert('Thanh toán thất bại. Vui lòng thử lại.');
+        navigate('/');
+      }
+      setPaymentStatus(null); // Đặt lại để tránh lặp lại
+    }
+  }, [paymentStatus, navigate]);
 
   if (loading) {
     return (
@@ -144,21 +142,23 @@ const PaymentPage = () => {
 
   return (
     <div className="payment-page">
-      <div className="payment-left">
+      <div className="payment-content">
         <h2>Thông tin đơn hàng #{order.id}</h2>
         <div className="restaurant-info">
-          <h3>{restaurant.name}</h3>
-          <p><strong>Địa chỉ:</strong> {restaurant.address}</p>
           <img src={restaurant.image} alt={restaurant.name} className="restaurant-image" />
+          <div className="restaurant-details">
+            <h3>{restaurant.name}</h3>
+            <p><strong>Địa chỉ:</strong> {restaurant.address}</p>
+          </div>
         </div>
         <h3>Các món đã chọn</h3>
         <ul className="selected-items">
           {order.dishes.map((item) => (
             <li key={item.id} className="selected-item">
               <div className="item-details">
-                <span>{item.name}</span>
-                <span>{item.quantity} x {(item.price || 0).toLocaleString('vi-VN')} VNĐ</span>
-                <span>{((item.price || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
+                <span className="item-name">{item.name}</span>
+                <span className="item-quantity111">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
+                <span className="item-total">{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </li>
           ))}
@@ -166,10 +166,6 @@ const PaymentPage = () => {
         <div className="total-price">
           <h3>Tổng tiền: {totalPrice.toLocaleString('vi-VN')} VNĐ</h3>
         </div>
-      </div>
-
-      <div className="payment-right">
-        {error && <div className="alert alert-danger">{error}</div>}
         <div className="booking-info">
           <h3>Thông tin đặt chỗ</h3>
           <p><strong>Ngày đến:</strong> {new Date(order.reservationTime).toLocaleDateString('vi-VN')}</p>
@@ -177,7 +173,6 @@ const PaymentPage = () => {
           <p><strong>Số người lớn:</strong> {order.numberOfPeople}</p>
           <p><strong>Số trẻ em:</strong> {order.numberOfChild}</p>
         </div>
-
         <div className="payment-info">
           <h3>Thanh toán</h3>
           <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
@@ -185,7 +180,6 @@ const PaymentPage = () => {
             <label>Hình thức thanh toán: VNPAY</label>
           </div>
         </div>
-
         <button 
           onClick={handlePayment} 
           className="payment-btn" 
@@ -193,6 +187,7 @@ const PaymentPage = () => {
         >
           {paymentLoading ? 'Đang xử lý...' : 'Xác nhận thanh toán'}
         </button>
+        {error && <div className="alert alert-danger">{error}</div>}
       </div>
     </div>
   );

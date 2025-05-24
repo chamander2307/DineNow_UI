@@ -20,15 +20,11 @@ import ReservationHistory from "../pages/ReservationHistory/ReservationHistory";
 
 // Nhà hàng & món ăn
 import AllDishes from "../pages/AllDishes/AllDishes";
-<<<<<<< HEAD
-import OrderPage from "../pages/OrderPage/OrderPage";
-=======
 import DishDetail from "../pages/DishDetail/DishDetail";
 import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
->>>>>>> fa7c5437af7bc3c8c51f9f0e4ee9504123a9ac7d
-
+import OrderPage from "../pages/OrderPage/OrderPage";
 // Chính sách & Thanh toán
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import PolicyPage from "../pages/Policy/PolicyPage";
@@ -79,6 +75,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
+      <Route path="/order/:id" element={<OrderPage />} />
 
       {/* Nhà hàng & món ăn */}
       <Route path="/all-dishes" element={<AllDishes />} />
