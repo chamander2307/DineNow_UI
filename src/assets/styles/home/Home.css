@@ -1,0 +1,180 @@
+/* Home.css */
+.home-app {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.home-page {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.home-section {
+  margin: 40px 0;
+}
+
+.home-section-header {
+  margin-bottom: 24px;
+}
+
+.home-section-title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
+  margin: 0;
+}
+
+.home-section-sub {
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+  margin-top: 8px;
+}
+
+/* Container cho section có nút điều hướng */
+.home-card-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+}
+
+/* Container cho danh sách thẻ */
+.home-card-container {
+  display: flex;
+  flex-wrap: nowrap !important; 
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  gap: 16px; 
+  padding: 16px 0;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #34495e transparent;
+  width: 100%; 
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Thanh cuộn ngang */
+.home-card-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.home-card-container::-webkit-scrollbar-thumb {
+  background-color: #34495e;
+  border-radius: 4px;
+}
+
+.home-card-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Đảm bảo kích thước và căn chỉnh thẻ */
+.home-card-item {
+  flex: 0 0 330px !important;
+  height: 370px !important;
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Hiệu ứng hover */
+.home-card-item:hover {
+  transform: translateY(-4px);
+}
+
+/* Đảm bảo thẻ không bị co giãn */
+.rc-item,
+.home-dish-card {
+  width: 330px !important; 
+  height: 370px !important;
+}
+
+/* Nút điều hướng */
+.home-scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-scroll-button:hover {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.home-scroll-button.prev {
+  left: 0;
+}
+
+.home-scroll-button.next {
+  right: 0;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .home-card-container {
+    gap: 12px;
+    flex-wrap: nowrap !important;
+  }
+  .home-card-item {
+    flex: 0 0 300px !important;
+    height: 350px !important;
+  }
+  .rc-item,
+  .home-dish-card {
+    width: 300px !important;
+    height: 350px !important;
+  }
+  .home-scroll-button.prev {
+    left: 0;
+  }
+  .home-scroll-button.next {
+    right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-card-container {
+    gap: 8px;
+    flex-wrap: nowrap !important;
+  }
+  .home-card-item {
+    flex: 0 0 280px !important;
+    height: 330px !important;
+  }
+  .rc-item,
+  .home-dish-card {
+    width: 280px !important;
+    height: 330px !important;
+  }
+  .home-scroll-button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  .home-scroll-button.prev {
+    left: 0;
+  }
+  .home-scroll-button.next {
+    right: 0;
+  }
+}

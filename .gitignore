@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+.cache/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.*.local
+
+# Editor folders
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db

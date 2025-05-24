@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.profit-manager {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.profit-manager h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.profit-manager .message {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.profit-manager .message.success {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+}
+.profit-manager .message.error {
+  color: #c62828;
+  background: #ffebee;
+  border-left: 4px solid #c62828;
+}
+
+.view-selector {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.view-selector label {
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+}
+.view-selector select {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+.view-selector select:focus {
+  outline: none;
+  border-color: #d6c9ff;
+}
+
+.time-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.time-inputs .month-picker-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 150px;
+}
+
+.time-inputs .month-picker-input {
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #3c2f2f;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b5b5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>') no-repeat right 8px center;
+  background-size: 16px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  max-width: 150px;
+}
+
+.time-inputs .month-picker-input:focus {
+  outline: none;
+  border-color: #f4a261;
+}
+
+.time-inputs .month-picker-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.time-inputs .month-picker-modal {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  z-index: 1000;
+  background-color: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  width: 280px;
+}
+
+.time-inputs .month-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.time-inputs .year-nav-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #3c2f2f;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.time-inputs .year-nav-btn:hover {
+  color: #f4a261;
+}
+
+.time-inputs .year-display {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3c2f2f;
+}
+
+.time-inputs .month-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.time-inputs .month-btn {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fef5f1;
+  color: #3c2f2f;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.time-inputs .month-btn:hover {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.time-inputs .month-btn.selected {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.time-inputs .month-picker-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.time-inputs .select-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #e76f51;
+  color: #fffaf7;
+  transition: background-color 0.2s ease;
+}
+
+.time-inputs .select-btn:hover {
+  background-color: #d65f43;
+}
+
+.time-inputs button {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #6b5b95;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.time-inputs button:hover {
+  background: #5a4b7d;
+}
+
+.time-inputs p {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+  font-weight: 500;
+}
+
+.profit-section {
+  margin-top: 0.75rem;
+}
+.profit-section h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.profit-section p {
+  font-size: 1rem;
+  color: #6b5b95;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #3c2f2f;
+  font-weight: 500;
+}
+.admin-table td {
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+.admin-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+.admin-table tr:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .profit-manager {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  .view-selector {
+    grid-template-columns: 1fr;
+  }
+  .time-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .time-inputs .month-picker-wrapper {
+    max-width: 100%;
+  }
+  .time-inputs .month-picker-modal {
+    width: 100%;
+    max-width: 280px;
+  }
+  .admin-table th,
+  .admin-table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+.profit-manager p:not(.message) {
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}

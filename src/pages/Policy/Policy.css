@@ -1,0 +1,94 @@
+.policy-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+}
+
+.policy-sidebar {
+  width: 280px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 2rem 1.5rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.policy-sidebar h4 {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.policy-sidebar ul {
+  padding-left: 0.5rem;
+  list-style: none;
+}
+
+.policy-sidebar li {
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #444;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.policy-sidebar li.active,
+.policy-sidebar li:hover {
+  color: #ff6347;
+  border-left: 3px solid #ff6347;
+  background-color: #fdf4f2;
+  padding-left: 0.75rem;
+}
+
+.policy-content {
+  flex: 1;
+  padding: 2rem 3rem;
+  background: #fff;
+}
+
+.policy-content h1 {
+  font-size: 1.5rem;
+  color: #222;
+  margin-bottom: 1rem;
+}
+
+.policy-content p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.7;
+}
+.policy-content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #333;
+}
+.policy-content {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.03);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.policy-content h2 {
+  font-size: 1.8rem;
+  color: #7990fe;
+  margin-bottom: 1rem;
+}
+
+.policy-content h3 {
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+  color: #222;
+}
+
+.policy-content ul {
+  padding-left: 1.25rem;
+  list-style-type: disc;
+}

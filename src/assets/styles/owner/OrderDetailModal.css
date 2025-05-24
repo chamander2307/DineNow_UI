@@ -1,0 +1,92 @@
+.order-detail-modal {
+  background: #fffaf7;
+  padding: 20px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.order-detail-modal h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #3c2f2f;
+  margin: 0 0 16px;
+}
+
+.order-detail-modal h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #3c2f2f;
+  margin: 16px 0 8px;
+}
+
+.order-info,
+.customer-info,
+.reservation-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.order-info p,
+.customer-info p,
+.reservation-info p {
+  font-size: 13px;
+  color: #3c2f2f;
+  margin: 0;
+}
+
+.menu-item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.menu-item-table th,
+.menu-item-table td {
+  padding: 8px;
+  text-align: left;
+  font-size: 13px;
+  color: #3c2f2f;
+  border-bottom: 1px solid #f0e6e2;
+}
+
+.menu-item-table th {
+  background-color: #fef5f1;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #6b5b5b;
+}
+
+.menu-item-table td {
+  vertical-align: middle;
+}
+
+.menu-item-table .menu-item-image {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #f0e6e2;
+}
+
+.close-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f4a261;
+  color: #fffaf7;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #e76f51;
+}

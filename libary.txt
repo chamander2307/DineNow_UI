@@ -1,0 +1,65 @@
+ npm install react-router-dom
+ npm install react-slick slick-carousel
+ npm install react-icons
+ npm install react-slick slick-carousel
+ npm install re-chart
+
+Admin: 
+renvernues : xem theo loại ( doanh thu/ lợi nhuận).
+-Doanh thu/Lợi nhuận: đầu trang là tổng doanh thu của các nhà hàng.
+    + Trang tổng doanh thu tất cả các nhà hàng, tổng doanh thu theo năm / tháng/ chọn khoảng thời gian.
+    + Xem tổng lợi nhuận theo từ trước đến nay / năm / tháng/ chọn khoảng thời gian.
+    + tìm kiếm nhà hàng để xem doanh thu / lợi nhuận theo bảng.
+
+/// trường nhập id sẽ hiển thị combobox cho người dùng chọn.
+
+Owner: 
+-quản lí nhà hàng:
+    +thêm nút tạm khóa/mở cho từng nhà hàng.
+    +thêm nhà hàng:
+        -id loại nhà hàng và tierID hiển thị combobox.
+-quản lí doanh thu:
+        + Xem theo nhà hàng (combobox chọn nhà hàng để xem)
+        + renvernues: xem doanh thu/lợi nhuận theo tháng (trục x).
+-quản lí món ăn :
+-quản lí đơn hàng:
+    + đầu tiên hiển thị form xác nhận đơn (hiển thị giống file docx) 
+        - hiển thị tất cả các đơn đang pending của tất cả nhà hàng.
+    + những trạng thái khác của đơn sẽ hiển thị theo từng nhà hàng:
+        - confirm và paid
+        - cancel và failed
+        - completed
+
+
+thanh điều hướng cho cố định bên trên màn hình.
+
+thống kê tổng doanh thu/lợi nhuận.
+
+ADMIN:
+    loại nhà hàng: chỉ cho thêm/sửa
+    main-category: chỉ cho thêm/sửa
+    đối soát/thanh toán: 
+        + hiển thị bảng restaurants_payment cho 15 ngày.
+        + quản lí nhà hàng đã tất toán/chưa tất toán.
+            - chưa tất toán:
+                hiển thị nhà hàng chưa hoàn tiền trong khoảng thời gian 15 ngày:
+                    * có nút hoàn tiền, ấn vào mở ra form có thông tin tài khoản của nhà hàng,
+                      số tiền, có textfield để nhập note(bắt buộc nhập, nội dung đã thanh toán theo chu kì) Có nút hủy/hoàn tất.
+                    
+Owner:
+    thêm nhà hàng: 
+        chỉnh sửa lại cách nhập địa chỉ
+    tổng quan(lọc theo nhà hàng).
+    quản lí đơn đặt: cho xem chi tiết trừ những đơn đã hủy/thanh toán thất bại.
+    quản lí đánh giá:
+        + đánh giá nhà hàng.
+        + thêm giao diện đánh giá món ăn  (lọc nhà hàng / món ăn).
+
+
+LƯU Ý: HIỂN THỊ HẾT HẾT THÔNG TIN  TRẢ VỀ TỪ API.
+
+lỗi:
+chỉnh sửa lại thống kê.
+tổng quan.
+Chỉnh sửa thông tin chuyển khoản (owner)
+public: chỉnh sửa lại các trang: all dishes, all restaurants, navbar.

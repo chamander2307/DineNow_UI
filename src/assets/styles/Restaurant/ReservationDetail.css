@@ -1,0 +1,184 @@
+.reservation-detail-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-detail-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Thông tin nhà hàng */
+.restaurant-info {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.restaurant-thumbnail {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.restaurant-details h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.restaurant-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Danh sách món ăn */
+.dishes-section {
+  margin-bottom: 30px;
+}
+
+.dishes-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.dishes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dishes-table th,
+.dishes-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.dishes-table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  color: #333;
+}
+
+.dish-imagess {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Thông tin thanh toán */
+.payment-section {
+  margin-bottom: 30px;
+}
+
+.payment-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.payment-section p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.payment-table th,
+.payment-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.payment-table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  color: #333;
+}
+
+.payment-status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.payment-status.thành-công {
+  background-color: #28a745;
+  color: white;
+}
+
+.payment-status.đang-chờ {
+  background-color: #f1c40f;
+  color: white;
+}
+
+.payment-status.đã-hủy {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Nút quay lại và hủy */
+.button-section {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn111 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #e74c3c; /* Màu đỏ cho nút hủy */
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 1; /* Đặt nút hủy bên phải */
+}
+
+.cancel-btn111:hover {
+  background-color: #c0392b; /* Màu đỏ đậm hơn khi hover */
+}
+
+.cancel-btn111:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.back-btn111 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 0; /* Đặt nút quay lại bên trái */
+}
+
+.back-btn111:hover {
+  background-color: #2980b9;
+}

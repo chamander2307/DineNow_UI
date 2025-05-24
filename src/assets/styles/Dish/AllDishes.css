@@ -1,0 +1,97 @@
+/* AllDishes.css */
+.ad-page {
+  padding: 40px 20px 40px 60px; /* Đồng bộ RestaurantList */
+  max-width: 1600px;
+  margin: 0 auto;
+  background-color: #fefefe;
+  box-sizing: border-box;
+}
+
+.ad-section-header.center {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.ad-section-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #333;
+}
+
+.ad-section-sub {
+  font-size: 16px;
+  color: #555;
+}
+
+.ad-dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 330px); /* 4 thẻ/hàng */
+  gap: 32px; /* Khoảng cách ngang và dọc */
+  justify-content: center;
+}
+
+.ad-dishes-grid > * {
+  margin-bottom: 24px; /* Thêm margin-bottom để tăng khoảng cách dọc (~56px tổng) */
+}
+
+.ad-error-message {
+  color: #ec1c24;
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+}
+
+.ad-loading {
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+  margin: 20px 0;
+}
+
+.ad-no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+  margin: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .ad-dishes-grid {
+    grid-template-columns: repeat(3, 330px); /* 3 thẻ/hàng */
+    gap: 24px;
+  }
+  .ad-dishes-grid > * {
+    margin-bottom: 16px; /* Giảm khoảng cách dọc */
+  }
+}
+
+@media (max-width: 1000px) {
+  .ad-dishes-grid {
+    grid-template-columns: repeat(2, 330px); /* 2 thẻ/hàng */
+    gap: 20px;
+  }
+  .ad-dishes-grid > * {
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ad-page {
+    padding: 20px; /* Giảm padding cho mobile */
+  }
+  .ad-dishes-grid {
+    grid-template-columns: 330px; /* 1 thẻ/hàng */
+    gap: 16px;
+  }
+  .ad-dishes-grid > * {
+    margin-bottom: 8px;
+  }
+  .ad-section-title {
+    font-size: 28px;
+  }
+  .ad-section-sub {
+    font-size: 14px;
+  }
+}

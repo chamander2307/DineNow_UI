@@ -1,0 +1,165 @@
+.restaurant-cart {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 2px solid #00c4b4;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-section {
+  margin-bottom: 20px;
+}
+
+.restaurant-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #e0f7fa;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.restaurant-header:hover {
+  background-color: #b2ebf2;
+}
+
+.restaurant-images {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.restaurant-infos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-name-wrappers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.restaurant-names {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.restaurant-addresss {
+  font-size: 14px;
+  color: #777;
+  margin-top: 5px;
+}
+
+.chevron-icon {
+  font-size: 16px;
+  color: #555;
+}
+
+.dish-lists {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.dish-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.dish-names {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.dish-price-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dish-price {
+  font-size: 12px;
+  color: #333;
+  font-weight: bold;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.decrease-btn,
+.increase-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.decrease-btn {
+  background-color: #ccc;
+}
+
+.decrease-btn:hover {
+  background-color: #999;
+}
+
+.increase-btn {
+  background-color: #00c4b4;
+}
+
+.increase-btn:hover {
+  background-color: #00a69b;
+}
+
+.quantity {
+  width: 24px;
+  height: 24px;
+  background-color: #ccc;
+  color: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #00c4b4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.checkout-btn:hover {
+  background-color: #00a69b;
+}

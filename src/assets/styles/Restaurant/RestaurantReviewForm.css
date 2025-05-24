@@ -1,0 +1,194 @@
+.rest-review-form-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+.rest-review-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+.rest-review-form-container h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 20px;
+}
+
+/* Form nhập đánh giá */
+.rest-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.rest-rating-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rest-rating-input label {
+  font-weight: bold;
+  color: #555;
+}
+
+.rest-stars {
+  display: flex;
+  gap: 5px;
+}
+
+.rest-star {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.rest-star.filled {
+  color: #f39c12; /* Màu vàng cho ngôi sao được chọn */
+}
+
+.rest-comment-input {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rest-comment-input label {
+  font-weight: bold;
+  color: #555;
+}
+
+.rest-comment-input textarea {
+  width: 100%;
+  padding: 4px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  resize: vertical;
+}
+
+.rest-comment-input textarea:focus {
+  border-color: #007bff;
+}
+
+.rest-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.rest-submit-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.rest-submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.rest-cancel-btn {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.rest-cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Danh sách đánh giá */
+.rest-reviews-list {
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.rest-review-item {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.rest-review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.rest-review-user {
+  font-weight: bold;
+  color: #333;
+}
+
+.rest-review-date {
+  font-size: 12px;
+  color: #888;
+}
+
+.rest-review-rating {
+  margin-bottom: 5px;
+}
+
+.rest-review-comment {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 10px; /* Thêm khoảng cách để nút không bị sát nội dung */
+}
+
+.rest-review-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.rest-edit-btn {
+  padding: 5px 10px;
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.rest-edit-btn:hover {
+  background-color: #e67e22;
+}
+
+.rest-delete-btn {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.rest-delete-btn:hover {
+  background-color: #c0392b;
+}

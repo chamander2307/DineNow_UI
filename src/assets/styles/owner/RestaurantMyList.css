@@ -1,0 +1,108 @@
+.restaurant-my-list {
+    padding: 20px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  
+  .restaurant-my-list h2 {
+    margin-bottom: 20px;
+  }
+  
+  .restaurant-my-list form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .restaurant-my-list input,
+  .restaurant-my-list select,
+  .restaurant-my-list textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .restaurant-my-list textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .restaurant-my-list button[type="submit"] {
+    width: fit-content;
+    padding: 8px 16px;
+    background-color: #3478f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .restaurant-my-list button[type="submit"]:hover {
+    background-color: #245dc2;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #3c2f2f;
+}
+  
+  .admin-table button {
+    padding: 4px 8px;
+    font-size: 13px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .admin-table button:hover {
+    background-color: #e68900;
+  }
+  .image-preview {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+  
+  .image-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .upload-btn {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .upload-btn:hover {
+    background-color: #0056b3;
+  }
+  

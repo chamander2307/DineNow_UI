@@ -1,0 +1,110 @@
+.reservation-history-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .reservation-history-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+  }
+  
+  .reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .reservation-table th,
+  .reservation-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .reservation-table th {
+    background-color: #f7796b;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .restaurant-images {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .status {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .status.đã-hủy,
+.status.thất-bại {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status.đã-xác-nhận,
+.status.đã-thanh-toán {
+    background-color: #ff6f61;
+    color: white;
+}
+
+.status.hoàn-thành {
+    background-color: #28a745;
+    color: white;
+}
+
+.status.đang-chờ {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.status.không-xác-định {
+    background-color: #6c757d;
+    color: white;
+}
+  
+  .action-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .action-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .reservation-table {
+      display: block;
+      overflow-x: auto;
+    }
+  
+    .reservation-table th,
+    .reservation-table td {
+      min-width: 120px;
+    }
+  
+    .restaurant-image {
+      width: 60px;
+      height: 60px;
+    }
+  }

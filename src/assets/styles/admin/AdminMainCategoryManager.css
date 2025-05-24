@@ -1,0 +1,49 @@
+.main-category-manager {
+  padding: 20px;
+}
+
+.form-inline {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.form-inline input {
+  flex: 1;
+  padding: 8px;
+}
+
+.form-inline button {
+  padding: 8px 16px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  grid-template-columns: 40% 40% 20% !important;
+  margin-top: 12px;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+.button-update{
+  background-color: #518cfa !important;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #3c2f2f;
+}
+
+.message {
+  margin-top: 10px;
+  color: #2c7a00;
+}

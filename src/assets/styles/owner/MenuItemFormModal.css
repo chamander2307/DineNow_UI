@@ -1,0 +1,161 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 1;
+}
+
+.modal-box {
+  background: #fffaf7;
+  border-radius: 6px;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0e6e2;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #3c2f2f;
+  margin: 0;
+}
+
+.close-btn {
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b5b5b;
+}
+
+.close-btn:hover {
+  color: #e63946;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3c2f2f;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #3c2f2f;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #f4a261;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+}
+
+input[type="file"] {
+  padding: 0;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3c2f2f;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.submit-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.submit-btn:hover {
+  background-color: #e76f51;
+}
+
+.cancel-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #f0e6e2;
+  color: #3c2f2f;
+}
+
+.cancel-btn:hover {
+  background-color: #e8deda;
+}
+
+textarea.form-input {
+  height: 100px;
+  resize: vertical;
+}
+
+.file-input-wrapper {
+  margin: 5px 0;
+}
+
+.file-input-wrapper input[type="file"] {
+  padding: 5px;
+}
+
+.error-message {
+  color: #e63946;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+select option {
+  padding: 8px;
+}

@@ -1,0 +1,286 @@
+/* RestaurantManagement.css: Styles for RestaurantManager modal */
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10010;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+}
+
+/* Modal box */
+.modal-box.restaurant-form {
+  background: #fffaf7;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Modal header */
+.modal-box.restaurant-form h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #3c2f2f;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0e6e2;
+}
+
+/* Form styles */
+.modal-box.restaurant-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-box.restaurant-form input,
+.modal-box.restaurant-form select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #3c2f2f;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.modal-box.restaurant-form input:focus,
+.modal-box.restaurant-form select:focus {
+  outline: none;
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+/* Select input (react-select) */
+.modal-box.restaurant-form .react-select__control {
+  width: 100%;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 38px;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.modal-box.restaurant-form .react-select__control--is-focused {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+.modal-box.restaurant-form .react-select__placeholder {
+  color: #6b5b5b;
+  font-size: 14px;
+}
+
+.modal-box.restaurant-form .react-select__single-value {
+  color: #3c2f2f;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-box.restaurant-form .react-select__menu {
+  background-color: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-box.restaurant-form .react-select__option {
+  color: #3c2f2f;
+  background-color: #fffaf7;
+  padding: 10px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.modal-box.restaurant-form .react-select__option--is-focused {
+  background-color: #fef5f1;
+}
+
+.modal-box.restaurant-form .react-select__option--is-selected {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+/* CKEditor styles */
+.modal-box.restaurant-form .ck-editor__editable {
+  min-height: 200px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #3c2f2f;
+  background-color: #fff;
+  padding: 12px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.modal-box.restaurant-form .ck-editor__editable:focus {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+/* File input */
+.modal-box.restaurant-form input[type="file"] {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #3c2f2f;
+}
+
+/* Labels */
+.modal-box.restaurant-form label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3c2f2f;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Modal buttons */
+.modal-box.restaurant-form .modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal-box.restaurant-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.modal-box.restaurant-form button[type="submit"] {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.modal-box.restaurant-form button[type="submit"]:hover {
+  background-color: #e76f51;
+  transform: translateY(-1px);
+}
+
+.modal-box.restaurant-form button[type="button"] {
+  background-color: #f0e6e2;
+  color: #3c2f2f;
+}
+
+.modal-box.restaurant-form button[type="button"]:hover {
+  background-color: #e8deda;
+  transform: translateY(-1px);
+}
+
+/* Table styles */
+.restaurant-table-container {
+  padding: 20px;
+}
+
+.restaurant-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fffaf7;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.restaurant-table th,
+.restaurant-table td {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: #3c2f2f;
+}
+
+.restaurant-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  border-bottom: 1px solid #f0e6e2;
+}
+
+.restaurant-table td {
+  border-bottom: 1px solid #f0e6e2;
+  vertical-align: middle;
+  transition: background-color 0.2s ease;
+}
+
+.restaurant-table tr:last-child td {
+  border-bottom: none;
+}
+
+.restaurant-table tr:hover {
+  background-color: #fef5f1;
+}
+
+.restaurant-table img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  transition: border-color 0.2s ease;
+}
+
+.restaurant-table img:hover {
+  border-color: #f4a261;
+}
+
+/* Action button */
+.action-btn {
+  padding: 8px 16px;
+  background-color: #f4a261;
+  color: #fffaf7;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-btn:hover {
+  background-color: #e76f51;
+  transform: translateY(-1px);
+}

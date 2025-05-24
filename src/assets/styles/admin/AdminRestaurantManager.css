@@ -1,0 +1,28 @@
+.restaurant-manager {
+  padding: 20px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.filter-group input {
+  padding: 8px;
+  width: 200px;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
