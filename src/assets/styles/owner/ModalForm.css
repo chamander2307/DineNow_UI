@@ -1,0 +1,538 @@
+/* ModalForm.css: Styles for modal forms (RestaurantFormModal, MenuItemFormModal, etc.) */
+
+/* Modal overlay */
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10010;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+/* Modal content */
+.ReactModal__Content,
+.order-detail-modal {
+  background: #fffaf7;
+  padding: 15px; /* Đã giảm từ 20px để nội dung rộng hơn (~670px) */
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10011;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Modal header */
+.ReactModal__Content .modal-header,
+.order-detail-modal h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0e6e2;
+  font-size: 22px;
+  font-weight: 600;
+  color: #3c2f2f;
+}
+
+.ReactModal__Content .modal-header h2 {
+  margin: 0;
+}
+
+.order-detail-modal h2 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.ReactModal__Content .close-btn,
+.order-detail-modal .close-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #6b5b5b;
+  transition: color 0.2s ease;
+}
+
+.ReactModal__Content .close-btn:hover,
+.order-detail-modal .close-button:hover {
+  color: #e63946;
+}
+
+/* Form styles */
+.ReactModal__Content .modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Form group */
+.ReactModal__Content .form-group,
+.ReactModal__Content .form-group.full-width {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.ReactModal__Content .form-group label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3c2f2f;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+/* Input styles (bao gồm input, textarea, NumericFormat) */
+.ReactModal__Content .form-input,
+.ReactModal__Content .form-input.number-format {
+  width: 100% !important; /* Đảm bảo rộng tối đa */
+  max-width: 100% !important; /* Ngăn giới hạn chiều ngang */
+  padding: 10px 14px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #3c2f2f;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  min-height: 48px; /* Đồng bộ với Select */
+}
+
+.ReactModal__Content .form-input:focus,
+.ReactModal__Content .form-input.number-format:focus {
+  outline: none;
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+.ReactModal__Content .form-input--textarea {
+  resize: vertical;
+  min-height: 220px; /* Tăng để trông rộng rãi hơn */
+  max-height: 300px;
+}
+
+/* Select input styles */
+.ReactModal__Content .select-input {
+  width: 100% !important;
+}
+
+.ReactModal__Content .select-input .react-select__control {
+  width: 100% !important;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  padding: 10px 14px; /* Đồng bộ với .form-input */
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 48px; /* Đồng bộ với .form-input */
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.ReactModal__Content .select-input .react-select__control--is-focused {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+.ReactModal__Content .select-input .react-select__control--is-disabled {
+  background-color: #f0e6e2;
+  cursor: not-allowed;
+}
+
+.ReactModal__Content .select-input .react-select__placeholder {
+  color: #6b5b5b;
+  font-size: 16px;
+}
+
+.ReactModal__Content .select-input .react-select__single-value {
+  color: #3c2f2f;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ReactModal__Content .select-input .react-select__menu {
+  background-color: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ReactModal__Content .select-input .react-select__option {
+  color: #3c2f2f;
+  background-color: #fffaf7;
+  padding: 10px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.ReactModal__Content .select-input .react-select__option--is-focused {
+  background-color: #fef5f1;
+}
+
+.ReactModal__Content .select-input .react-select__option--is-selected {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+/* CKEditor styles */
+.ReactModal__Content .ck-editor__editable {
+  width: 100% !important;
+  min-height: 220px; /* Đồng bộ với textarea */
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #3c2f2f;
+  background-color: #fff;
+  padding: 12px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.ReactModal__Content .ck-editor__editable:focus {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.2);
+}
+
+/* File input and image preview */
+.ReactModal__Content .file-input {
+  padding: 10px 0; /* Đồng bộ padding với các trường khác */
+  font-size: 16px;
+  color: #3c2f2f;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Ghi đè kiểu mặc định của input file */
+.ReactModal__Content .form-group input[type="file"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 10px 14px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #3c2f2f;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  min-height: 48px; /* Đồng bộ với các trường khác */
+}
+
+.ReactModal__Content .image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.ReactModal__Content .image-wrapper {
+  width: 120px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  transition: border-color 0.2s ease;
+}
+
+.ReactModal__Content .image-wrapper:hover {
+  border-color: #f4a261;
+}
+
+.ReactModal__Content .image-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Address group */
+.ReactModal__Content .address-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Modal buttons */
+.ReactModal__Content .modal-buttons,
+.order-detail-modal .modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.ReactModal__Content .submit-btn,
+.ReactModal__Content .cancel-btn,
+.order-detail-modal .close-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.ReactModal__Content .submit-btn {
+  background-color: #f4a261;
+  color: #fffaf7;
+}
+
+.ReactModal__Content .submit-btn:hover {
+  background-color: #e76f51;
+  transform: translateY(-1px);
+}
+
+.ReactModal__Content .submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ReactModal__Content .cancel-btn,
+.order-detail-modal .close-button {
+  background-color: #f0e6e2;
+  color: #3c2f2f;
+}
+
+.ReactModal__Content .cancel-btn:hover,
+.order-detail-modal .close-button:hover {
+  background-color: #e8deda;
+  transform: translateY(-1px);
+}
+
+/* Info section (RestaurantDetailModal, MenuItemDetailModal) */
+.ReactModal__Content .info-section {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #fef5f1;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  width: 100%;
+}
+
+.ReactModal__Content .info-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e63946;
+  margin-bottom: 12px;
+}
+
+.ReactModal__Content .info-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.ReactModal__Content .info-item {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #3c2f2f;
+}
+
+.ReactModal__Content .info-item strong {
+  font-weight: 600;
+  color: #3c2f2f;
+}
+
+/* Description section (RestaurantDetailModal, MenuItemDetailModal) */
+.ReactModal__Content .description-section {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #fef5f1;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  width: 100%;
+}
+
+.ReactModal__Content .description-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e63946;
+  margin-bottom: 12px;
+}
+
+.ReactModal__Content .description-text {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #6b5b5b;
+}
+
+/* Full image modal (RestaurantDetailModal, MenuItemDetailModal) */
+.ReactModal__Content .full-image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10012;
+}
+
+.ReactModal__Content .full-image-wrapper {
+  width: 600px;
+  height: 400px;
+  background-color: #fffaf7;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.ReactModal__Content .full-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.ReactModal__Content .close-full-image-btn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  font-size: 16px;
+  background-color: #e63946;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fffaf7;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ReactModal__Content .close-full-image-btn:hover {
+  background-color: #d62828;
+}
+
+/* OrderDetailModal specific styles */
+.order-detail-modal .order-info,
+.order-detail-modal .customer-info,
+.order-detail-modal .reservation-info {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #fef5f1;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  width: 100%;
+}
+
+.order-detail-modal .order-info p,
+.order-detail-modal .customer-info p,
+.order-detail-modal .reservation-info p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #3c2f2f;
+  margin: 8px 0;
+}
+
+.order-detail-modal .order-info p strong,
+.order-detail-modal .customer-info p strong,
+.order-detail-modal .reservation-info p strong {
+  font-weight: 600;
+  color: #3c2f2f;
+}
+
+.order-detail-modal h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e63946;
+  margin: 16px 0 8px;
+}
+
+.order-detail-modal .menu-item-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fffaf7;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  margin: 16px 0;
+}
+
+.order-detail-modal .menu-item-table th,
+.order-detail-modal .menu-item-table td {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 16px;
+  color: #3c2f2f;
+  border-bottom: 1px solid #f0e6e2;
+}
+
+.order-detail-modal .menu-item-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.order-detail-modal .menu-item-table tr:last-child td {
+  border-bottom: none;
+}
+
+.order-detail-modal .menu-item-table tr:hover {
+  background-color: #fef5f1;
+}
+
+.order-detail-modal .menu-item-image {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #f0e6e2;
+  transition: border-color 0.2s ease;
+}
+
+.order-detail-modal .menu-item-image:hover {
+  border-color: #f4a261;
+}

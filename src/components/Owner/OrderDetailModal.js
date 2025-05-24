@@ -1,6 +1,8 @@
 import React from "react";
 import Modal from "react-modal";
-import "../../assets/styles/owner/OrderDetailModal.css";
+import "../../assets/styles/owner/ModalForm.css";
+
+Modal.setAppElement("#root");
 
 const OrderDetailModal = ({ isOpen, onClose, order }) => {
   if (!isOpen || !order) return null;
@@ -15,8 +17,17 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} className="order-detail-modal">
-      <h2>Chi tiết đơn hàng</h2>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className="ReactModal__Content"
+      overlayClassName="ReactModal__Overlay"
+    >
+      <div className="modal-header">
+        <h2>Chi tiết đơn hàng</h2>
+        <button className="close-btn" onClick={onClose}>×</button>
+      </div>
+
       <div className="order-info">
         <p><strong>Mã đơn hàng:</strong> {order.id || "N/A"}</p>
         <p><strong>Trạng thái:</strong> {statusText[order.status] || "Không xác định"}</p>
@@ -74,7 +85,9 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
         </tbody>
       </table>
 
-      <button onClick={onClose} className="close-button">Đóng</button>
+      <div className="modal-buttons">
+        <button className="cancel-btn" onClick={onClose}>Đóng</button>
+      </div>
     </Modal>
   );
 };

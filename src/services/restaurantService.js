@@ -148,7 +148,7 @@ export const fetchSimpleMenuByRestaurant = async (restaurantId) => {
 // Lấy menu công khai theo nhà hàng (dùng trong RestaurantCart.js)
 export const getPublicMenuByRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`/api/restaurants/${restaurantId}/menu`); // Giả định endpoint giống fetchSimpleMenuByRestaurant
+    const response = await axios.get(`/api/restaurants/${restaurantId}/menu`);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy menu công khai trong giỏ hàng:", error.response?.data || error.message);
@@ -223,45 +223,69 @@ export const fetchRestaurantsByTypeId = async (typeId, page = 0, size = 20) => {
   }
 };
 
-// Lấy danh sách cấp độ nhà hàng (mock data)
 export const fetchRestaurantTiers = async () => {
   try {
-    const mockTiers = [
-      {
-        id: 1,
-        name: "Cơ bản",
-        price: 5000,
-        description: "Gói cơ bản cho nhà hàng mới",
-      },
-      {
-        id: 2,
-        name: "Phổ thông",
-        price: 10000,
-        description: "Gói phù hợp với đa số",
-      },
-      {
-        id: 3,
-        name: "Cao cấp",
-        price: 20000,
-        description: "Ưu tiên hiển thị, nhiều tiện ích",
-      },
-      {
-        id: 4,
-        name: "VIP",
-        price: 30000,
-        description: "Dành cho nhà hàng cao cấp",
-      },
-      {
-        id: 5,
-        name: "Premium+",
-        price: 50000,
-        description: "Tối đa hóa tiếp cận khách hàng",
-      },
-    ];
-    return mockTiers;
+    const res = await axios.get('/api/owner/restaurant-tiers');
+    return res.data.data;
   } catch (error) {
     console.error(
       "Lỗi khi lấy danh sách cấp độ nhà hàng:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Lấy danh sách hạng nhà hàng (ADMIN)
+export const fetchAdminRestaurantTiers = async () => {
+  try {
+    const res = await axios.get('/api/admin/restaurant-tiers');
+    return res.data.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy danh sách hạng nhà hàng (ADMIN):",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Tạo mới hạng nhà hàng (ADMIN)
+export const createRestaurantTier = async (payload) => {
+  try {
+    const res = await axios.post('/api/admin/restaurant-tiers', payload);
+    return res; // Trả về toàn bộ res
+  } catch (error) {
+    console.error(
+      "Lỗi khi tạo hạng nhà hàng:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Cập nhật hạng nhà hàng (ADMIN)
+export const updateRestaurantTier = async (id, payload) => {
+  try {
+    const res = await axios.put(`/api/admin/restaurant-tiers/${id}`, payload);
+    return res; // Trả về toàn bộ res
+  } catch (error) {
+    console.error(
+      `Lỗi khi cập nhật hạng nhà hàng (ID: ${id}):`,
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// Xóa hạng nhà hàng (ADMIN)
+export const deleteRestaurantTier = async (id) => {
+  try {
+    const res = await axios.delete(`/api/admin/restaurant-tiers/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi xóa hạng nhà hàng:",
       error.response?.data || error.message
     );
     throw error;

@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  deleteRestaurantType,
-} from "../../services/adminService";
 import { fetchRestaurantTypes } from "../../services/restaurantService";
 import AdminLayout from "./AdminLayout";
 import RestaurantTypeFormModal from "../../components/common/RestaurantTypeFormModal";
@@ -12,39 +9,27 @@ const RestaurantTypeManager = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingData, setEditingData] = useState(null);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadTypes();
   }, []);
 
   const loadTypes = async () => {
+    setLoading(true);
     try {
       const res = await fetchRestaurantTypes();
-      if (res.status === 200 && Array.isArray(res.data.data)) {
-        setTypes(res.data.data);
+      if (Array.isArray(res)) {
+        setTypes(res);
+        setMessage("");
       } else {
-        setMessage(res.data.message || "Dữ liệu không hợp lệ");
+        setMessage("Dữ liệu không hợp lệ");
       }
     } catch (err) {
-      console.error("Error fetching types:", err);
+      console.error("Lỗi khi lấy danh sách loại nhà hàng:", err);
       setMessage("Không thể tải loại nhà hàng");
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Xác nhận xoá?")) {
-      try {
-        const res = await deleteRestaurantType(id);
-        if (res.status === 200) {
-          loadTypes();
-          setMessage("Xoá thành công");
-        } else {
-          setMessage(res.data.message || "Xoá thất bại");
-        }
-      } catch (err) {
-        console.error("Error deleting type:", err);
-        setMessage(err || "Xoá thất bại");
-      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,44 +50,67 @@ const RestaurantTypeManager = () => {
   };
 
   const checkDuplicateName = (name) => {
-    return types.some(type => type.name.toLowerCase() === name.toLowerCase());
+    return types.some((type) => type.name.toLowerCase() === name.toLowerCase());
   };
 
   return (
     <AdminLayout>
       <div className="restaurant-type-manager">
-        <h2>Quản lý loại nhà hàng</h2>
-        <button onClick={openCreateModal}>+ Thêm loại</button>
+        <div className="manager-header">
+          <h2>Quản lý loại nhà hàng</h2>
+          <button className="btn-create" onClick={openCreateModal}>
+            + Thêm loại
+          </button>
+        </div>
 
-        {message && <p className="message">{message}</p>}
+        {message && (
+          <p className={message.includes("thành công") ? "message" : "error"}>
+            {message}
+          </p>
+        )}
 
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Hình</th>
-              <th>Tên</th>
-              <th>Mô tả</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {types.map((type) => (
-              <tr key={type.id}>
-                <td>
-                  {type.imageUrl && (
-                    <img src={type.imageUrl} alt={type.name} className="thumbnail" />
-                  )}
-                </td>
-                <td>{type.name}</td>
-                <td>{type.description}</td>
-                <td>
-                  <button onClick={() => openEditModal(type)}>Sửa</button>
-                  <button onClick={() => handleDelete(type.id)}>Xoá</button>
-                </td>
+        {loading ? (
+          <div className="loading-spinner">
+            <span>Đang tải...</span>
+          </div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Hình</th>
+                <th>Tên</th>
+                <th>Mô tả</th>
+                <th>Hành động</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {types.length > 0 ? (
+                types.map((type) => (
+                  <tr key={type.id}>
+                    <td>
+                      {type.imageUrl && (
+                        <img
+                          src={type.imageUrl}
+                          alt={type.name}
+                          className="thumbnail"
+                        />
+                      )}
+                    </td>
+                    <td>{type.name}</td>
+                    <td>{type.description}</td>
+                    <td>
+                      <button onClick={() => openEditModal(type)}>Sửa</button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">Không có loại nhà hàng nào</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
 
         {showFormModal && (
           <RestaurantTypeFormModal

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -11,13 +11,12 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import '../../assets/styles/Restaurant/RestaurantDetail.css';
 import RestaurantReviewForm from '../../components/Restaurants/RestaurantReviewForm';
-import DishReviews from '../../components/Dish/DishReviews'; // Import DishReviews
+import DishReviews from '../../components/Dish/DishReviews';
 import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
 import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants } from '../../services/userService';
 import { createOrder } from '../../services/orderService';
 import { UserContext } from '../../contexts/UserContext';
 
-// Hàm hiển thị sao đánh giá
 const renderStars = (rating) => {
   const effectiveRating = Math.min(rating || 0, 5);
   const full = Math.floor(effectiveRating);
@@ -166,6 +165,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
 const RestaurantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { isLogin } = useContext(UserContext);
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
@@ -181,7 +181,7 @@ const RestaurantDetail = () => {
     const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
     return savedCart[id] || {};
   });
-  const [isExpanded, setIsExpanded] = useState(false); // Thêm khai báo state
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Kiểm tra trạng thái yêu thích khi component mount
   useEffect(() => {
@@ -199,7 +199,7 @@ const RestaurantDetail = () => {
     fetchFavoriteStatus();
   }, [id, isLogin]);
 
-  // Tải dữ liệu nhà hàng và menu
+  // Tải dữ liệu nhà hàng, menu và chọn món ăn từ state
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -208,7 +208,17 @@ const RestaurantDetail = () => {
         const restaurantData = await fetchRestaurantById(id);
         setRestaurant(restaurantData);
         const menuData = await fetchSimpleMenuByRestaurant(id);
-        setMenuItems(Array.isArray(menuData.data) ? menuData.data : []);
+        const menuItemsArray = Array.isArray(menuData.data) ? menuData.data : [];
+        setMenuItems(menuItemsArray);
+
+        if (state?.selectedDishId) {
+          const selectedDish = menuItemsArray.find(
+            (item) => item.id === state.selectedDishId
+          );
+          if (selectedDish) {
+            setSelectedDish(selectedDish);
+          }
+        }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu nhà hàng:", error);
         setError("Không thể tải dữ liệu nhà hàng. Vui lòng thử lại.");
@@ -217,7 +227,7 @@ const RestaurantDetail = () => {
       }
     };
     loadData();
-  }, [id]);
+  }, [id, state]);
 
   // Lưu giỏ hàng vào sessionStorage
   useEffect(() => {
@@ -291,7 +301,7 @@ const RestaurantDetail = () => {
     } catch (error) {
       console.error('Lỗi khi cập nhật danh sách yêu thích:', error);
       alert('Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.');
-      setIsLiked(!isLiked); // Rollback nếu API thất bại
+      setIsLiked(!isLiked);
     }
   }, [isLiked, isLogin, id]);
 
@@ -330,18 +340,19 @@ const RestaurantDetail = () => {
     });
   }, [cart, menuItems, navigate, restaurant]);
 
-  const restaurantSliderSettings = {
-    dots: true,
+  // Cấu hình slider động dựa trên số lượng ảnh
+  const getRestaurantSliderSettings = (imageCount) => ({
+    dots: imageCount > 1,
     arrows: false,
-    infinite: true,
+    infinite: imageCount > 1,
     speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: imageCount > 1,
     autoplaySpeed: 4000,
-    swipeToSlide: true,
+    swipeToSlide: imageCount > 1,
     touchThreshold: 10,
-  };
+  });
 
   const priceRanges = [
     { label: "Tất cả", value: "" },
@@ -443,16 +454,23 @@ const RestaurantDetail = () => {
   return (
     <div className="restaurant-detail">
       <div className="restaurant-slider">
-        <Slider {...restaurantSliderSettings}>
-          {restaurant.imageUrls?.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt={`slide-${i}`}
-              className="slider-image"
-            />
-          )) || <p>Không có hình ảnh</p>}
-        </Slider>
+        {restaurant.imageUrls?.length > 0 ? (
+          <Slider {...getRestaurantSliderSettings(restaurant.imageUrls.length)}>
+            {restaurant.imageUrls.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`slide-${i}`}
+                className="slider-image"
+                onError={(e) => {
+                  e.target.src = '/assets/images/fallback-image.jpg'; // Ảnh dự phòng
+                }}
+              />
+            ))}
+          </Slider>
+        ) : (
+          <p>Không có hình ảnh</p>
+        )}
       </div>
 
       <div className="restaurant-info">

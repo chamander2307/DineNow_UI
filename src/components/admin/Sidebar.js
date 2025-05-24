@@ -24,6 +24,12 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
+          <NavLink 
+          to="/admin/restaurant-tier" className={({isActive})=> (isActive?"active": "")}>
+          Quản lí cấp độ nhà hàng
+          </NavLink>
+        </li>
+        <li>
           <NavLink
             to="/admin/restaurants"
             className={({ isActive }) => (isActive ? "active" : "")}

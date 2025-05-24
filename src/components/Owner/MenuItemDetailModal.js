@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-
+import "../../assets/styles/owner/ModalForm.css";
 Modal.setAppElement("#root");
 
 const MenuItemDetailModal = ({ isOpen, onClose, item }) => {

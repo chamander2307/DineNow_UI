@@ -1,10 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import "../../assets/styles/Restaurant/RestaurantCard.css";
 import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants } from "../../services/userService";
 import { UserContext } from "../../contexts/UserContext";
-import FavoriteButton from "../basicComponents/FavoriteButton";
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -18,7 +17,7 @@ const renderStars = (rating) => {
   for (let i = 0; i < empty; i++)
     stars.push(<FaRegStar key={`empty-${i}`} color="#ccc" />);
 
-  return <div className="star-icons">{stars}</div>;
+  return <div className="rc-star-icons">{stars}</div>;
 };
 
 const formatNumber = (num) => {
@@ -28,10 +27,9 @@ const formatNumber = (num) => {
 };
 
 const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits }) => {
-  const { isLogin } = useContext(UserContext);
+  const { isLogin = false } = useContext(UserContext);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Lấy trạng thái yêu thích từ server khi component mount
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
       if (isLogin) {
@@ -54,7 +52,7 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits
 
     try {
       const newIsFavorite = !isFavorite;
-      setIsFavorite(newIsFavorite); // Cập nhật trạng thái ngay lập tức
+      setIsFavorite(newIsFavorite);
 
       if (newIsFavorite) {
         await addFavoriteRestaurant(id);
@@ -63,36 +61,34 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits
       }
     } catch (err) {
       console.error("Lỗi khi thay đổi yêu thích:", err);
-      // Rollback trạng thái nếu API thất bại
       setIsFavorite(!isFavorite);
       alert("Không thể cập nhật danh sách yêu thích. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="restaurant-item">
-      <FavoriteButton
-        isActive={isFavorite}
-        onClick={handleFavoriteClick}
-        restaurantId={id}
-      />
-      <img
-        src={thumbnailUrl || "/fallback.jpg"}
-        alt={name}
-        className="restaurant-image"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = "/fallback.jpg";
-        }}
-      />
-
-      <div className="restaurant-details">
-        <h3>{name}</h3>
-        <div className="restaurant-meta">
+    <div className="rc-item">
+      <div className={`rc-favorite-icon ${isFavorite ? 'active' : ''}`} onClick={handleFavoriteClick}>
+        {isFavorite ? <FaHeart /> : <FaRegHeart />}
+      </div>
+      <div className="rc-image-container">
+        <img
+          src={thumbnailUrl || "/fallback.jpg"}
+          alt={name}
+          className="rc-image"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/fallback.jpg";
+          }}
+        />
+      </div>
+      <div className="rc-details">
+        <h3 className="rc-name">{name}</h3>
+        <div className="rc-meta">
           {renderStars(averageRating)}
-          <span className="visit-count">{formatNumber(visits || 0)} Lượt đặt</span>
+          <span className="rc-visit-count">{formatNumber(visits || 0)} Lượt đặt</span>
         </div>
-        {address && <p className="restaurant-address">{address}</p>}
+        {address && <p className="rc-address">{address}</p>}
         <Link to={`/restaurant/${id}`}>
           <button className="rc-button">Đặt bàn giữ chỗ</button>
         </Link>

@@ -39,13 +39,16 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplica
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!initialData && checkDuplicateName && checkDuplicateName(formData.name)) {
-        setMessage("Tên loại nhà hàng đã tồn tại!");
+      if (!formData.name) {
+        setMessage("Vui lòng nhập tên loại nhà hàng");
         return;
       }
-
+      if (!initialData && checkDuplicateName(formData.name)) {
+        setMessage("Tên loại nhà hàng đã tồn tại");
+        return;
+      }
       if (!initialData && !formData.image) {
-        setMessage("Vui lòng chọn ảnh!");
+        setMessage("Vui lòng chọn ảnh đại diện");
         return;
       }
 
@@ -61,22 +64,22 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplica
       let res;
       if (initialData) {
         res = await updateRestaurantType(initialData.id, data);
-        if (res && res.status === 200) {
+        if (res?.status === 200) {
           onSuccess("Cập nhật thành công");
         } else {
-          setMessage((res && res.data && res.data.message) || "Cập nhật thất bại");
+          setMessage(res?.data?.message || "Cập nhật thất bại");
         }
       } else {
         res = await createRestaurantType(data);
-        if (res && res.status === 200) {
+        if (res?.status === 201) {
           onSuccess("Tạo mới thành công");
         } else {
-          setMessage((res && res.data && res.data.message) || "Tạo mới thất bại");
+          setMessage(res?.data?.message || "Tạo mới thất bại");
         }
       }
     } catch (err) {
-      console.error("Error submitting form:", err);
-      setMessage((err && err.message) || "Thao tác thất bại");
+      console.error("Lỗi khi gửi form:", err);
+      setMessage(err.response?.data?.message || "Thao tác thất bại");
     }
   };
 
@@ -125,13 +128,17 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplica
             {preview && (
               <div className="preview-container">
                 <img src={preview} alt="preview" className="preview" />
-                <button type="button" onClick={removeImage}>Xóa ảnh</button>
+                <button type="button" onClick={removeImage}>
+                  Xóa ảnh
+                </button>
               </div>
             )}
           </div>
           <div className="modal-actions">
             <button type="submit">{initialData ? "Cập nhật" : "Tạo mới"}</button>
-            <button type="button" onClick={onClose}>Hủy</button>
+            <button type="button" onClick={onClose}>
+              Hủy
+            </button>
           </div>
           {message && <p className="message">{message}</p>}
         </form>

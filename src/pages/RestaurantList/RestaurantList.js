@@ -16,7 +16,6 @@ const RestaurantList = () => {
   const [page, setPage] = useState(0);
   const location = useLocation();
 
-  // Fetch data
   useEffect(() => {
     const loadRestaurants = async () => {
       setLoading(true);
@@ -29,7 +28,7 @@ const RestaurantList = () => {
         let response;
         if (typeId) {
           console.log("Gọi API fetchRestaurantsByTypeId với typeId:", typeId);
-          response = await fetchRestaurantsByTypeId(typeId, page, 10);
+          response = await fetchRestaurantsByTypeId(typeId, page, 20);
           setRestaurants(response.data || []);
         } else if (province || restaurantName) {
           const searchParams = { province, restaurantName };
@@ -38,7 +37,7 @@ const RestaurantList = () => {
           setRestaurants(response.data || []);
         } else {
           console.log("Gọi API fetchAllRestaurants");
-          response = await fetchAllRestaurants(page, 10);
+          response = await fetchAllRestaurants(page, 20);
           setRestaurants(response.data.content || []);
         }
       } catch (error) {
@@ -51,7 +50,6 @@ const RestaurantList = () => {
     loadRestaurants();
   }, [location.search, page]);
 
-  // Phân trang
   const handleNextPage = () => setPage(page + 1);
   const handlePrevPage = () => setPage(page > 0 ? page - 1 : 0);
 
@@ -70,7 +68,7 @@ const RestaurantList = () => {
                 <div key={item.id} className="rl-card-item">
                   <RestaurantCard
                     {...item}
-                    thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"} // Fallback image
+                    thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"}
                   />
                 </div>
               ))
@@ -84,7 +82,7 @@ const RestaurantList = () => {
             Trang trước
           </button>
           <span>Trang {page + 1}</span>
-          <button onClick={handleNextPage} disabled={restaurants.length < 10}>
+          <button onClick={handleNextPage} disabled={restaurants.length < 20}>
             Trang sau
           </button>
         </div>

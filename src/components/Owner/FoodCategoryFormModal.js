@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { createFoodCategory, updateFoodCategory } from "../../services/foodCategoryService";
-import "../../assets/styles/owner/MenuItem.css";
+import "../../assets/styles/owner/ModalForm.css";
 Modal.setAppElement("#root");
 
 const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mainCategories, onSuccess }) => {
