@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart } from 'react-icons/fa';
 import '../../assets/styles/Restaurant/FavoriteRestaurants.css';
 import { getFavoriteRestaurants, removeFavoriteRestaurant } from '../../services/userService';
-import FavoriteButton from '../../components/basicComponents/FavoriteButton';
 
 const renderStars = (rating) => {
   const full = Math.floor(rating);
@@ -86,11 +85,12 @@ const FavoriteRestaurants = () => {
                     e.target.src = '/fallback.jpg';
                   }}
                 />
-                <FavoriteButton
-                  isActive={true}
+                <div
+                  className="favorite-btn active"
                   onClick={(e) => handleUnlike(restaurant.id, e)}
-                  restaurantId={restaurant.id}
-                />
+                >
+                  <FaHeart />
+                </div>
               </div>
               <div className="fr-details">
                 <h3 className="fr-name">{restaurant.name}</h3>

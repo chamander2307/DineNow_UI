@@ -54,6 +54,17 @@ export const cancelOrder = async (orderId) => {
   }
 };
 
+// Thêm hàm mới để lấy chi tiết đơn hàng của khách
+export const getCustomerOrderDetail = async (orderId) => {
+  try {
+    const response = await axios.get(`/api/customers/orders/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết đơn hàng của khách:", error);
+    throw error;
+  }
+};
+
 // ========== OWNER ==========
 
 export const getOrderDetail = async (orderId) => {

@@ -171,29 +171,21 @@ const RestaurantCart = ({ onCheckout }) => {
   };
 
   const handleCheckout = (restaurant) => {
-    const selectedItems = [
-      {
-        restaurant: {
-          id: restaurant.id,
-          name: restaurant.name,
-        },
-        dishes: restaurant.dishes
-          .filter(dish => cartItems[restaurant.id]?.[dish.id] > 0)
-          .map(dish => ({
-            id: dish.id,
-            name: dish.name,
-            price: dish.price,
-            quantity: cartItems[restaurant.id][dish.id],
-          })),
-      },
-    ].filter(item => item.dishes.length > 0);
+    const selectedItems = restaurant.dishes
+      .filter(dish => cartItems[restaurant.id]?.[dish.id] > 0)
+      .map(dish => ({
+        id: dish.id,
+        name: dish.name,
+        price: dish.price,
+        quantity: cartItems[restaurant.id][dish.id],
+      }));
 
     if (selectedItems.length === 0) {
       alert('Giỏ hàng trống! Vui lòng chọn ít nhất một món trước khi thanh toán.');
       return;
     }
 
-    navigate('/order', { state: { selectedItems } });
+    navigate('/order', { state: { selectedItems, restaurant: { id: restaurant.id, name: restaurant.name, image: restaurant.image, address: restaurant.address } } });
     if (onCheckout) {
       onCheckout(); // Đóng dialog sau khi navigate
     }

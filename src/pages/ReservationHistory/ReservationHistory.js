@@ -48,7 +48,7 @@ const ReservationHistory = () => {
         const formattedReservations = data.map(order => ({
           id: order.id,
           restaurant: {
-            name: order.reservationSimpleResponse?.restaurantName || 'Không xác định',
+            name: order.restaurants?.name || 'Không xác định',
           },
           status: localizeStatus(order.status || 'Không xác định'),
           date: formatDate(order.reservationSimpleResponse?.reservationTime),

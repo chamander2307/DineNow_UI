@@ -4,7 +4,7 @@ import '../../assets/styles/Restaurant/OrderPage.css';
 import { createOrder } from '../../services/orderService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
-// Dữ liệu giả lập
+// Dữ liệu giả lập (dùng làm fallback nếu không có state)
 const mockRestaurant = {
   name: 'Nhà hàng B',
   address: '456 Đường Ẩm Thực, TP. HCM',
@@ -28,19 +28,18 @@ const OrderPage = () => {
     restaurant: initialRestaurant = mockRestaurant,
   } = location.state || {};
 
-  // Sử dụng dữ liệu từ state nếu là "đặt lại", ngược lại dùng dữ liệu mặc định
-  const restaurant = isRebook ? initialRestaurant : mockRestaurant;
-  const initialItems = isRebook ? initialItemsData : mockSelectedItems;
-
-  // State để quản lý danh sách món ăn đã chọn
-  const [selectedItems, setSelectedItems] = useState(initialItems.map(item => ({
-    id: item.id,
-    name: item.name,
-    quantity: item.quantity,
-    price: parseFloat(item.price) || 0,
-  })));
-
-  // State để quản lý thông tin đặt chỗ
+  // Di chuyển tất cả các Hook useState lên đầu component
+  const [selectedItems, setSelectedItems] = useState(() => {
+    const normalizedItems = Array.isArray(initialItemsData) && initialItemsData.length > 0 && initialItemsData[0].dishes
+      ? initialItemsData[0].dishes
+      : initialItemsData;
+    return normalizedItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      price: parseFloat(item.price) || 0,
+    }));
+  });
   const [numberOfAdults, setNumberOfAdults] = useState('');
   const [numberOfChildren, setNumberOfChildren] = useState('');
   const [date, setDate] = useState('');
@@ -49,6 +48,22 @@ const OrderPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('VNPay');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Sử dụng dữ liệu từ state
+  const restaurant = initialRestaurant;
+
+  // Nếu không có location.state, hiển thị thông báo lỗi
+  if (!location.state) {
+    return (
+      <div className="order-page">
+        <h2>Không tìm thấy thông tin đơn hàng</h2>
+        <p>Vui lòng quay lại giỏ hàng để đặt bàn.</p>
+        <button onClick={() => navigate('/')} className="back-btn">
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
 
   // Tính tổng tiền dựa trên số lượng
   const totalPrice = selectedItems.reduce((total, item) => total + ((parseFloat(item.price) || 0) * item.quantity), 0);
@@ -107,7 +122,7 @@ const OrderPage = () => {
         })),
       };
 
-      await createOrder(restaurant.id || 1, orderData); // Giả định restaurant.id nếu không có
+      await createOrder(restaurant.id || 1, orderData);
 
       const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
       delete savedCart[restaurant.id || 1];

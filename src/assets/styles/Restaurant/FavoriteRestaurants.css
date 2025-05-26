@@ -41,7 +41,7 @@
   width: 330px !important;
   height: 200px !important;
   overflow: hidden;
-  position: relative; /* Hỗ trợ position: absolute */
+  position: relative;
 }
 
 .fr-image {
@@ -97,25 +97,48 @@
   flex-grow: 1;
 }
 
-/* Style cho FavoriteButton, khớp với RestaurantCard */
+/* Style cho favorite button, khớp với RestaurantCard */
 .favorite-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
-  border: none;
+  font-size: 24px;
   cursor: pointer;
-  padding: 5px;
-  font-size: 18px; /* Kích thước biểu tượng */
-  transition: transform 0.2s ease;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: transparent;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
 }
 
-.favorite-btn:hover {
-  transform: scale(1.1);
+.favorite-btn svg {
+  color: gray;
 }
 
 .favorite-btn.active svg {
-  color: #e74c3c; /* Màu đỏ khi active */
+  color: #e74c3c;
+}
+
+.favorite-btn:hover {
+  border: 2px solid #ccc;
+  transform: scale(1.1);
+}
+
+.favorite-btn:hover svg {
+  color: darkred;
+}
+
+.favorite-btn:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+.favorite-btn.active:hover {
+  background-color: white;
 }
 
 .empty-message {

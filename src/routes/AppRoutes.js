@@ -27,6 +27,7 @@ import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm
 import OrderPage from "../pages/OrderPage/OrderPage";
 // Chính sách & Thanh toán
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
+import PaymentStatus from "../pages/PaymentPage/PaymentStatus";
 import PolicyPage from "../pages/Policy/PolicyPage";
 
 // Quản trị (admin)
@@ -75,7 +76,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
-      <Route path="/order/:id" element={<OrderPage />} />
+      <Route path="/order" element={<OrderPage />} />
 
       {/* Nhà hàng & món ăn */}
       <Route path="/all-dishes" element={<AllDishes />} />
@@ -85,7 +86,8 @@ const AppRoutes = () => {
       <Route path="/restaurant/:id/review" element={<RestaurantReviewForm />} />
 
       {/* Chính sách & Thanh toán */}
-      <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/payment/:id" element={<PaymentPage />} />
+      <Route path="/payment-status/:id" element={<PaymentStatus />} />
       <Route path="/policy" element={<PolicyPage />} />
 
       {/* Quản trị - Admin */}

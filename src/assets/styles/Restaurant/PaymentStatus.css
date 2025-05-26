@@ -1,0 +1,179 @@
+.payment-page {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* Nội dung chính */
+.payment-content {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.payment-content h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.restaurant-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.restaurant-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.restaurant-details {
+  flex: 1;
+}
+
+.restaurant-details h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.restaurant-details p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.selected-items {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.selected-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.item-details {
+  display: table;
+  width: 100%;
+}
+
+.item-details > span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.item-name {
+  font-size: 16px;
+  color: #333;
+  width: 50%;
+  padding-right: 10px;
+}
+
+.item-quantity111 {
+  font-size: 14px;
+  color: #555;
+  width: 25%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.item-total {
+  font-weight: bold;
+  color: #e74c3c;
+  width: 25%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.total-price h3 {
+  font-size: 20px;
+  color: #333;
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.booking-info h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.booking-info p {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.payment-info h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.payment-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+}
+
+.payment-info p strong {
+  font-weight: bold;
+  color: #28a745; /* Màu xanh cho trạng thái "Thành công" */
+}
+
+.payment-info p strong.failed {
+  color: #e74c3c; /* Màu đỏ cho trạng thái "Thất bại" */
+}
+
+.payment-info span {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.payment-method label {
+  font-weight: bold;
+  color: #555;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import '../../assets/styles/Restaurant/PaymentPage.css';
-import { createPaymentUrl } from '../../services/paymentService';
+import '../../assets/styles/Restaurant/PaymentStatus.css';
 import { getCustomerOrderDetail } from '../../services/orderService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
@@ -11,20 +10,19 @@ const mockOrderDefaults = {
   numberOfChild: 2,
 };
 
-const PaymentPage = () => {
+const PaymentStatus = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const orderId = id || '12345';
+  const paymentStatus = queryParams.get('paymentStatus') || null;
 
   const [order, setOrder] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState(queryParams.get('paymentStatus') || null);
 
   const totalPrice = order?.dishes?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
 
@@ -64,35 +62,15 @@ const PaymentPage = () => {
     fetchOrderDetails();
   }, [orderId]);
 
-  const handlePayment = async () => {
-    setPaymentLoading(true);
-    setError('');
-
-    try {
-      console.log('Gọi API với orderId:', orderId);
-      const paymentUrl = await createPaymentUrl(orderId);
-      console.log('URL thanh toán:', paymentUrl);
-      window.location.href = paymentUrl;
-    } catch (err) {
-      setError('Lỗi khi tạo liên kết thanh toán: ' + err.message);
-      console.error('Lỗi khi tạo thanh toán:', err);
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (paymentStatus) {
       if (paymentStatus === 'SUCCESS') {
         alert('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
-        navigate('/reservation-history');
       } else if (paymentStatus === 'FAILED') {
         alert('Thanh toán thất bại. Vui lòng thử lại.');
-        navigate('/');
       }
-      setPaymentStatus(null);
     }
-  }, [paymentStatus, navigate]);
+  }, [paymentStatus]);
 
   if (loading) {
     return (
@@ -114,10 +92,10 @@ const PaymentPage = () => {
     );
   }
 
-  if (!order || !restaurant) {
+  if (!order || !restaurant || !paymentStatus) {
     return (
       <div className="payment-page">
-        <h2>Không tìm thấy đơn hàng</h2>
+        <h2>Không tìm thấy thông tin thanh toán hoặc đơn hàng</h2>
         <button onClick={() => navigate('/')} className="back-btn">
           Quay lại trang chủ
         </button>
@@ -128,7 +106,7 @@ const PaymentPage = () => {
   return (
     <div className="payment-page">
       <div className="payment-content">
-        <h2>Thông tin đơn hàng #{order.id}</h2>
+        <h2>Trạng thái thanh toán cho đơn hàng #{order.id}</h2>
         <div className="restaurant-info">
           <img src={restaurant.image} alt={restaurant.name} className="restaurant-image" />
           <div className="restaurant-details">
@@ -159,23 +137,19 @@ const PaymentPage = () => {
           <p><strong>Số trẻ em:</strong> {order.numberOfChild}</p>
         </div>
         <div className="payment-info">
-          <h3>Thanh toán</h3>
+          <h3>Trạng thái thanh toán</h3>
           <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
+          <p>Trạng thái: <strong>{paymentStatus === 'SUCCESS' ? 'Thành công' : 'Thất bại'}</strong></p>
           <div className="payment-method">
             <label>Hình thức thanh toán: VNPAY</label>
           </div>
         </div>
-        <button 
-          onClick={handlePayment} 
-          className="payment-btn" 
-          disabled={paymentLoading}
-        >
-          {paymentLoading ? 'Đang xử lý...' : 'Xác nhận thanh toán'}
+        <button onClick={() => navigate('/reservation-history')} className="back-btn">
+          Quay lại lịch sử đặt bàn
         </button>
-        {error && <div className="alert alert-danger">{error}</div>}
       </div>
     </div>
   );
 };
 
-export default PaymentPage;
+export default PaymentStatus;
