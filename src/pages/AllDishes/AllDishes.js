@@ -27,7 +27,8 @@ const AllDishes = () => {
         };
 
         const response = await filterMenuItems(filterData, 0, 20);
-        setDishes(response.data || []);
+        const dishesData = Array.isArray(response.data?.content) ? response.data.content : response.data || [];
+        setDishes(dishesData);
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
         setError("Không tìm thấy món ăn phù hợp.");
@@ -43,10 +44,10 @@ const AllDishes = () => {
       <FilterBar />
       <div className="ad-page">
         <div className="ad-section-header center">
-          <h2 className="ad-section-title">Tất Cả Món Ăn</h2>
+          {/* <h2 className="ad-section-title">Tất Cả Món Ăn</h2>
           <p className="ad-section-sub">
             Khám phá hàng loạt món ăn ngon hấp dẫn mỗi ngày
-          </p>
+          </p> */}
         </div>
         {error && <div className="ad-error-message">{error}</div>}
         {loading ? (
@@ -56,13 +57,16 @@ const AllDishes = () => {
         ) : (
           <div className="ad-dishes-grid">
             {dishes.map((dish) => (
-              <DishCard
-                key={dish.id}
-                dish={{
-                  ...dish,
-                  thumbnailUrl: dish.thumbnailUrl || "https://via.placeholder.com/330x200", // Fallback image
-                }}
-              />
+              dish.restaurantId ? (
+                <DishCard
+                  key={dish.id}
+                  dish={{
+                    ...dish,
+                    thumbnailUrl: dish.thumbnailUrl || "https://via.placeholder.com/330x200",
+                  }}
+                  restaurantId={dish.restaurantId}
+                />
+              ) : null
             ))}
           </div>
         )}

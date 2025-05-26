@@ -29,7 +29,7 @@ import OrderPage from "../pages/OrderPage/OrderPage";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import PaymentStatus from "../pages/PaymentPage/PaymentStatus";
 import PolicyPage from "../pages/Policy/PolicyPage";
-
+import PaymentResult from "../pages/PaymentResult/PaymentResult";
 // Quản trị (admin)
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminMainCategoryManager from "../pages/Admin/AdminMainCategoryManager";
@@ -89,6 +89,7 @@ const AppRoutes = () => {
       <Route path="/payment/:id" element={<PaymentPage />} />
       <Route path="/payment-status/:id" element={<PaymentStatus />} />
       <Route path="/policy" element={<PolicyPage />} />
+      <Route path="/payment-status" element={<PaymentResult />} />
 
       {/* Quản trị - Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />

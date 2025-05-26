@@ -18,7 +18,6 @@ const Home = () => {
   const dishContainerRef = useRef(null);
   const restaurantContainerRef = useRef(null);
 
-  // Fetch data
   useEffect(() => {
     const loadFeaturedRestaurants = async () => {
       try {
@@ -46,7 +45,6 @@ const Home = () => {
     loadData();
   }, []);
 
-  // Hàm cuộn cho món ăn
   const scrollDishNext = () => {
     if (dishContainerRef.current) {
       dishContainerRef.current.scrollBy({ left: 330 + 16, behavior: "smooth" });
@@ -59,7 +57,6 @@ const Home = () => {
     }
   };
 
-  // Hàm cuộn cho nhà hàng
   const scrollRestaurantNext = () => {
     if (restaurantContainerRef.current) {
       restaurantContainerRef.current.scrollBy({ left: 330 + 16, behavior: "smooth" });
@@ -95,9 +92,11 @@ const Home = () => {
             </button>
             <div className="home-card-container" ref={dishContainerRef}>
               {featuredDishes.slice(0, 15).map((dish) => (
-                <div key={dish.id} className="home-card-item">
-                  <DishCard dish={dish} />
-                </div>
+                dish.restaurantId ? (
+                  <div key={dish.id} className="home-card-item">
+                    <DishCard dish={dish} restaurantId={dish.restaurantId} />
+                  </div>
+                ) : null
               ))}
             </div>
             <button className="home-scroll-button next" onClick={scrollDishNext}>
@@ -124,7 +123,7 @@ const Home = () => {
                 <div key={restaurant.id} className="home-card-item">
                   <RestaurantCard
                     id={restaurant.id}
-                    thumbnailUrl={restaurant.thumbnailUrl || "https://via.placeholder.com/330x200"} // Fallback image
+                    thumbnailUrl={restaurant.thumbnailUrl || "https://via.placeholder.com/330x200"}
                     name={restaurant.name}
                     averageRating={restaurant.averageRating}
                     address={restaurant.address}

@@ -17,6 +17,7 @@ import { addFavoriteRestaurant, removeFavoriteRestaurant, getFavoriteRestaurants
 import { createOrder } from '../../services/orderService';
 import { UserContext } from '../../contexts/UserContext';
 
+// Hàm render sao đánh giá
 const renderStars = (rating) => {
   const effectiveRating = Math.min(rating || 0, 5);
   const full = Math.floor(effectiveRating);
@@ -43,60 +44,58 @@ const DishItem = ({
   decreaseQuantity,
   setSelectedDish,
 }) => {
-  const handleClick = useCallback(
-    () => setSelectedDish(dish),
-    [dish, setSelectedDish]
-  );
-  const handleAdd = useCallback(
-    (e) => {
-      e.preventDefault();
-      addToCart(dish.id);
-    },
-    [dish.id, addToCart]
-  );
-  const handleIncrease = useCallback(
-    (e) => {
-      e.preventDefault();
-      increaseQuantity(dish.id);
-    },
-    [dish.id, increaseQuantity]
-  );
-  const handleDecrease = useCallback(
-    (e) => {
-      e.preventDefault();
-      decreaseQuantity(dish.id);
-    },
-    [dish.id, decreaseQuantity]
-  );
+  const handleClick = useCallback(() => setSelectedDish(dish), [dish, setSelectedDish]);
+  const handleAdd = useCallback((e) => {
+    e.preventDefault();
+    addToCart(dish.id);
+  }, [dish.id, addToCart]);
+  const handleIncrease = useCallback((e) => {
+    e.preventDefault();
+    increaseQuantity(dish.id);
+  }, [dish.id, increaseQuantity]);
+  const handleDecrease = useCallback((e) => {
+    e.preventDefault();
+    decreaseQuantity(dish.id);
+  }, [dish.id, decreaseQuantity]);
 
   return (
-    <div className="dish-item" onClick={handleClick}>
-      <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
+    <div className="dish-item" onClick={handleClick} id={`dish-${dish.id}`}>
+      <img
+        src={dish.imageUrl}
+        alt={dish.name}
+        className="dish-image"
+        onError={(e) => {
+          e.target.src = '/assets/images/fallback-image.jpg';
+        }}
+      />
       <div className="dish-details">
         <h3>{dish.name}</h3>
         {renderStars(dish.averageRating)}
-        <p className="price">{parseFloat(dish.price).toLocaleString()}đ</p>
+        <p className="price">
+          {new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(Number(dish.price || 0))}
+        </p>
       </div>
       {cart[dish.id] ? (
         <div className="add-item-container">
-          <button className="remove-btn" onClick={handleDecrease}>
-            −
-          </button>
+          <button className="remove-btn" onClick={handleDecrease}>−</button>
           <span className="item-quantity">{cart[dish.id]}</span>
-          <button className="add-btn" onClick={handleIncrease}>
-            +
-          </button>
+          <button className="add-btn" onClick={handleIncrease}>+</button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={handleAdd}>
-          Thêm
-        </button>
+        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
       )}
     </div>
   );
 };
 
+// Component chi tiết món ăn
 const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const handleAdd = useCallback((e) => {
     e.preventDefault();
     addToCart(dish.id);
@@ -112,13 +111,20 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
   const handleBack = useCallback((e) => {
     e.preventDefault();
     onBack();
-  }, [onBack]);
+    navigate(`/restaurant/${id}`, { state: {} }); // Xóa state
+  }, [onBack, navigate, id]);
 
   return (
     <div className="dish-detail-section">
       <div className="dish-section">
         <div className="dish-images">
-          <img src={dish.imageUrl} alt={dish.name} />
+          <img
+            src={dish.imageUrl}
+            alt={dish.name}
+            onError={(e) => {
+              e.target.src = '/assets/images/fallback-image.jpg';
+            }}
+          />
         </div>
         <div className="dish-details">
           <h2 className="dish-name">{dish.name}</h2>
@@ -132,23 +138,20 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
             </div>
           </div>
           <p className="dish-price">
-            {parseFloat(dish.price).toLocaleString()}đ
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(Number(dish.price || 0))}
           </p>
           <div className="dish-actions-Detail">
             {cart[dish.id] ? (
               <div className="add-item-container-Detail">
-                <button className="remove-btn-Detail" onClick={handleDecrease}>
-                  −
-                </button>
+                <button className="remove-btn-Detail" onClick={handleDecrease}>−</button>
                 <span className="item-quantity-Detail">{cart[dish.id]}</span>
-                <button className="add-btn-Detail" onClick={handleIncrease}>
-                  +
-                </button>
+                <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
               </div>
             ) : (
-              <button className="add-to-cart-Detail" onClick={handleAdd}>
-                Thêm
-              </button>
+              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
             )}
           </div>
         </div>
@@ -183,7 +186,7 @@ const RestaurantDetail = () => {
   });
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Kiểm tra trạng thái yêu thích khi component mount
+  // Kiểm tra trạng thái yêu thích
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
       if (isLogin) {
@@ -199,24 +202,36 @@ const RestaurantDetail = () => {
     fetchFavoriteStatus();
   }, [id, isLogin]);
 
-  // Tải dữ liệu nhà hàng, menu và chọn món ăn từ state
+  // Tải dữ liệu nhà hàng và menu
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const restaurantData = await fetchRestaurantById(id);
+        const [restaurantData, menuData] = await Promise.all([
+          fetchRestaurantById(id),
+          fetchSimpleMenuByRestaurant(id),
+        ]);
         setRestaurant(restaurantData);
-        const menuData = await fetchSimpleMenuByRestaurant(id);
-        const menuItemsArray = Array.isArray(menuData.data) ? menuData.data : [];
+        // Xử lý cấu trúc API trả về
+        const menuItemsArray = Array.isArray(menuData?.data?.content)
+          ? menuData.data.content
+          : Array.isArray(menuData?.data)
+          ? menuData.data
+          : [];
         setMenuItems(menuItemsArray);
 
         if (state?.selectedDishId) {
+          // Ép kiểu selectedDishId thành số
+          const dishId = parseInt(state.selectedDishId, 10);
           const selectedDish = menuItemsArray.find(
-            (item) => item.id === state.selectedDishId
+            (item) => item.id === dishId
           );
           if (selectedDish) {
             setSelectedDish(selectedDish);
+          } else {
+            console.warn("Không tìm thấy món ăn với ID:", dishId, "trong danh sách:", menuItemsArray);
+            setError("Món ăn được chọn không tồn tại.");
           }
         }
       } catch (error) {
@@ -235,7 +250,6 @@ const RestaurantDetail = () => {
       const storedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
       storedCart[id] = cart;
       sessionStorage.setItem('cart', JSON.stringify(storedCart));
-      console.log('Dữ liệu giỏ hàng đã lưu vào sessionStorage:', { [id]: cart });
     } catch (error) {
       console.error('Lỗi khi lưu giỏ hàng:', error);
     }
@@ -247,10 +261,7 @@ const RestaurantDetail = () => {
       let newQuantity;
       setCart(prev => {
         newQuantity = (prev[dishId] || 0) + 1;
-        return {
-          ...prev,
-          [dishId]: newQuantity,
-        };
+        return { ...prev, [dishId]: newQuantity };
       });
       const orderData = {
         reservationTime: new Date().toISOString(),
@@ -292,7 +303,6 @@ const RestaurantDetail = () => {
     try {
       const newIsLiked = !isLiked;
       setIsLiked(newIsLiked);
-
       if (newIsLiked) {
         await addFavoriteRestaurant(id);
       } else {
@@ -305,14 +315,11 @@ const RestaurantDetail = () => {
     }
   }, [isLiked, isLogin, id]);
 
-  const handleDishClick = useCallback(
-    (dish) => {
-      if (!isDragging) {
-        setSelectedDish(dish);
-      }
-    },
-    [isDragging]
-  );
+  const handleDishClick = useCallback((dish) => {
+    if (!isDragging) {
+      setSelectedDish(dish);
+    }
+  }, [isDragging]);
 
   const handleBookTable = useCallback(() => {
     const selectedItems = Object.keys(cart)
@@ -340,7 +347,7 @@ const RestaurantDetail = () => {
     });
   }, [cart, menuItems, navigate, restaurant]);
 
-  // Cấu hình slider động dựa trên số lượng ảnh
+  // Cấu hình slider
   const getRestaurantSliderSettings = (imageCount) => ({
     dots: imageCount > 1,
     arrows: false,
@@ -392,9 +399,7 @@ const RestaurantDetail = () => {
           {categories.map((cat, i) => (
             <li
               key={i}
-              className={`category-item ${
-                selectedCategory === cat ? "active" : ""
-              }`}
+              className={`category-item ${selectedCategory === cat ? "active" : ""}`}
               onClick={() => setSelectedCategory(cat)}
             >
               {cat}
@@ -463,7 +468,7 @@ const RestaurantDetail = () => {
                 alt={`slide-${i}`}
                 className="slider-image"
                 onError={(e) => {
-                  e.target.src = '/assets/images/fallback-image.jpg'; // Ảnh dự phòng
+                  e.target.src = '/assets/images/fallback-image.jpg';
                 }}
               />
             ))}
@@ -512,11 +517,7 @@ const RestaurantDetail = () => {
               Đặt bàn ngay
             </button>
             <button className="heart" onClick={toggleLike}>
-              {isLiked ? (
-                <FaHeart color="#ff6f61" />
-              ) : (
-                <FaRegHeart color="#ccc" />
-              )}
+              {isLiked ? <FaHeart color="#ff6f61" /> : <FaRegHeart color="#ccc" />}
             </button>
           </div>
         </div>
@@ -565,6 +566,9 @@ const RestaurantDetail = () => {
                         src={item.imageUrl}
                         alt={item.name}
                         className="highlight-image"
+                        onError={(e) => {
+                          e.target.src = '/assets/images/fallback-image.jpg';
+                        }}
                       />
                       <div className="highlight-info">
                         <h3
@@ -574,7 +578,10 @@ const RestaurantDetail = () => {
                           {item.name}
                         </h3>
                         <p className="price">
-                          {parseFloat(item.price).toLocaleString()}đ
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(Number(item.price || 0))}
                         </p>
                         <button
                           className="view-detail-btn"

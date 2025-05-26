@@ -58,7 +58,7 @@ const RestaurantList = () => {
       <LocationSearchBar />
       <FilterBar />
       <div className="rl-page">
-        <h1 className="rl-title">Danh Sách Nhà Hàng</h1>
+        {/* <h1 className="rl-title">Danh Sách Nhà Hàng</h1> */}
         {loading ? (
           <p>Đang tải...</p>
         ) : (

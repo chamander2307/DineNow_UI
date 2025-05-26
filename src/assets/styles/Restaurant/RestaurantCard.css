@@ -115,7 +115,7 @@
 }
 
 .rc-favorite-icon.active svg {
-  color: red;
+  color: rgb(179, 0, 0);
 }
 
 .rc-favorite-icon:hover {
@@ -123,7 +123,7 @@
 }
 
 .rc-favorite-icon:hover svg {
-  color: darkred;
+  color: rgb(194, 0, 0);
 }
 
 .rc-favorite-icon:hover:not(.active) {
