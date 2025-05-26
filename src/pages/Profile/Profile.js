@@ -69,8 +69,6 @@ const Profile = () => {
           <nav>
             <ul>
               <li className="active">Hồ Sơ</li>
-              <li>Đơn Mua</li>
-              <li>Cài Đặt Thông Báo</li>
             </ul>
           </nav>
         </aside>
