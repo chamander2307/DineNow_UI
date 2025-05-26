@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+<<<<<<< HEAD
 import { toast } from 'react-toastify'; // Cần cài đặt: npm install react-toastify
+=======
+import { toast } from 'react-toastify';
+>>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 import '../../assets/styles/Restaurant/PaymentPage.css';
 import { createPaymentUrl } from '../../services/paymentService';
 import { getCustomerOrderDetail } from '../../services/orderService';
@@ -16,38 +20,69 @@ const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
-
   const queryParams = new URLSearchParams(location.search);
-  const orderId = id || '12345';
 
   const [order, setOrder] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
+<<<<<<< HEAD
   const paymentStatus = queryParams.get('paymentStatus') || null;
+=======
+>>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 
-  const totalPrice = order?.dishes?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
+  const totalPrice = order?.dishes?.length
+    ? order.dishes.reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        return total + price * (item.quantity || 0);
+      }, 0)
+    : 0;
 
   useEffect(() => {
+    const status = queryParams.get('paymentStatus');
+    if (status) {
+      if (status === 'SUCCESS') {
+        toast.success('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
+        navigate('/reservation-history');
+      } else if (status === 'FAILED') {
+        toast.error('Thanh toán thất bại. Vui lòng thử lại.');
+        navigate('/');
+      } else {
+        toast.error('Trạng thái thanh toán không hợp lệ.');
+        navigate('/');
+      }
+    }
+  }, [navigate, queryParams]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchOrderDetails = async () => {
       setLoading(true);
       setError('');
       try {
-        const response = await getCustomerOrderDetail(orderId);
+        if (!id || isNaN(id)) {
+          throw new Error('Mã đơn hàng không hợp lệ');
+        }
+        const response = await getCustomerOrderDetail(id, {
+          signal: abortController.signal,
+        });
         const data = response.data;
 
         setOrder({
-          id: data.id,
+          id: data.id || '',
           reservationTime: data.reservationTime || mockOrderDefaults.reservationTime,
-          numberOfPeople: data.numberOfPeople || mockOrderDefaults.numberOfPeople,
-          numberOfChild: data.numberOfChild || mockOrderDefaults.numberOfChild,
-          dishes: (data.menuItems || []).map(item => ({
-            id: item.menuItemId,
-            name: item.menuItemName,
-            quantity: item.quantity,
-            price: parseFloat(item.menuItemPrice) || 0,
-          })),
+          numberOfPeople: data.numberOfPeople ?? mockOrderDefaults.numberOfPeople,
+          numberOfChild: data.numberOfChild ?? mockOrderDefaults.numberOfChild,
+          dishes: Array.isArray(data.menuItems)
+            ? data.menuItems.map(item => ({
+                id: item.menuItemId || '',
+                name: item.menuItemName || 'Không xác định',
+                quantity: Number(item.quantity) || 0,
+                price: Number(item.menuItemPrice) || 0,
+              }))
+            : [],
         });
 
         setRestaurant({
@@ -56,14 +91,23 @@ const PaymentPage = () => {
           image: data.restaurant?.thumbnailUrl || restaurant1,
         });
       } catch (err) {
-        setError('Lỗi khi tải thông tin đơn hàng: ' + err.message);
+        if (err.name === 'AbortError') return;
+        setError(
+          err.response?.status === 404
+            ? 'Không tìm thấy đơn hàng.'
+            : err.response?.status === 403
+            ? 'Bạn không có quyền truy cập đơn hàng này.'
+            : 'Lỗi khi tải thông tin đơn hàng: ' + (err.message || 'Không xác định')
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrderDetails();
-  }, [orderId]);
+
+    return () => abortController.abort();
+  }, [id]);
 
   useEffect(() => {
     if (paymentStatus) {
@@ -93,7 +137,7 @@ const PaymentPage = () => {
       window.location.href = paymentUrl;
     } catch (err) {
       setError('Lỗi khi tạo liên kết thanh toán: ' + err.message);
-      console.error('Lỗi khi tạo thanh toán:', err);
+      setTimeout(() => setError(''), 5000);
     } finally {
       setPaymentLoading(false);
     }
@@ -135,6 +179,11 @@ const PaymentPage = () => {
 
   return (
     <div className="payment-page">
+      {paymentLoading && (
+        <div className="loading-overlay">
+          <div className="spinner">Đang xử lý thanh toán...</div>
+        </div>
+      )}
       <div className="payment-content">
         <h2>Thông tin đơn hàng #{order.id}</h2>
         <div className="restaurant-info">
