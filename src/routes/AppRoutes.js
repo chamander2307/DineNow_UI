@@ -24,7 +24,7 @@ import DishDetail from "../pages/DishDetail/DishDetail";
 import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
-
+import OrderPage from "../pages/OrderPage/OrderPage";
 // Chính sách & Thanh toán
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import PolicyPage from "../pages/Policy/PolicyPage";
@@ -75,6 +75,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
+      <Route path="/order/:id" element={<OrderPage />} />
 
       {/* Nhà hàng & món ăn */}
       <Route path="/all-dishes" element={<AllDishes />} />

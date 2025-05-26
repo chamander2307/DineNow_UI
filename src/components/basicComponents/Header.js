@@ -10,11 +10,11 @@ import { fetchMainCategories } from "../../services/menuItemService";
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false); // Thay showCartDropdown
+  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const dropdownRef = useRef();
   const userRef = useRef();
-  const dialogRef = useRef(); // Ref cho dialog
+  const dialogRef = useRef();
   const navigate = useNavigate();
 
   const { isLogin, user, logout, loading } = useContext(UserContext);
@@ -49,6 +49,10 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleCheckoutClose = () => {
+    setIsCartDialogOpen(false); // Đóng dialog khi checkout
   };
 
   return (
@@ -99,7 +103,7 @@ const Header = () => {
           <div className="cart-container">
             <div
               className="cart-link"
-              onClick={() => setIsCartDialogOpen(true)} // Mở dialog
+              onClick={() => setIsCartDialogOpen(true)}
             >
               <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
             </div>
@@ -119,7 +123,7 @@ const Header = () => {
                   </button>
                 </div>
                 <div className="cart-dialog-content">
-                  <RestaurantCart />
+                  <RestaurantCart onCheckout={handleCheckoutClose} />
                 </div>
               </div>
             </>

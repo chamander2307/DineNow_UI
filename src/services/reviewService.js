@@ -45,7 +45,7 @@ export const addMenuItemReview = async (menuItemId, reviewData) => {
   try {
     console.log('Dữ liệu gửi đi:', reviewData);
     const response = await axios.post(
-      `/api/reviews/menu-items/${menuItemId}/add`,
+      `/api/customer/reviews/menu-items/${menuItemId}/add`,
       reviewData
     );
     console.log('Phản hồi từ API:', response?.data);
@@ -89,7 +89,7 @@ export const fetchRestaurantReviews = async (
 export const addRestaurantReview = async (restaurantId, reviewData) => {
   try {
     const response = await axios.post(
-      `/api/reviews/restaurant/${restaurantId}/add`,
+      `/api/customer/reviews/restaurant/${restaurantId}/add`,
       reviewData
     );
     return response?.data?.data || null;
