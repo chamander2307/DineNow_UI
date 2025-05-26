@@ -5,9 +5,11 @@ const API_BASE_URL = 'http://localhost:8080/api/customer/payments';
 
 export const createPaymentUrl = async (orderId) => {
   try {
+    console.log(`${API_BASE_URL}/create-url/${orderId}`);
     const response = await axios.post(`${API_BASE_URL}/create-url/${orderId}`);
-
+    console.log('Tạo URL thanh toán thành công:', response.data);
     if (response.status === 200 || response.status === 201) {
+      
       if (response.data && response.data.data && typeof response.data.data === 'string') {
         return response.data.data; // Trả về URL thanh toán
       }
