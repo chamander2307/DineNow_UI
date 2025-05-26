@@ -71,19 +71,19 @@ const OwnerOrderManager = () => {
     }
   };
 
-const loadOrdersByStatus = async () => {
-  setLoadingOrders(true);
-  try {
-    const selectedStatus = STATUS_GROUPS.find(group => group.value === selectedStatusGroup);
-    const statusList = selectedStatus ? selectedStatus.statuses : ["PENDING"];
-    const res = await getOwnerOrdersByRestaurant(selectedRestaurantId, statusList);
-    setOrders(Array.isArray(res.data) ? res.data : []);
-  } catch (err) {
-    alert("Không thể tải danh sách đơn hàng.");
-  } finally {
-    setLoadingOrders(false);
-  }
-};
+  const loadOrdersByStatus = async () => {
+    setLoadingOrders(true);
+    try {
+      const selectedStatus = STATUS_GROUPS.find(group => group.value === selectedStatusGroup);
+      const statusList = selectedStatus ? selectedStatus.statuses : ["PENDING"];
+      const res = await getOwnerOrdersByRestaurant(selectedRestaurantId, statusList);
+      setOrders(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      alert("Không thể tải danh sách đơn hàng.");
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 
   const canUpdateStatus = (currentStatus, newStatus) => {
     const allowedStatuses = ALLOWED_STATUS_TRANSITIONS[currentStatus] || [];
@@ -129,7 +129,7 @@ const loadOrdersByStatus = async () => {
   const handleViewDetail = async (id) => {
     try {
       const res = await getOrderDetail(id);
-      setSelectedOrder(res || null);
+      setSelectedOrder(res.data || null); // Sửa ở đây: Lấy res.data thay vì res
       setIsDetailOpen(true);
     } catch (err) {
       alert("Không thể lấy chi tiết đơn hàng: " + (err.response?.data?.message || err.message));

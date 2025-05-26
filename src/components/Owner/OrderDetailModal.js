@@ -7,6 +7,22 @@ Modal.setAppElement("#root");
 const OrderDetailModal = ({ isOpen, onClose, order }) => {
   if (!isOpen || !order) return null;
 
+  // Định dạng tiền tệ VND
+  const formatCurrency = (value) => {
+    return value ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value) : "N/A";
+  };
+
+  // Định dạng ngày giờ
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+  };
+
+  // Mapping trạng thái đơn hàng
   const statusText = {
     PENDING: "Đang chờ xử lý",
     CONFIRMED: "Đã xác nhận",
@@ -31,7 +47,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
       <div className="order-info">
         <p><strong>Mã đơn hàng:</strong> {order.id || "N/A"}</p>
         <p><strong>Trạng thái:</strong> {statusText[order.status] || "Không xác định"}</p>
-        <p><strong>Tổng tiền:</strong> {order.totalPrice ? order.totalPrice.toLocaleString() + " đ" : "N/A"}</p>
+        <p><strong>Tổng tiền:</strong> {formatCurrency(order.totalPrice)}</p>
       </div>
 
       <h3>Thông tin khách hàng</h3>
@@ -47,7 +63,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
         <p><strong>Số trẻ em:</strong> {order.reservation?.numberOfChild || "0"}</p>
         <p><strong>Nhà hàng:</strong> {order.reservation?.restaurantName || "N/A"}</p>
         <p><strong>Địa chỉ:</strong> {order.reservation?.restaurantAddress || "N/A"}</p>
-        <p><strong>Thời gian đặt bàn:</strong> {order.reservation?.reservationTime ? new Date(order.reservation.reservationTime).toLocaleString() : "N/A"}</p>
+        <p><strong>Thời gian đặt bàn:</strong> {formatDateTime(order.reservation?.reservationTime)}</p>
       </div>
 
       <h3>Danh sách món ăn</h3>
@@ -64,7 +80,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
         <tbody>
           {order.menuItems && order.menuItems.length > 0 ? (
             order.menuItems.map((item) => (
-              <tr key={item.menuItemId || item.id}>
+              <tr key={item.menuItemId}>
                 <td>
                   <img
                     src={item.menuItemImageUrl || "/fallback.jpg"}
@@ -73,10 +89,10 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                     onError={(e) => { e.target.src = "/fallback.jpg"; }}
                   />
                 </td>
-                <td>{item.menuItemName || "N/A"}</td>
-                <td>{item.menuItemPrice ? item.menuItemPrice.toLocaleString() + " đ" : "N/A"}</td>
+                <p>{item.menuItemName || "N/A"}</p>
+                <td>{formatCurrency(item.menuItemPrice)}</td>
                 <td>{item.quantity || "0"}</td>
-                <td>{item.totalPrice ? item.totalPrice.toLocaleString() + " đ" : "N/A"}</td>
+                <td>{formatCurrency(item.totalPrice)}</td>
               </tr>
             ))
           ) : (
