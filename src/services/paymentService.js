@@ -1,25 +1,31 @@
-// services/paymentService.js
-import axios from 'axios';
+import axios from '../config/axios';
 
-const API_BASE_URL = 'http://localhost:8080/api/customer/payments';
-
+// Hàm tạo URL thanh toán cho đơn hàng
 export const createPaymentUrl = async (orderId) => {
   try {
-    console.log(`${API_BASE_URL}/create-url/${orderId}`);
-    const response = await axios.post(`${API_BASE_URL}/create-url/${orderId}`);
-    console.log('Tạo URL thanh toán thành công:', response.data);
-    if (response.status === 200 || response.status === 201) {
-      
-      if (response.data && response.data.data && typeof response.data.data === 'string') {
-        return response.data.data; // Trả về URL thanh toán
-      }
-      throw new Error('URL thanh toán không hợp lệ trong phản hồi.');
+    // Kiểm tra orderId hợp lệ
+    if (!orderId || isNaN(orderId)) {
+      throw new Error('ID đơn hàng không hợp lệ.');
     }
-    throw new Error('Yêu cầu không thành công. Vui lòng thử lại.');
+
+    // Gọi API tạo URL thanh toán
+    const res = await axios.post(`/api/customer/payments/create-url/${orderId}`);
+
+    // Kiểm tra phản hồi
+    if (!res.data?.data) {
+      throw new Error('Phản hồi API không chứa URL thanh toán.');
+    }
+
+    const paymentUrl = res.data.data;
+
+    // Kiểm tra bảo mật: đảm bảo URL thuộc VNPAY
+    if (typeof paymentUrl !== 'string' || !paymentUrl.includes('vnpayment.vn')) {
+      throw new Error('URL thanh toán không hợp lệ hoặc không thuộc VNPAY.');
+    }
+
+    return paymentUrl;
   } catch (error) {
     console.error('Lỗi khi tạo URL thanh toán:', error);
-    throw error.response 
-      ? new Error(error.response.data.message || 'Không thể tạo URL thanh toán. Vui lòng kiểm tra quyền truy cập hoặc trạng thái đơn hàng.')
-      : new Error('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.');
+    throw new Error(`Không thể tạo URL thanh toán: ${error.response?.data?.message || error.message}`);
   }
 };

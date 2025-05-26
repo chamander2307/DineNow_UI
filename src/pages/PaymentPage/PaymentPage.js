@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Cần cài đặt: npm install react-toastify
 import '../../assets/styles/Restaurant/PaymentPage.css';
 import { createPaymentUrl } from '../../services/paymentService';
 import { getCustomerOrderDetail } from '../../services/orderService';
@@ -24,7 +25,7 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState(queryParams.get('paymentStatus') || null);
+  const paymentStatus = queryParams.get('paymentStatus') || null;
 
   const totalPrice = order?.dishes?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
 
@@ -64,14 +65,31 @@ const PaymentPage = () => {
     fetchOrderDetails();
   }, [orderId]);
 
+  useEffect(() => {
+    if (paymentStatus) {
+      if (paymentStatus === 'SUCCESS') {
+        toast.success('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
+        navigate('/reservation-history');
+      } else if (paymentStatus === 'FAILED') {
+        toast.error('Thanh toán thất bại. Vui lòng thử lại.');
+        navigate('/');
+      } else {
+        toast.warn('Trạng thái thanh toán không hợp lệ.');
+        navigate('/');
+      }
+    }
+  }, [paymentStatus, navigate]);
+
   const handlePayment = async () => {
     setPaymentLoading(true);
     setError('');
-
     try {
       console.log('Gọi API với orderId:', orderId);
       const paymentUrl = await createPaymentUrl(orderId);
       console.log('URL thanh toán:', paymentUrl);
+      if (typeof paymentUrl !== 'string' || !paymentUrl.includes('vnpayment.vn')) {
+        throw new Error('URL thanh toán không hợp lệ.');
+      }
       window.location.href = paymentUrl;
     } catch (err) {
       setError('Lỗi khi tạo liên kết thanh toán: ' + err.message);
@@ -80,19 +98,6 @@ const PaymentPage = () => {
       setPaymentLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (paymentStatus) {
-      if (paymentStatus === 'SUCCESS') {
-        alert('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
-        navigate('/reservation-history');
-      } else if (paymentStatus === 'FAILED') {
-        alert('Thanh toán thất bại. Vui lòng thử lại.');
-        navigate('/');
-      }
-      setPaymentStatus(null);
-    }
-  }, [paymentStatus, navigate]);
 
   if (loading) {
     return (
@@ -107,6 +112,9 @@ const PaymentPage = () => {
       <div className="payment-page">
         <h2>Lỗi</h2>
         <p>{error}</p>
+        <button onClick={() => window.location.reload()} className="retry-btn">
+          Thử lại
+        </button>
         <button onClick={() => navigate('/')} className="back-btn">
           Quay lại trang chủ
         </button>
@@ -114,10 +122,10 @@ const PaymentPage = () => {
     );
   }
 
-  if (!order || !restaurant) {
+  if (!order?.dishes?.length || !restaurant?.name) {
     return (
       <div className="payment-page">
-        <h2>Không tìm thấy đơn hàng</h2>
+        <h2>Dữ liệu đơn hàng không đầy đủ</h2>
         <button onClick={() => navigate('/')} className="back-btn">
           Quay lại trang chủ
         </button>
@@ -142,7 +150,7 @@ const PaymentPage = () => {
             <li key={item.id} className="selected-item">
               <div className="item-details">
                 <span className="item-name">{item.name}</span>
-                <span className="item-quantity111">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
+                <span className="item-quantity">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
                 <span className="item-total">{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </li>
@@ -165,9 +173,9 @@ const PaymentPage = () => {
             <label>Hình thức thanh toán: VNPAY</label>
           </div>
         </div>
-        <button 
-          onClick={handlePayment} 
-          className="payment-btn" 
+        <button
+          onClick={handlePayment}
+          className="payment-btn"
           disabled={paymentLoading}
         >
           {paymentLoading ? 'Đang xử lý...' : 'Xác nhận thanh toán'}

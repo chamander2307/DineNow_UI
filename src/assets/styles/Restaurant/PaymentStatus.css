@@ -1,179 +1,109 @@
-.payment-page {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-}
-
-/* Nội dung chính */
-.payment-content {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.payment-content h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
-}
-
-.restaurant-info {
+.payment-page-container {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #fbc2eb);
+  padding: 1rem;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-.restaurant-image {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 20px;
-}
-
-.restaurant-details {
-  flex: 1;
-}
-
-.restaurant-details h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-
-.restaurant-details p {
-  font-size: 14px;
-  color: #555;
-  margin: 0;
-}
-
-.selected-items {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 20px;
-}
-
-.selected-item {
-  padding: 10px 0;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.item-details {
-  display: table;
+.payment-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   width: 100%;
-}
-
-.item-details > span {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.item-name {
-  font-size: 16px;
-  color: #333;
-  width: 50%;
-  padding-right: 10px;
-}
-
-.item-quantity111 {
-  font-size: 14px;
-  color: #555;
-  width: 25%;
+  padding: 3rem;
   text-align: center;
-  white-space: nowrap;
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 
-.item-total {
+.payment-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.payment-icon {
+  font-size: 6rem;
+  margin-bottom: 1.5rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.payment-title {
+  font-size: 2.5rem;
   font-weight: bold;
-  color: #e74c3c;
-  width: 25%;
-  text-align: right;
-  white-space: nowrap;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, #3b82f6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
-.total-price h3 {
-  font-size: 20px;
-  color: #333;
-  text-align: right;
-  margin-bottom: 20px;
+.payment-message {
+  font-size: 1.25rem;
+  color: #4b5563;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.booking-info h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.booking-info p {
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #555;
-}
-
-.payment-info h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.payment-info p {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #555;
-  display: flex;
-  justify-content: space-between;
-}
-
-.payment-info p strong {
-  font-weight: bold;
-  color: #28a745; /* Màu xanh cho trạng thái "Thành công" */
-}
-
-.payment-info p strong.failed {
-  color: #e74c3c; /* Màu đỏ cho trạng thái "Thất bại" */
-}
-
-.payment-info span {
-  font-weight: bold;
-  color: #e74c3c;
-}
-
-.payment-method {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 20px;
-}
-
-.payment-method label {
-  font-weight: bold;
-  color: #555;
-}
-
-.back-btn {
-  padding: 10px 20px;
-  background-color: #6c757d;
+.payment-button {
+  background: #2563eb;
   color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 2rem;
   cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-  max-width: 300px;
-  margin: 10px auto;
-  display: block;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
 }
 
-.back-btn:hover {
-  background-color: #5a6268;
+.payment-button:hover {
+  background: #1d4ed8;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
 }
 
-.alert-danger {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  text-align: center;
+.payment-button:active {
+  transform: scale(0.95);
+  background: #1e40af;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .payment-card {
+    padding: 2rem;
+  }
+  .payment-icon {
+    font-size: 4rem;
+  }
+  .payment-title {
+    font-size: 1.875rem;
+  }
+  .payment-message {
+    font-size: 1rem;
+  }
+  .payment-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+  }
 }
