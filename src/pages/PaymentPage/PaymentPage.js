@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-<<<<<<< HEAD
 import { toast } from 'react-toastify'; // Cần cài đặt: npm install react-toastify
-=======
-import { toast } from 'react-toastify';
->>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 import '../../assets/styles/Restaurant/PaymentPage.css';
 import { createPaymentUrl } from '../../services/paymentService';
 import { getCustomerOrderDetail } from '../../services/orderService';
@@ -27,10 +23,7 @@ const PaymentPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
-<<<<<<< HEAD
   const paymentStatus = queryParams.get('paymentStatus') || null;
-=======
->>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 
   const totalPrice = order?.dishes?.length
     ? order.dishes.reduce((total, item) => {
