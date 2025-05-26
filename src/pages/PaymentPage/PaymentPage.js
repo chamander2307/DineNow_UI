@@ -1,155 +1,206 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+<<<<<<< HEAD
+import { toast } from 'react-toastify'; // Cần cài đặt: npm install react-toastify
+=======
+import { toast } from 'react-toastify';
+>>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 import '../../assets/styles/Restaurant/PaymentPage.css';
-import { createOrder } from '../../services/orderService';
-
+import { createPaymentUrl } from '../../services/paymentService';
+import { getCustomerOrderDetail } from '../../services/orderService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
-// Dữ liệu giả lập
-const mockRestaurant = {
-  name: 'Nhà hàng B',
-  address: '456 Đường Ẩm Thực, TP. HCM',
-  image: restaurant1,
+const mockOrderDefaults = {
+  reservationTime: '2025-05-23T14:30:00Z',
+  numberOfPeople: 4,
+  numberOfChild: 2,
 };
-
-const mockSelectedItems = [
-  { id: '4', name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, quantity: 1 },
-  { id: '5', name: 'Cơm Thố Gà + Ốp La', price: 37000, quantity: 1 },
-  { id: '7', name: 'Coca Cola', price: 11000, quantity: 1 },
-];
 
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const queryParams = new URLSearchParams(location.search);
 
-  // Lấy dữ liệu từ state
-  const { selectedItems: initialItemsData = [{ restaurant: mockRestaurant, dishes: mockSelectedItems }] } = location.state || {};
-
-  // Lấy restaurant và dishes từ selectedItems
-  const restaurant = initialItemsData[0]?.restaurant || mockRestaurant;
-  const initialItems = initialItemsData[0]?.dishes.map(item => ({
-    id: item.id,
-    name: item.name,
-    quantity: item.quantity,
-    price: parseFloat(item.price) || 0, // Đảm bảo price là số, mặc định là 0 nếu không có
-  })) || mockSelectedItems;
-
-  // State để quản lý danh sách món ăn đã chọn
-  const [selectedItems, setSelectedItems] = useState(initialItems);
-
-  // Tính tổng tiền dựa trên số lượng
-  const totalPrice = selectedItems.reduce((total, item) => total + ((parseFloat(item.price) || 0) * item.quantity), 0);
-
-  // State để quản lý thông tin đặt chỗ
-  const [numberOfAdults, setNumberOfAdults] = useState('');
-  const [numberOfChildren, setNumberOfChildren] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [note, setNote] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('VNPay');
-  const [loading, setLoading] = useState(false);
+  const [order, setOrder] = useState(null);
+  const [restaurant, setRestaurant] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [paymentLoading, setPaymentLoading] = useState(false);
+<<<<<<< HEAD
+  const paymentStatus = queryParams.get('paymentStatus') || null;
+=======
+>>>>>>> 98a5eb96f26c35d07755084555819e56548d36fd
 
-  // Xử lý thay đổi số lượng
-  const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    setSelectedItems(
-      selectedItems.map((item) =>
-        item.id === id ? { ...item, quantity: parseInt(newQuantity) } : item
-      )
-    );
-  };
+  const totalPrice = order?.dishes?.length
+    ? order.dishes.reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        return total + price * (item.quantity || 0);
+      }, 0)
+    : 0;
 
-  // Xử lý xóa món ăn
-  const handleRemoveItem = (id) => {
-    setSelectedItems(selectedItems.filter((item) => item.id !== id));
-  };
+  useEffect(() => {
+    const status = queryParams.get('paymentStatus');
+    if (status) {
+      if (status === 'SUCCESS') {
+        toast.success('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
+        navigate('/reservation-history');
+      } else if (status === 'FAILED') {
+        toast.error('Thanh toán thất bại. Vui lòng thử lại.');
+        navigate('/');
+      } else {
+        toast.error('Trạng thái thanh toán không hợp lệ.');
+        navigate('/');
+      }
+    }
+  }, [navigate, queryParams]);
 
-  // Xử lý thanh toán
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    const fetchOrderDetails = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        if (!id || isNaN(id)) {
+          throw new Error('Mã đơn hàng không hợp lệ');
+        }
+        const response = await getCustomerOrderDetail(id, {
+          signal: abortController.signal,
+        });
+        const data = response.data;
+
+        setOrder({
+          id: data.id || '',
+          reservationTime: data.reservationTime || mockOrderDefaults.reservationTime,
+          numberOfPeople: data.numberOfPeople ?? mockOrderDefaults.numberOfPeople,
+          numberOfChild: data.numberOfChild ?? mockOrderDefaults.numberOfChild,
+          dishes: Array.isArray(data.menuItems)
+            ? data.menuItems.map(item => ({
+                id: item.menuItemId || '',
+                name: item.menuItemName || 'Không xác định',
+                quantity: Number(item.quantity) || 0,
+                price: Number(item.menuItemPrice) || 0,
+              }))
+            : [],
+        });
+
+        setRestaurant({
+          name: data.restaurant?.name || 'Nhà hàng không xác định',
+          address: data.restaurant?.address || 'Chưa có địa chỉ',
+          image: data.restaurant?.thumbnailUrl || restaurant1,
+        });
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        setError(
+          err.response?.status === 404
+            ? 'Không tìm thấy đơn hàng.'
+            : err.response?.status === 403
+            ? 'Bạn không có quyền truy cập đơn hàng này.'
+            : 'Lỗi khi tải thông tin đơn hàng: ' + (err.message || 'Không xác định')
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+
+    return () => abortController.abort();
+  }, [id]);
+
+  useEffect(() => {
+    if (paymentStatus) {
+      if (paymentStatus === 'SUCCESS') {
+        toast.success('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
+        navigate('/reservation-history');
+      } else if (paymentStatus === 'FAILED') {
+        toast.error('Thanh toán thất bại. Vui lòng thử lại.');
+        navigate('/');
+      } else {
+        toast.warn('Trạng thái thanh toán không hợp lệ.');
+        navigate('/');
+      }
+    }
+  }, [paymentStatus, navigate]);
+
+  const handlePayment = async () => {
+    setPaymentLoading(true);
     setError('');
-
-    if (!numberOfAdults && !numberOfChildren) {
-      setError('Vui lòng nhập số người lớn hoặc số trẻ em!');
-      setLoading(false);
-      return;
-    }
-    if (!date || !time) {
-      setError('Vui lòng nhập đầy đủ thông tin đặt chỗ (ngày đến, giờ đến)!');
-      setLoading(false);
-      return;
-    }
-
-    const adults = parseInt(numberOfAdults) || 0;
-    const children = parseInt(numberOfChildren) || 0;
-    if (adults + children === 0) {
-      setError('Vui lòng nhập ít nhất một người (người lớn hoặc trẻ em)!');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const reservationDateTime = new Date(`${date}T${time}`).toISOString();
-      const orderData = {
-        reservationTime: reservationDateTime,
-        numberOfPeople: adults,
-        numberOfChild: children,
-        numberPhone: '0386299573',
-        note: note || '',
-        orderItems: selectedItems.map(item => ({
-          menuItemId: item.id,
-          quantity: item.quantity,
-        })),
-      };
-
-      await createOrder(restaurant.id, orderData);
-
-      const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
-      delete savedCart[restaurant.id];
-      sessionStorage.setItem('cart', JSON.stringify(savedCart));
-
-      alert('Đơn hàng đã được gửi đến nhà hàng thành công!');
-      navigate('/');
+      console.log('Gọi API với orderId:', orderId);
+      const paymentUrl = await createPaymentUrl(orderId);
+      console.log('URL thanh toán:', paymentUrl);
+      if (typeof paymentUrl !== 'string' || !paymentUrl.includes('vnpayment.vn')) {
+        throw new Error('URL thanh toán không hợp lệ.');
+      }
+      window.location.href = paymentUrl;
     } catch (err) {
-      setError('Lỗi khi gửi đơn hàng: ' + err.message);
-      console.error('Lỗi khi thanh toán:', err);
+      setError('Lỗi khi tạo liên kết thanh toán: ' + err.message);
+      setTimeout(() => setError(''), 5000);
     } finally {
-      setLoading(false);
+      setPaymentLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="payment-page">
+        <h2>Đang tải thông tin đơn hàng...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="payment-page">
+        <h2>Lỗi</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()} className="retry-btn">
+          Thử lại
+        </button>
+        <button onClick={() => navigate('/')} className="back-btn">
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
+
+  if (!order?.dishes?.length || !restaurant?.name) {
+    return (
+      <div className="payment-page">
+        <h2>Dữ liệu đơn hàng không đầy đủ</h2>
+        <button onClick={() => navigate('/')} className="back-btn">
+          Quay lại trang chủ
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="payment-page">
-      <div className="payment-left">
-        <h2>Thông tin đơn hàng</h2>
+      {paymentLoading && (
+        <div className="loading-overlay">
+          <div className="spinner">Đang xử lý thanh toán...</div>
+        </div>
+      )}
+      <div className="payment-content">
+        <h2>Thông tin đơn hàng #{order.id}</h2>
         <div className="restaurant-info">
-          <h3>{restaurant.name}</h3>
           <img src={restaurant.image} alt={restaurant.name} className="restaurant-image" />
+          <div className="restaurant-details">
+            <h3>{restaurant.name}</h3>
+            <p><strong>Địa chỉ:</strong> {restaurant.address}</p>
+          </div>
         </div>
         <h3>Các món đã chọn</h3>
         <ul className="selected-items">
-          {selectedItems.map((item) => (
+          {order.dishes.map((item) => (
             <li key={item.id} className="selected-item">
               <div className="item-details">
-                <span>{item.name}</span>
-                <span>{((parseFloat(item.price) || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
-              </div>
-              <div className="item-actions">
-                <input
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                  min="1"
-                  className="quantity-input"
-                />
-                <button
-                  className="remove-btn111"
-                  onClick={() => handleRemoveItem(item.id)}
-                >
-                  Xóa
-                </button>
+                <span className="item-name">{item.name}</span>
+                <span className="item-quantity">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
+                <span className="item-total">{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </li>
           ))}
@@ -157,67 +208,28 @@ const PaymentPage = () => {
         <div className="total-price">
           <h3>Tổng tiền: {totalPrice.toLocaleString('vi-VN')} VNĐ</h3>
         </div>
-      </div>
-
-      <div className="payment-right">
+        <div className="booking-info">
+          <h3>Thông tin đặt chỗ</h3>
+          <p><strong>Ngày đến:</strong> {new Date(order.reservationTime).toLocaleDateString('vi-VN')}</p>
+          <p><strong>Giờ đến:</strong> {new Date(order.reservationTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
+          <p><strong>Số người lớn:</strong> {order.numberOfPeople}</p>
+          <p><strong>Số trẻ em:</strong> {order.numberOfChild}</p>
+        </div>
+        <div className="payment-info">
+          <h3>Thanh toán</h3>
+          <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
+          <div className="payment-method">
+            <label>Hình thức thanh toán: VNPAY</label>
+          </div>
+        </div>
+        <button
+          onClick={handlePayment}
+          className="payment-btn"
+          disabled={paymentLoading}
+        >
+          {paymentLoading ? 'Đang xử lý...' : 'Xác nhận thanh toán'}
+        </button>
         {error && <div className="alert alert-danger">{error}</div>}
-        <form onSubmit={handlePayment} className="payment-form">
-          <div className="booking-info">
-            <h3>Thông tin đặt chỗ</h3>
-            <div className="form-group">
-              <label>Số người lớn: <span className="required">*</span></label>
-              <input
-                type="number"
-                value={numberOfAdults}
-                onChange={(e) => setNumberOfAdults(e.target.value)}
-                min="0"
-                required={!(parseInt(numberOfChildren) > 0)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Số trẻ em: <span className="required">*</span></label>
-              <input
-                type="number"
-                value={numberOfChildren}
-                onChange={(e) => setNumberOfChildren(e.target.value)}
-                min="0"
-                required={!(parseInt(numberOfAdults) > 0)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Ngày đến: <span className="required">*</span></label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Giờ đến: <span className="required">*</span></label>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                required
-                step="900"
-              />
-            </div>
-          </div>
-
-          <div className="payment-info">
-            <h3>Thanh toán</h3>
-            <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
-            <div className="payment-method">
-              <label>Hình thức thanh toán: VNPAY</label>
-            </div>
-          </div>
-
-          <button type="submit" className="payment-btn" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Thanh toán'}
-          </button>
-        </form>
       </div>
     </div>
   );

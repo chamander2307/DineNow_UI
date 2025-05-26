@@ -7,6 +7,8 @@ const ReservationHistory = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Không xác định';
@@ -25,9 +27,11 @@ const ReservationHistory = () => {
       CONFIRMED: 'Đã xác nhận',
       CANCELLED: 'Đã hủy',
       FAILED: 'Thất bại',
-      'Không xác định': 'Không xác định', // Fallback
+      'Không xác định': 'Không xác định',
     };
-    return statusMap[status] || statusMap['Không xác định'];
+    const localized = statusMap[status] || statusMap['Không xác định'];
+    console.log(`Localized status for ${status}: ${localized}`); // Debug
+    return localized;
   };
 
   useEffect(() => {
@@ -44,7 +48,7 @@ const ReservationHistory = () => {
         const formattedReservations = data.map(order => ({
           id: order.id,
           restaurant: {
-            name: order.reservationSimpleResponse?.restaurantName || 'Không xác định',
+            name: order.restaurants?.name || 'Không xác định',
           },
           status: localizeStatus(order.status || 'Không xác định'),
           date: formatDate(order.reservationSimpleResponse?.reservationTime),
@@ -63,13 +67,63 @@ const ReservationHistory = () => {
     fetchReservations();
   }, []);
 
+  const uniqueRestaurants = [
+    { name: 'Tất cả', value: '' },
+    ...Array.from(new Set(reservations.map(r => r.restaurant.name)))
+      .filter(name => name !== 'Không xác định')
+      .map(name => ({ name, value: name })),
+  ];
+
+  const uniqueStatuses = [
+    { name: 'Tất cả', value: '' },
+    ...Array.from(new Set(reservations.map(r => r.status)))
+      .filter(status => status !== 'Không xác định')
+      .map(status => ({ name: status, value: status })),
+  ];
+
+  const filteredReservations = reservations.filter(r => {
+    const matchesRestaurant = selectedRestaurant ? r.restaurant.name === selectedRestaurant : true;
+    const matchesStatus = selectedStatus ? r.status === selectedStatus : true;
+    return matchesRestaurant && matchesStatus;
+  });
+
   if (loading) return <div className="text-center">Đang tải...</div>;
   if (error) return <div className="text-center text-danger">{error}</div>;
 
   return (
     <div className="reservation-history-container">
       <h2>Lịch sử đặt bàn</h2>
-      {reservations.length > 0 ? (
+      <div className="filter-section">
+        <div className="filter-group">
+          <select
+            id="restaurantFilter"
+            value={selectedRestaurant}
+            onChange={(e) => setSelectedRestaurant(e.target.value)}
+            className="restaurant-filter"
+          >
+            {uniqueRestaurants.map((restaurant) => (
+              <option key={restaurant.value} value={restaurant.value}>
+                {restaurant.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="filter-group">
+          <select
+            id="statusFilter"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="status-filter"
+          >
+            {uniqueStatuses.map((status) => (
+              <option key={status.value} value={status.value}>
+                {status.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {filteredReservations.length > 0 ? (
         <table className="reservation-table">
           <thead>
             <tr>
@@ -81,7 +135,7 @@ const ReservationHistory = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.map((reservation) => (
+            {filteredReservations.map((reservation) => (
               <tr key={reservation.id}>
                 <td>{reservation.restaurant.name}</td>
                 <td>{reservation.date}</td>
@@ -101,7 +155,7 @@ const ReservationHistory = () => {
           </tbody>
         </table>
       ) : (
-        <p>Chưa có đơn đặt bàn nào.</p>
+        <p>Chưa có đơn đặt bàn nào phù hợp với bộ lọc.</p>
       )}
     </div>
   );

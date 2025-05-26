@@ -2,8 +2,7 @@
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border: 2px solid #00c4b4;
+  border: 2px solid #f7796b; /* Đổi màu viền sang tông chính */
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -16,14 +15,13 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: #e0f7fa;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .restaurant-header:hover {
-  background-color: #b2ebf2;
+  /* Bỏ background-color khi hover */
 }
 
 .restaurant-images {
@@ -114,29 +112,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .decrease-btn {
-  background-color: #ccc;
+  color: #ccc; /* Đổi từ background sang color */
 }
 
 .decrease-btn:hover {
-  background-color: #999;
+  color: #999;
 }
 
 .increase-btn {
-  background-color: #00c4b4;
+  color: #f7796b; /* Đổi từ background sang color */
 }
 
 .increase-btn:hover {
-  background-color: #00a69b;
+  color: #d95e51; /* Tông đậm hơn của #f7796b khi hover */
 }
 
 .quantity {
   width: 24px;
   height: 24px;
-  background-color: #ccc;
   color: #333;
   border-radius: 50%;
   display: flex;
@@ -149,17 +146,17 @@
   display: block;
   width: 100%;
   padding: 10px;
-  background-color: #00c4b4;
-  color: white;
-  border: none;
+  color: #f7796b; /* Đổi từ background sang color */
+  border: 2px solid #f7796b; /* Thêm viền để nút rõ ràng */
   border-radius: 5px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease, border-color 0.3s ease;
   margin-top: 10px;
 }
 
 .checkout-btn:hover {
-  background-color: #00a69b;
+  color: #d95e51; /* Tông đậm hơn khi hover */
+  border-color: #d95e51;
 }

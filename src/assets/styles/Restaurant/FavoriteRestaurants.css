@@ -1,98 +1,149 @@
 .favorite-restaurants {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .favorite-restaurants h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .restaurant-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-  
-  .restaurant-card {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    transition: transform 0.2s ease;
-  }
-  
-  .restaurant-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .restaurant-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
-  
-  .restaurant-content {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .restaurant-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .restaurant-name {
-    text-decoration: none;
-  }
-  
-  .restaurant-name h3 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-  }
-  
-  .restaurant-name:hover h3 {
-    color: #007bff;
-  }
-  
-  .restaurant-location,
-  .restaurant-style,
-  .restaurant-address {
-    font-size: 14px;
-    color: #555;
-    margin: 0;
-  }
-  
-  .unlike-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 5px;
-    transition: transform 0.2s ease;
-  }
-  
-  .unlike-btn:hover {
-    transform: scale(1.1);
-  }
-  
-  .empty-message {
-    text-align: center;
-    font-size: 16px;
-    color: #777;
-    margin-top: 20px;
-  }
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.favorite-restaurants h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  color: #333;
+}
+
+.restaurant-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 20px;
+}
+
+.fr-item {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  width: 330px !important;
+  height: 370px !important;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  text-decoration: none;
+  color: inherit;
+}
+
+.fr-item:hover {
+  transform: translateY(-4px);
+}
+
+.fr-image-container {
+  width: 330px !important;
+  height: 200px !important;
+  overflow: hidden;
+  position: relative;
+}
+
+.fr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.fr-details {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+.fr-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.fr-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.fr-star-icons {
+  display: flex;
+  gap: 2px;
+}
+
+.fr-visit-count {
+  font-size: 13px;
+  color: #777;
+  white-space: nowrap;
+}
+
+.fr-address {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+/* Style cho favorite button, khớp với RestaurantCard */
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: transparent;
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+}
+
+.favorite-btn svg {
+  color: gray;
+}
+
+.favorite-btn.active svg {
+  color: #e74c3c;
+}
+
+.favorite-btn:hover {
+  border: 2px solid #ccc;
+  transform: scale(1.1);
+}
+
+.favorite-btn:hover svg {
+  color: darkred;
+}
+
+.favorite-btn:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+.favorite-btn.active:hover {
+  background-color: white;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+  margin-top: 20px;
+}

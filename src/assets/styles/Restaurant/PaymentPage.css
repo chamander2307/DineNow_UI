@@ -1,44 +1,50 @@
 .payment-page {
-  display: flex;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 800px;
+  margin: 20px auto;
   padding: 20px;
-  gap: 20px;
 }
 
-/* Bên trái: Thông tin đơn hàng */
-.payment-left {
-  flex: 1;
+/* Nội dung chính */
+.payment-content {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
 
-.payment-left h2 {
+.payment-content h2 {
   font-size: 24px;
   margin-bottom: 20px;
   color: #333;
+  text-align: center;
 }
 
 .restaurant-info {
+  display: flex;
+  align-items: center;
   margin-bottom: 20px;
 }
 
-.restaurant-info h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.restaurant-info p {
-  color: #555;
-  margin-bottom: 10px;
-}
-
 .restaurant-image {
-  width: 100%;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
+  margin-right: 20px;
+}
+
+.restaurant-details {
+  flex: 1;
+}
+
+.restaurant-details h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.restaurant-details p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
 }
 
 .selected-items {
@@ -48,116 +54,72 @@
 }
 
 .selected-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .item-details {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
+  display: table;
+  width: 100%;
 }
 
-.item-details span:last-child {
-  font-weight: bold;
-  color: #e74c3c;
+.item-details > span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.item-name {
+  font-size: 16px;
+  color: #333;
+  width: 50%;
   padding-right: 10px;
 }
 
-.item-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.quantity-input {
-  width: 60px;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.item-quantity111 {
+  font-size: 14px;
+  color: #555;
+  width: 25%;
   text-align: center;
+  white-space: nowrap;
 }
 
-.remove-btn111 {
-  padding: 5px 10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.remove-btn111:hover {
-  background-color: #c0392b;
+.item-total {
+  font-weight: bold;
+  color: #e74c3c;
+  width: 25%;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .total-price h3 {
   font-size: 20px;
   color: #333;
-}
-
-/* Bên phải: Form thanh toán */
-.payment-right {
-  flex: 1;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.payment-right h2 {
-  font-size: 24px;
+  text-align: right;
   margin-bottom: 20px;
-  color: #333;
 }
 
-.payment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.booking-info h3,
-.payment-info h3 {
+.booking-info h3 {
   font-size: 20px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: #333;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  font-weight: bold;
+.booking-info p {
+  font-size: 14px;
+  margin-bottom: 5px;
   color: #555;
 }
 
-.form-group .required {
-  color: #e74c3c;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.form-group textarea {
-  resize: vertical;
+.payment-info h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .payment-info p {
   font-size: 16px;
   margin-bottom: 10px;
+  color: #555;
 }
 
 .payment-info span {
@@ -169,19 +131,12 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-bottom: 20px;
 }
 
 .payment-method label {
   font-weight: bold;
   color: #555;
-}
-
-.payment-select {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 200px;
 }
 
 .payment-btn {
@@ -192,10 +147,62 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  align-self: center;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
   transition: background-color 0.3s ease;
 }
 
 .payment-btn:hover {
   background-color: #2980b9;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+/* assets/styles/Restaurant/PaymentPage.css */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
 }

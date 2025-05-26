@@ -38,3 +38,4 @@ export const getBankAccount = async () => {
     throw error;
   }
 };
+

@@ -134,7 +134,7 @@
   color: white;
 }
 
-/* Nút quay lại và hủy */
+/* Nút hủy, đặt lại và quay lại */
 .button-section {
   display: flex;
   justify-content: flex-start;
@@ -154,7 +154,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 16px;
-  order: 1; /* Đặt nút hủy bên phải */
+  order: 2; /* Đặt nút hủy bên phải */
 }
 
 .cancel-btn111:hover {
@@ -164,6 +164,23 @@
 .cancel-btn111:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.rebook-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2ecc71; /* Màu xanh lá cho nút đặt lại */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 1; /* Đặt nút đặt lại giữa */
+}
+
+.rebook-btn:hover {
+  background-color: #27ae60; /* Màu xanh đậm hơn khi hover */
 }
 
 .back-btn111 {

@@ -6,15 +6,16 @@ import { FaHeart, FaShoppingBag, FaTimes } from "react-icons/fa";
 import "../../assets/styles/home/Navbar.css";
 import RestaurantCart from "../Restaurants/RestaurantCart";
 import { fetchMainCategories } from "../../services/menuItemService";
+import axios from "axios";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false); // Thay showCartDropdown
+  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const dropdownRef = useRef();
   const userRef = useRef();
-  const dialogRef = useRef(); // Ref cho dialog
+  const dialogRef = useRef();
   const navigate = useNavigate();
 
   const { isLogin, user, logout, loading } = useContext(UserContext);
@@ -51,6 +52,56 @@ const Header = () => {
     navigate("/login");
   };
 
+  const handleCheckoutClose = () => {
+    setIsCartDialogOpen(false);
+  };
+
+  const handleNearbyClick = async (e) => {
+    e.preventDefault();
+    console.log("Bắt đầu lấy vị trí người dùng...");
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log(`Vị trí: lat=${latitude}, lng=${longitude}`);
+          try {
+            // Thêm page và size vào query params
+            const response = await axios.get(
+              `http://localhost:8080/api/restaurants/nearby?lng=${longitude}&lat=${latitude}&radius=10&page=0&size=20`
+            );
+            console.log("Phản hồi API:", response.data);
+            const restaurants = response.data.data || [];
+            if (restaurants.length === 0) {
+              console.warn("Không tìm thấy nhà hàng gần đây.");
+              alert("Không tìm thấy nhà hàng trong khu vực này.");
+            }
+            navigate("/restaurant-list", { state: { nearbyRestaurants: restaurants } });
+          } catch (error) {
+            console.error("Lỗi khi gọi API nearby:", error);
+            alert("Không thể tải danh sách nhà hàng. Vui lòng thử lại.");
+            navigate("/restaurant-list");
+          }
+        },
+        (error) => {
+          console.error("Lỗi lấy vị trí:", error.message);
+          let errorMessage = "Không thể lấy vị trí. Vui lòng cho phép truy cập vị trí.";
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = "Bạn đã từ chối cấp quyền vị trí. Vui lòng bật vị trí trong cài đặt trình duyệt.";
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMessage = "Thông tin vị trí không khả dụng.";
+          }
+          alert(errorMessage);
+          navigate("/restaurant-list");
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      console.error("Trình duyệt không hỗ trợ geolocation.");
+      alert("Trình duyệt không hỗ trợ định vị. Vui lòng thử trình duyệt khác.");
+      navigate("/restaurant-list");
+    }
+  };
+
   return (
     <header className="header">
       <div className="header-inner">
@@ -61,7 +112,7 @@ const Header = () => {
           </Link>
 
           <nav className="nav-combined" ref={dropdownRef}>
-            <Link to="/nearby" className="nav-item">
+            <Link to="/nearby" className="nav-item" onClick={handleNearbyClick}>
               Gần Bạn
             </Link>
             <Link to="/restaurant-list" className="nav-item">
@@ -99,7 +150,7 @@ const Header = () => {
           <div className="cart-container">
             <div
               className="cart-link"
-              onClick={() => setIsCartDialogOpen(true)} // Mở dialog
+              onClick={() => setIsCartDialogOpen(true)}
             >
               <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
             </div>
@@ -119,7 +170,7 @@ const Header = () => {
                   </button>
                 </div>
                 <div className="cart-dialog-content">
-                  <RestaurantCart />
+                  <RestaurantCart onCheckout={handleCheckoutClose} />
                 </div>
               </div>
             </>

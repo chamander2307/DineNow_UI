@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../../assets/styles/home/PaymentResult.css';
+import '../../assets/styles/Restaurant/PaymentStatus.css';
 
-const PaymentResult = () => {
+const PaymentStatus = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -12,7 +12,7 @@ const PaymentResult = () => {
   
   // Xác định nội dung hiển thị dựa trên paymentStatus
   const isSuccess = paymentStatus === 'SUCCESS';
-  const title = isSuccess ? 'Thanh toán thành công' : 'Thanh toán thất bại';
+  const title = isSuccess ? 'Thanh Toán Thành Công' : 'Thanh Toán Thất Bại';
   const message = isSuccess
     ? 'Cảm ơn bạn đã thanh toán! Đơn hàng của bạn đã được xử lý thành công.'
     : 'Xin lỗi, thanh toán của bạn không thể thực hiện. Vui lòng thử lại hoặc liên hệ hỗ trợ.';
@@ -37,4 +37,4 @@ const PaymentResult = () => {
   );
 };
 
-export default PaymentResult;
+export default PaymentStatus;

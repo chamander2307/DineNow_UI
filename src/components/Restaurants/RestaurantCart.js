@@ -4,7 +4,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import '../../assets/styles/Restaurant/RestaurantCart.css';
 import { fetchRestaurantById, fetchSimpleMenuByRestaurant } from '../../services/restaurantService';
 
-const RestaurantCart = () => {
+const RestaurantCart = ({ onCheckout }) => {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
   const [cartItems, setCartItems] = useState({});
@@ -171,29 +171,24 @@ const RestaurantCart = () => {
   };
 
   const handleCheckout = (restaurant) => {
-    const selectedItems = [
-      {
-        restaurant: {
-          id: restaurant.id,
-          name: restaurant.name,
-        },
-        dishes: restaurant.dishes
-          .filter(dish => cartItems[restaurant.id]?.[dish.id] > 0)
-          .map(dish => ({
-            id: dish.id,
-            name: dish.name,
-            price: dish.price,
-            quantity: cartItems[restaurant.id][dish.id],
-          })),
-      },
-    ].filter(item => item.dishes.length > 0);
+    const selectedItems = restaurant.dishes
+      .filter(dish => cartItems[restaurant.id]?.[dish.id] > 0)
+      .map(dish => ({
+        id: dish.id,
+        name: dish.name,
+        price: dish.price,
+        quantity: cartItems[restaurant.id][dish.id],
+      }));
 
     if (selectedItems.length === 0) {
       alert('Giỏ hàng trống! Vui lòng chọn ít nhất một món trước khi thanh toán.');
       return;
     }
 
-    navigate('/payment', { state: { selectedItems } });
+    navigate('/order', { state: { selectedItems, restaurant: { id: restaurant.id, name: restaurant.name, image: restaurant.image, address: restaurant.address } } });
+    if (onCheckout) {
+      onCheckout(); // Đóng dialog sau khi navigate
+    }
   };
 
   if (loading) return <div className="text-center">Đang tải...</div>;
