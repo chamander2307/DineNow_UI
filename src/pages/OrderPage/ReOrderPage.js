@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../../assets/styles/Restaurant/OrderPage.css';
+import '../../assets/styles/Restaurant/OrderPage.css'; // Thay đổi đường dẫn import CSS
 import { createOrder } from '../../services/orderService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
@@ -17,13 +17,13 @@ const mockSelectedItems = [
   { id: '7', name: 'Coca Cola', price: 11000, quantity: 1 },
 ];
 
-const OrderPage = () => {
+const ReOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Lấy dữ liệu từ state
   const { 
-    isRebook = false,
+    isRebook = true, // Đặt isRebook mặc định là true để chỉ định re-order
     selectedItems: initialItemsData = mockSelectedItems,
     restaurant: initialRestaurant = mockRestaurant,
   } = location.state || {};
@@ -56,10 +56,10 @@ const OrderPage = () => {
   if (!location.state) {
     return (
       <div className="order-page">
-        <h2>Không tìm thấy thông tin đơn hàng</h2>
-        <p>Vui lòng quay lại giỏ hàng để đặt bàn.</p>
-        <button onClick={() => navigate('/')} className="back-btn">
-          Quay lại trang chủ
+        <h2>Không tìm thấy thông tin đơn hàng để đặt lại</h2>
+        <p>Vui lòng quay lại lịch sử đặt bàn để chọn đơn hàng.</p>
+        <button onClick={() => navigate('/reservation-history')} className="back-btn">
+          Quay lại lịch sử đặt bàn
         </button>
       </div>
     );
@@ -83,7 +83,7 @@ const OrderPage = () => {
     setSelectedItems(selectedItems.filter((item) => item.id !== id));
   };
 
-  // Xử lý thanh toán
+  // Xử lý thanh toán (đặt lại)
   const handlePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -128,10 +128,10 @@ const OrderPage = () => {
       delete savedCart[restaurant.id || 1];
       sessionStorage.setItem('cart', JSON.stringify(savedCart));
 
-      alert('Đơn hàng đã được gửi đến nhà hàng thành công!');
-      navigate('/');
+      alert('Đơn hàng đã được đặt lại thành công!');
+      navigate('/reservation-history');
     } catch (err) {
-      setError('Lỗi khi gửi đơn hàng: ' + err.message);
+      setError('Lỗi khi đặt lại đơn hàng: ' + err.message);
       console.error('Lỗi khi thanh toán:', err);
     } finally {
       setLoading(false);
@@ -146,8 +146,11 @@ const OrderPage = () => {
           <img
             src={restaurant.image}
             alt={restaurant.name}
-            className="restaurant-image1111"
-            onError={(e) => { e.target.src = restaurant1; }}
+            className="restaurant-image1111" // Đổi class để khớp với OrderPage.css
+            onError={(e) => {
+              console.log(`Không load được ảnh nhà hàng ${restaurant.name} từ URL: ${restaurant.image}`);
+              e.target.src = restaurant1;
+            }}
           />
           <h3>{restaurant.name}</h3>
         </div>
@@ -192,7 +195,7 @@ const OrderPage = () => {
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handlePayment} className="order-form">
           <div className="booking-info">
-            <h3>Thông tin đặt chỗ</h3>
+            <h3>Thông tin đặt lại</h3>
             <div className="form-group">
               <label>Số người lớn: <span className="required">*</span></label>
               <input
@@ -244,7 +247,7 @@ const OrderPage = () => {
           </div>
 
           <button type="submit" className="payment-btn" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Đặt bàn'}
+            {loading ? 'Đang xử lý...' : 'Đặt lại'}
           </button>
         </form>
       </div>
@@ -252,4 +255,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default ReOrderPage;

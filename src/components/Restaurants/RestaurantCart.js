@@ -31,6 +31,7 @@ const RestaurantCart = ({ onCheckout }) => {
         const restaurantPromises = restaurantIds.map(async (id) => {
           try {
             const restaurantRes = await fetchRestaurantById(id);
+            console.log(`Restaurant data for ID ${id}:`, restaurantRes); // Debug restaurant data
             const menuRes = await fetchSimpleMenuByRestaurant(id);
             const restaurantData = restaurantRes || {};
             const menuData = menuRes.data || [];
@@ -51,7 +52,7 @@ const RestaurantCart = ({ onCheckout }) => {
             return {
               id: restaurantData.id,
               name: restaurantData.name || 'Nhà hàng không xác định',
-              image: restaurantData.thumbnailUrl || '',
+              image: restaurantData.thumbnailUrl || (restaurantData.imageUrls && restaurantData.imageUrls.length > 0 ? restaurantData.imageUrls[0] : 'https://via.placeholder.com/150?text=No+Image'),
               address: restaurantData.address || 'Chưa có địa chỉ',
               dishes,
             };
@@ -102,16 +103,13 @@ const RestaurantCart = ({ onCheckout }) => {
   }, [cartItems, restaurants]);
 
   const increaseQuantity = (restaurantId, dishId) => {
-    setCartItems(prev => {
-      const updatedCart = {
-        ...prev,
-        [restaurantId]: {
-          ...prev[restaurantId],
-          [dishId]: (prev[restaurantId]?.[dishId] || 0) + 1,
-        },
-      };
-      return updatedCart;
-    });
+    setCartItems(prev => ({
+      ...prev,
+      [restaurantId]: {
+        ...prev[restaurantId],
+        [dishId]: (prev[restaurantId]?.[dishId] || 0) + 1,
+      },
+    }));
   };
 
   const decreaseQuantity = (restaurantId, dishId) => {
@@ -203,7 +201,12 @@ const RestaurantCart = ({ onCheckout }) => {
               className="restaurant-header"
               onClick={() => toggleDropdown(restaurant.id)}
             >
-              <img src={restaurant.image} alt={restaurant.name} className="restaurant-images" />
+              <img
+                src={restaurant.image}
+                alt={restaurant.name}
+                className="restaurant-images"
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=No+Image'; }} // Fallback on error
+              />
               <div className="restaurant-infos">
                 <div className="restaurant-name-wrappers">
                   <h3 className="restaurant-names">{restaurant.name}</h3>

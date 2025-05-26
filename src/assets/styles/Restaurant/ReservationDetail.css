@@ -33,8 +33,9 @@
 }
 
 .restaurant-details p {
-  margin: 5px 0;
+  margin: 20x 0;
   color: #555;
+  font-size: 32px;
 }
 
 /* Danh sách món ăn */
@@ -89,6 +90,12 @@
 .payment-section p {
   margin: 5px 0;
   color: #555;
+}
+
+.payment-section .price {
+  color: #e74c3c; /* Giữ màu đỏ */
+  font-size: 20px; /* Giảm từ 24px xuống 20px */
+  font-weight: bold; /* Giữ in đậm */
 }
 
 .payment-table {
