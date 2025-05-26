@@ -20,25 +20,32 @@ const RestaurantList = () => {
     const loadRestaurants = async () => {
       setLoading(true);
       try {
-        const queryParams = new URLSearchParams(location.search);
-        const province = queryParams.get("province") || "";
-        const restaurantName = queryParams.get("restaurantName") || "";
-        const typeId = queryParams.get("typeId") || "";
-
-        let response;
-        if (typeId) {
-          console.log("Gọi API fetchRestaurantsByTypeId với typeId:", typeId);
-          response = await fetchRestaurantsByTypeId(typeId, page, 20);
-          setRestaurants(response.data || []);
-        } else if (province || restaurantName) {
-          const searchParams = { province, restaurantName };
-          console.log("Gọi API searchRestaurants với params:", searchParams);
-          response = await searchRestaurants(searchParams);
-          setRestaurants(response.data || []);
+        console.log("location.state:", location.state);
+        // Kiểm tra nếu có danh sách nhà hàng từ state (từ "Gần Bạn")
+        if (location.state?.nearbyRestaurants) {
+          console.log("Hiển thị nhà hàng gần đây:", location.state.nearbyRestaurants);
+          setRestaurants(location.state.nearbyRestaurants);
         } else {
-          console.log("Gọi API fetchAllRestaurants");
-          response = await fetchAllRestaurants(page, 20);
-          setRestaurants(response.data.content || []);
+          const queryParams = new URLSearchParams(location.search);
+          const province = queryParams.get("province") || "";
+          const restaurantName = queryParams.get("restaurantName") || "";
+          const typeId = queryParams.get("typeId") || "";
+
+          let response;
+          if (typeId) {
+            console.log("Gọi API fetchRestaurantsByTypeId với typeId:", typeId);
+            response = await fetchRestaurantsByTypeId(typeId, page, 20);
+            setRestaurants(response.data || []);
+          } else if (province || restaurantName) {
+            const searchParams = { province, restaurantName };
+            console.log("Gọi API searchRestaurants với params:", searchParams);
+            response = await searchRestaurants(searchParams);
+            setRestaurants(response.data || []);
+          } else {
+            console.log("Gọi API fetchAllRestaurants");
+            response = await fetchAllRestaurants(page, 20);
+            setRestaurants(response.data.content || []);
+          }
         }
       } catch (error) {
         console.error("Lỗi khi tải danh sách nhà hàng:", error);
@@ -48,7 +55,7 @@ const RestaurantList = () => {
       }
     };
     loadRestaurants();
-  }, [location.search, page]);
+  }, [location.search, page, location.state]);
 
   const handleNextPage = () => setPage(page + 1);
   const handlePrevPage = () => setPage(page > 0 ? page - 1 : 0);
@@ -58,22 +65,31 @@ const RestaurantList = () => {
       <LocationSearchBar />
       <FilterBar />
       <div className="rl-page">
-        {/* <h1 className="rl-title">Danh Sách Nhà Hàng</h1> */}
+        <h1 className="rl-title">
+          {location.state?.nearbyRestaurants ? "Nhà Hàng Gần Bạn" : "Danh Sách Nhà Hàng"}
+        </h1>
         {loading ? (
           <p>Đang tải...</p>
         ) : (
           <div className="rl-card-container">
             {restaurants.length > 0 ? (
-              restaurants.map((item) => (
-                <div key={item.id} className="rl-card-item">
-                  <RestaurantCard
-                    {...item}
-                    thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"}
-                  />
-                </div>
-              ))
+              restaurants.map((item) => {
+                console.log("Render nhà hàng:", item);
+                return (
+                  <div key={item.id} className="rl-card-item">
+                    <RestaurantCard
+                      {...item}
+                      thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"}
+                    />
+                  </div>
+                );
+              })
             ) : (
-              <p>Không có nhà hàng nào.</p>
+              <p>
+                {location.state?.nearbyRestaurants
+                  ? "Không có nhà hàng nào gần bạn trong bán kính 10km."
+                  : "Không có nhà hàng nào được tìm thấy."}
+              </p>
             )}
           </div>
         )}
@@ -82,7 +98,10 @@ const RestaurantList = () => {
             Trang trước
           </button>
           <span>Trang {page + 1}</span>
-          <button onClick={handleNextPage} disabled={restaurants.length < 20}>
+          <button
+            onClick={handleNextPage}
+            disabled={restaurants.length < 20 || location.state?.nearbyRestaurants}
+          >
             Trang sau
           </button>
         </div>

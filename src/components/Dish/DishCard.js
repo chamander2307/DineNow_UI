@@ -1,10 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import fallbackImage from "../../assets/img/fallback.jpg"; 
 import "../../assets/styles/Dish/DishCard.css";
 
 const DishCard = ({ dish, restaurantId }) => {
-  // Base URL cho ảnh từ server
-  const BASE_URL = "http://localhost:8080";
+  // Sử dụng biến môi trường hoặc mặc định
+  const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
   // Format price with Vietnamese currency (VNĐ)
   const formattedPrice = new Intl.NumberFormat("vi-VN", {
@@ -32,9 +32,11 @@ const DishCard = ({ dish, restaurantId }) => {
     if (dish.imageUrl.startsWith("http")) {
       imageUrl = dish.imageUrl;
     } else {
-      imageUrl = `${BASE_URL}/Uploads/${dish.imageUrl}`;
+      // Xóa các dấu / thừa ở đầu
+      imageUrl = `${BASE_URL}/uploads/${dish.imageUrl.replace(/^\/+/, '')}`;
     }
   }
+  console.log("Image URL for dish", dish.name, ":", imageUrl); // Debug
 
   return (
     <Link
@@ -49,6 +51,7 @@ const DishCard = ({ dish, restaurantId }) => {
             alt={dish.name || "Món ăn"}
             className="dc-image"
             onError={(e) => {
+              console.warn(`Failed to load image for dish ${dish.name}: ${imageUrl}`);
               e.target.src = fallbackImage;
             }}
           />
