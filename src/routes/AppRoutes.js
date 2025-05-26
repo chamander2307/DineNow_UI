@@ -28,7 +28,7 @@ import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm
 // Chính sách & Thanh toán
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import PolicyPage from "../pages/Policy/PolicyPage";
-
+import PaymentResult from "../pages/PaymentResult/PaymentResult";
 // Quản trị (admin)
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminMainCategoryManager from "../pages/Admin/AdminMainCategoryManager";
@@ -86,7 +86,8 @@ const AppRoutes = () => {
       {/* Chính sách & Thanh toán */}
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/policy" element={<PolicyPage />} />
-      <Route path="/payment-status" element={<PaymentPage />} />
+      <Route path="/payment-status" element={<PaymentResult />} />
+
       {/* Quản trị - Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/main-category" element={<AdminMainCategoryManager />} />
