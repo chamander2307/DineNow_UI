@@ -64,6 +64,7 @@ const ReservationDetail = () => {
           thumbnail: order.restaurants?.thumbnailUrl ? order.restaurants.thumbnailUrl : restaurant1,
           name: order.restaurants?.name || 'Nhà hàng không xác định',
           address: order.restaurants?.address || 'Chưa có địa chỉ',
+          id: order.restaurants?.id || 1, // Thêm restaurantId để sử dụng trong navigate
         },
         date: order.reservationSimpleResponse?.reservationTime,
         time: order.reservationSimpleResponse?.reservationTime,
@@ -122,6 +123,12 @@ const ReservationDetail = () => {
       };
       navigate(`/re-order/${id}`, { state: { isRebook: true, ...rebookData } });
     }
+  };
+
+  const handleReview = (dishId) => {
+    navigate(`/restaurant/${reservation.restaurant.id}`, {
+      state: { selectedDishId: dishId },
+    });
   };
 
   if (loading) {
@@ -188,6 +195,7 @@ const ReservationDetail = () => {
                 <th>Số lượng</th>
                 <th>Giá</th>
                 <th>Tổng</th>
+                {reservation.status === 'COMPLETED' && <th>Hành động</th>}
               </tr>
             </thead>
             <tbody>
@@ -205,6 +213,16 @@ const ReservationDetail = () => {
                   <td>{dish.quantity}</td>
                   <td>{(dish.price || 0).toLocaleString('vi-VN')} VNĐ</td>
                   <td>{((dish.quantity || 0) * (dish.price || 0)).toLocaleString('vi-VN')} VNĐ</td>
+                  {reservation.status === 'COMPLETED' && (
+                    <td>
+                      <button
+                        className="review-btn"
+                        onClick={() => handleReview(dish.id)}
+                      >
+                        Đánh giá
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -217,8 +235,8 @@ const ReservationDetail = () => {
       {/* Thông tin thanh toán */}
       <div className="payment-section">
         <h3>Thông tin thanh toán</h3>
-          <p><strong>Tổng tiền:</strong> <span className="price">{(reservation.totalAmount || 0).toLocaleString('vi-VN')} VNĐ</span></p>
-          <p><strong>Hình thức thanh toán:</strong> VNPay</p>
+        <p><strong>Tổng tiền:</strong> <span className="price">{(reservation.totalAmount || 0).toLocaleString('vi-VN')} VNĐ</span></p>
+        <p><strong>Hình thức thanh toán:</strong> VNPay</p>
       </div>
 
       {/* Nút hủy, đặt lại và quay lại */}

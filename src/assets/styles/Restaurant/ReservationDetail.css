@@ -33,7 +33,7 @@
 }
 
 .restaurant-details p {
-  margin: 20x 0;
+  margin: 20px 0; /* Sửa lỗi typo từ 20x thành 20px */
   color: #555;
   font-size: 32px;
 }
@@ -77,6 +77,22 @@
   border-radius: 5px;
 }
 
+/* Thêm style cho nút Đánh giá */
+.review-btn {
+  padding: 5px 10px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.review-btn:hover {
+  background-color: #27ae60;
+}
+
 /* Thông tin thanh toán */
 .payment-section {
   margin-bottom: 30px;
@@ -93,9 +109,9 @@
 }
 
 .payment-section .price {
-  color: #e74c3c; /* Giữ màu đỏ */
-  font-size: 20px; /* Giảm từ 24px xuống 20px */
-  font-weight: bold; /* Giữ in đậm */
+  color: #e74c3c;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .payment-table {
@@ -152,7 +168,7 @@
 .cancel-btn111 {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #e74c3c; /* Màu đỏ cho nút hủy */
+  background-color: #e74c3c;
   color: white;
   text-decoration: none;
   border: none;
@@ -161,11 +177,11 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 16px;
-  order: 2; /* Đặt nút hủy bên phải */
+  order: 2;
 }
 
 .cancel-btn111:hover {
-  background-color: #c0392b; /* Màu đỏ đậm hơn khi hover */
+  background-color: #c0392b;
 }
 
 .cancel-btn111:disabled {
@@ -176,18 +192,19 @@
 .rebook-btn {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #2ecc71; /* Màu xanh lá cho nút đặt lại */
+  background-color: #2ecc71;
   color: white;
   text-decoration: none;
+  border: none;
   border-radius: 5px;
   text-align: center;
   transition: background-color 0.3s ease;
   font-size: 16px;
-  order: 1; /* Đặt nút đặt lại giữa */
+  order: 1;
 }
 
 .rebook-btn:hover {
-  background-color: #27ae60; /* Màu xanh đậm hơn khi hover */
+  background-color: #27ae60;
 }
 
 .back-btn111 {
@@ -200,7 +217,7 @@
   text-align: center;
   transition: background-color 0.3s ease;
   font-size: 16px;
-  order: 0; /* Đặt nút quay lại bên trái */
+  order: 0;
 }
 
 .back-btn111:hover {

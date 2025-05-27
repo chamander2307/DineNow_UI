@@ -1,9 +1,56 @@
 .order-page {
   display: flex;
-  max-width: 1200px;
-  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Đảm bảo chiếm toàn bộ chiều cao viewport */
   padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Container cho nội dung chính */
+.content-container {
+  display: flex;
+  max-width: 1200px;
+  width: 100%;
   gap: 20px;
+}
+
+/* Container cho thông báo lỗi */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 15px;
+  padding: 40px;
+}
+
+.error-container h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.error-container p {
+  font-size: 16px;
+  color: #555;
+  margin: 0;
+}
+
+.error-container .back-btn {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.error-container .back-btn:hover {
+  background-color: #2980b9;
 }
 
 /* Bên trái: Thông tin đơn hàng */
@@ -36,7 +83,7 @@
 
 .restaurant-image1111 {
   width: 100%;
-  height: 150px; /* Tăng chiều cao để ảnh lớn hơn */
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
 }
@@ -55,12 +102,12 @@
 }
 
 .selected-items-table .item-name {
-  width: 55%; /* Increased from 40% to reduce empty space on the right */
+  width: 55%;
 }
 
 .selected-items-table .item-actions {
   text-align: right;
-  width: 45%; /* Reduced from 60% to fit content more snugly */
+  width: 45%;
 }
 
 .selected-items-table .price-quantity-remove {
@@ -80,7 +127,7 @@
 }
 
 .selected-items-table .quantity-input {
-  width: 60px; /* Unchanged */
+  width: 60px;
   padding: 5px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -88,7 +135,7 @@
 }
 
 .selected-items-table .remove-btn111 {
-  padding: 5px 10px; /* Unchanged */
+  padding: 5px 10px;
   background-color: #e74c3c;
   color: white;
   border: none;
@@ -108,8 +155,8 @@
 
 .total-price .price {
   color: #e74c3c;
-  font-size: 24px; /* Tăng kích cỡ chữ */
-  font-weight: bold; /* In đậm */
+  font-size: 24px;
+  font-weight: bold;
 }
 
 /* Bên phải: Form thanh toán */

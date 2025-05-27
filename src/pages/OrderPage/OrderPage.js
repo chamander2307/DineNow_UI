@@ -56,11 +56,13 @@ const OrderPage = () => {
   if (!location.state) {
     return (
       <div className="order-page">
-        <h2>Không tìm thấy thông tin đơn hàng</h2>
-        <p>Vui lòng quay lại giỏ hàng để đặt bàn.</p>
-        <button onClick={() => navigate('/')} className="back-btn">
-          Quay lại trang chủ
-        </button>
+        <div className="error-container">
+          <h2>Không tìm thấy thông tin đơn hàng</h2>
+          <p>Vui lòng quay lại giỏ hàng để đặt bàn.</p>
+          <button onClick={() => navigate('/')} className="back-btn">
+            Quay lại trang chủ
+          </button>
+        </div>
       </div>
     );
   }
@@ -140,113 +142,115 @@ const OrderPage = () => {
 
   return (
     <div className="order-page">
-      <div className="order-left">
-        <h2>Thông tin đơn hàng</h2>
-        <div className="restaurant-info">
-          <img
-            src={restaurant.image}
-            alt={restaurant.name}
-            className="restaurant-image1111"
-            onError={(e) => { e.target.src = restaurant1; }}
-          />
-          <h3>{restaurant.name}</h3>
-        </div>
-        <h3>Các món đã chọn</h3>
-        {selectedItems.length > 0 ? (
-          <table className="selected-items-table">
-            <tbody>
-              {selectedItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="item-name">{item.name}</td>
-                  <td className="item-actions">
-                    <div className="price-quantity-remove">
-                      <span className="price">{((parseFloat(item.price) || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                        min="1"
-                        className="quantity-input"
-                      />
-                      <button
-                        className="remove-btn111"
-                        onClick={() => handleRemoveItem(item.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Chưa có món ăn nào được chọn.</p>
-        )}
-        <div className="total-price">
-          <h3>Tổng tiền: <span className="price">{totalPrice.toLocaleString('vi-VN')} VNĐ</span></h3>
-        </div>
-      </div>
-
-      <div className="order-right">
-        {error && <div className="alert alert-danger">{error}</div>}
-        <form onSubmit={handlePayment} className="order-form">
-          <div className="booking-info">
-            <h3>Thông tin đặt chỗ</h3>
-            <div className="form-group">
-              <label>Số người lớn: <span className="required">*</span></label>
-              <input
-                type="number"
-                value={numberOfAdults}
-                onChange={(e) => setNumberOfAdults(e.target.value)}
-                min="0"
-                required={!(parseInt(numberOfChildren) > 0)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Số trẻ em: <span className="required">*</span></label>
-              <input
-                type="number"
-                value={numberOfChildren}
-                onChange={(e) => setNumberOfChildren(e.target.value)}
-                min="0"
-                required={!(parseInt(numberOfAdults) > 0)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Ngày đến: <span className="required">*</span></label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Giờ đến: <span className="required">*</span></label>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                required
-                step="900"
-              />
-            </div>
+      <div className="content-container">
+        <div className="order-left">
+          <h2>Thông tin đơn hàng</h2>
+          <div className="restaurant-info">
+            <img
+              src={restaurant.image}
+              alt={restaurant.name}
+              className="restaurant-image1111"
+              onError={(e) => { e.target.src = restaurant1; }}
+            />
+            <h3>{restaurant.name}</h3>
           </div>
-
-          <div className="payment-info">
-            <h3>Thanh toán</h3>
-            <p>Tổng tiền: <span className="price">{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
-            <div className="payment-method">
-              <label>Hình thức thanh toán: VNPay</label>
-            </div>
+          <h3>Các món đã chọn</h3>
+          {selectedItems.length > 0 ? (
+            <table className="selected-items-table">
+              <tbody>
+                {selectedItems.map((item) => (
+                  <tr key={item.id}>
+                    <td className="item-name">{item.name}</td>
+                    <td className="item-actions">
+                      <div className="price-quantity-remove">
+                        <span className="price">{((parseFloat(item.price) || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                          min="1"
+                          className="quantity-input"
+                        />
+                        <button
+                          className="remove-btn111"
+                          onClick={() => handleRemoveItem(item.id)}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Chưa có món ăn nào được chọn.</p>
+          )}
+          <div className="total-price">
+            <h3>Tổng tiền: <span className="price">{totalPrice.toLocaleString('vi-VN')} VNĐ</span></h3>
           </div>
+        </div>
 
-          <button type="submit" className="payment-btn" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Đặt bàn'}
-          </button>
-        </form>
+        <div className="order-right">
+          {error && <div className="alert alert-danger">{error}</div>}
+          <form onSubmit={handlePayment} className="order-form">
+            <div className="booking-info">
+              <h3>Thông tin đặt chỗ</h3>
+              <div className="form-group">
+                <label>Số người lớn: <span className="required">*</span></label>
+                <input
+                  type="number"
+                  value={numberOfAdults}
+                  onChange={(e) => setNumberOfAdults(e.target.value)}
+                  min="0"
+                  required={!(parseInt(numberOfChildren) > 0)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Số trẻ em: <span className="required">*</span></label>
+                <input
+                  type="number"
+                  value={numberOfChildren}
+                  onChange={(e) => setNumberOfChildren(e.target.value)}
+                  min="0"
+                  required={!(parseInt(numberOfAdults) > 0)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Ngày đến: <span className="required">*</span></label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Giờ đến: <span className="required">*</span></label>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  required
+                  step="900"
+                />
+              </div>
+            </div>
+
+            <div className="payment-info">
+              <h3>Thanh toán</h3>
+              <p>Tổng tiền: <span className="price">{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
+              <div className="payment-method">
+                <label>Hình thức thanh toán: VNPay</label>
+              </div>
+            </div>
+
+            <button type="submit" className="payment-btn" disabled={loading}>
+              {loading ? 'Đang xử lý...' : 'Đặt bàn'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -150,14 +150,16 @@ const PaymentPage = () => {
             <li key={item.id} className="selected-item">
               <div className="item-details">
                 <span className="item-name">{item.name}</span>
-                <span className="item-quantity">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
+                <span className="item-quantity111">{item.quantity} x {item.price.toLocaleString('vi-VN')} VNĐ</span>
                 <span className="item-total">{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </li>
           ))}
         </ul>
         <div className="total-price">
-          <h3>Tổng tiền: {totalPrice.toLocaleString('vi-VN')} VNĐ</h3>
+          <h3>
+            Tổng tiền: <span style={{ color: '#e74c3c' }}>{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
+          </h3>
         </div>
         <div className="booking-info">
           <h3>Thông tin đặt chỗ</h3>
@@ -168,7 +170,7 @@ const PaymentPage = () => {
         </div>
         <div className="payment-info">
           <h3>Thanh toán</h3>
-          <p>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></p>
+          <p><strong>Tổng tiền: <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span></strong></p>
           <div className="payment-method">
             <label>Hình thức thanh toán: VNPAY</label>
           </div>
