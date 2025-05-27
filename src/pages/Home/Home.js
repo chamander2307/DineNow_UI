@@ -127,7 +127,7 @@ const Home = () => {
                     name={restaurant.name}
                     averageRating={restaurant.averageRating}
                     address={restaurant.address}
-                    visits={restaurant.visits || 0}
+                    reservationCount={restaurant.reservationCount || 0}
                   />
                 </div>
               ))}

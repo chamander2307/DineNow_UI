@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
 import { getUserProfile } from "../services/userService";
-import { refreshToken } from "../utils/authRefresh";
 
 export const UserContext = createContext();
 
@@ -21,31 +20,19 @@ export const UserProvider = ({ children }) => {
       try {
         console.log("Fetching user profile...");
         const profile = await getUserProfile();
+        console.log("Profile fetched:", profile);
         setUser(profile);
         setIsLogin(true);
       } catch (err) {
-        console.error("Error fetching profile:", err.message);
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          console.log("Token may be expired, attempting to refresh...");
-          try {
-            await refreshToken();
-            const profile = await getUserProfile();
-            setUser(profile);
-            setIsLogin(true);
-          } catch (refreshErr) {
-            console.error("Refresh token failed:", refreshErr.message);
-            localStorage.removeItem("accessToken");
-            setUser(null);
-            setIsLogin(false);
-            window.location.href = "/login";
-          }
-        } else {
-          console.error("Non-auth error, logging out:", err.message);
-          localStorage.removeItem("accessToken");
-          setUser(null);
-          setIsLogin(false);
-          window.location.href = "/login";
-        }
+        console.error("Error fetching profile:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+        });
+        localStorage.removeItem("accessToken");
+        setUser(null);
+        setIsLogin(false);
+        window.location.href = "/login";
       } finally {
         setLoading(false);
       }

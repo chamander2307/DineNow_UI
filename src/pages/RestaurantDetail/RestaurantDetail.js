@@ -19,18 +19,20 @@ import { UserContext } from '../../contexts/UserContext';
 
 // Hàm render sao đánh giá
 const renderStars = (rating) => {
-  const effectiveRating = Math.min(rating || 0, 5);
+  const effectiveRating = rating && !isNaN(rating) ? Math.min(rating, 5) : 0;
   const full = Math.floor(effectiveRating);
-  const half = effectiveRating % 1 !== 0;
+  const half = effectiveRating % 1 >= 0.5;
   const empty = 5 - full - (half ? 1 : 0);
+
   const stars = [];
   for (let i = 0; i < full; i++) stars.push(<FaStar key={`full-${i}`} />);
   if (half) stars.push(<FaStarHalfAlt key="half" />);
   for (let i = 0; i < empty; i++) stars.push(<FaRegStar key={`empty-${i}`} />);
+
   return (
     <div className="dish-star-rating">
       {stars}
-      <span className="dish-rating-number">({effectiveRating.toFixed(1)})</span>
+      {effectiveRating > 0 ? <span className="dish-rating-number">({effectiveRating.toFixed(1)})</span> : null}
     </div>
   );
 };
@@ -70,6 +72,9 @@ const DishItem = ({
       />
       <div className="dish-details">
         <h3>{dish.name}</h3>
+        <p className="dish-description">
+          {dish.description || "Món ăn này chưa có mô tả."}
+        </p>
         {renderStars(dish.averageRating)}
         <p className="price">
           {new Intl.NumberFormat("vi-VN", {
@@ -111,7 +116,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
   const handleBack = useCallback((e) => {
     e.preventDefault();
     onBack();
-    navigate(`/restaurant/${id}`, { state: {} }); // Xóa state
+    navigate(`/restaurant/${id}`, { state: {} });
   }, [onBack, navigate, id]);
 
   return (
@@ -134,7 +139,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
           <div className="dish-meta">
             <div className="dish-rating">
               {renderStars(dish.averageRating)}
-              <span className="rating-number">({dish.averageRating || 0})</span>
+              {dish.averageRating > 0 ? <span className="rating-number">({dish.averageRating})</span> : null}
             </div>
           </div>
           <p className="dish-price">
@@ -213,16 +218,14 @@ const RestaurantDetail = () => {
           fetchSimpleMenuByRestaurant(id),
         ]);
         setRestaurant(restaurantData);
-        // Xử lý cấu trúc API trả về
         const menuItemsArray = Array.isArray(menuData?.data?.content)
           ? menuData.data.content
           : Array.isArray(menuData?.data)
-          ? menuData.data
-          : [];
+            ? menuData.data
+            : [];
         setMenuItems(menuItemsArray);
 
         if (state?.selectedDishId) {
-          // Ép kiểu selectedDishId thành số
           const dishId = parseInt(state.selectedDishId, 10);
           const selectedDish = menuItemsArray.find(
             (item) => item.id === dishId
@@ -347,7 +350,6 @@ const RestaurantDetail = () => {
     });
   }, [cart, menuItems, navigate, restaurant]);
 
-  // Cấu hình slider
   const getRestaurantSliderSettings = (imageCount) => ({
     dots: imageCount > 1,
     arrows: false,
@@ -484,9 +486,12 @@ const RestaurantDetail = () => {
           <div className="rd-meta">
             <div className="rd-rating">
               {renderStars(restaurant.averageRating)}
-              <span className="rd-rating-number">
-                ({restaurant.averageRating || 0})
-              </span>
+              {restaurant.averageRating > 0 ? (
+                <span className="rd-rating-number">
+                  ({restaurant.averageRating})
+                </span>
+              ) : null}
+
             </div>
             <div className="rd-visits">
               {(restaurant.visits || 0).toLocaleString()} lượt xem

@@ -22,32 +22,38 @@ const processQueue = (error, token = null) => {
 };
 
 const isTokenExpired = (token) => {
-  if (!token) return true;
+  if (!token) {
+    console.log("No token provided");
+    return true;
+  }
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.exp < Math.floor(Date.now() / 1000);
-  } catch {
+    console.log("Token payload:", payload);
+    const currentTime = Math.floor(Date.now() / 1000);
+    const isExpired = payload.exp < currentTime;
+    console.log(`Token expiration check: exp=${payload.exp}, currentTime=${currentTime}, isExpired=${isExpired}`);
+    return isExpired;
+  } catch (e) {
+    console.error("Error decoding token:", e.message);
     return true;
   }
 };
 
 instance.interceptors.request.use(async (config) => {
   const token = localStorage.getItem("accessToken");
+  console.log(`Request to ${config.url}, has token: ${!!token}`);
 
-  // Nếu không có token (chưa đăng nhập), gửi yêu cầu mà không thêm Authorization
   if (!token) {
     console.log(`No token found for request: ${config.url}`);
     return config;
   }
 
-  // Nếu token còn hợp lệ, thêm Authorization header
   if (!isTokenExpired(token)) {
     console.log(`Using valid token for request: ${config.url}`);
     config.headers["Authorization"] = `Bearer ${token}`;
     return config;
   }
 
-  // Nếu token hết hạn và không đang làm mới, gọi refreshToken
   if (!isRefreshing) {
     isRefreshing = true;
     console.log(`Token expired, refreshing for request: ${config.url}`);
@@ -68,14 +74,14 @@ instance.interceptors.request.use(async (config) => {
       localStorage.removeItem("accessToken");
       setTimeout(() => {
         window.location.href = "/login";
-      }, 100); // Đợi xử lý hàng đợi trước khi chuyển hướng
+      }, 100);
       throw error;
     } finally {
       isRefreshing = false;
+      console.log("Token refresh completed, isRefreshing:", isRefreshing);
     }
   }
 
-  // Nếu đang làm mới, xếp hàng yêu cầu
   console.log(`Queueing request while refreshing: ${config.url}`);
   return new Promise((resolve, reject) => {
     failedQueue.push({
@@ -92,15 +98,17 @@ instance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log(`Response error: ${error.response?.status} for ${originalRequest.url}`);
+    console.log(`Response error for ${originalRequest.url}:`, {
+      status: error.response?.status,
+      data: error.response?.data,
+      retry: originalRequest._retry,
+    });
 
-    // Xử lý lỗi 401 hoặc 403, nhưng chỉ thử làm mới một lần
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
       if (!isRefreshing) {
         isRefreshing = true;
         console.log("Retrying with refreshed token...");
@@ -125,10 +133,10 @@ instance.interceptors.response.use(
           return Promise.reject(e);
         } finally {
           isRefreshing = false;
+          console.log("Token refresh completed, isRefreshing:", isRefreshing);
         }
       }
 
-      // Đang làm mới, xếp hàng yêu cầu
       console.log(`Queueing retry request: ${originalRequest.url}`);
       return new Promise((resolve, reject) => {
         failedQueue.push({

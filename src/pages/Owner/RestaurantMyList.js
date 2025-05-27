@@ -14,7 +14,7 @@ const RestaurantMyList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null); // Thay đổi từ selectedRestaurant
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,28 +35,28 @@ const RestaurantMyList = () => {
   };
 
   const openCreateModal = () => {
-    setSelectedRestaurant(null);
+    setSelectedRestaurantId(null);
     setShowFormModal(true);
   };
 
   const openEditModal = (restaurant) => {
-    setSelectedRestaurant(restaurant);
+    setSelectedRestaurantId(restaurant.id); // Truyền ID thay vì object
     setShowFormModal(true);
   };
 
   const openDetailModal = (restaurant) => {
-    setSelectedRestaurant(restaurant);
+    setSelectedRestaurantId(restaurant.id); // Truyền ID
     setShowDetailModal(true);
   };
 
   const closeFormModal = () => {
     setShowFormModal(false);
-    setSelectedRestaurant(null);
+    setSelectedRestaurantId(null);
   };
 
   const closeDetailModal = () => {
     setShowDetailModal(false);
-    setSelectedRestaurant(null);
+    setSelectedRestaurantId(null);
   };
 
   return (
@@ -122,17 +122,17 @@ const RestaurantMyList = () => {
         <RestaurantFormModal
           isOpen={showFormModal}
           onClose={closeFormModal}
-          restaurant={selectedRestaurant}
+          restaurantId={selectedRestaurantId} // Truyền restaurantId
           onRefresh={loadRestaurants}
-          restaurants={restaurants} // Truyền danh sách nhà hàng
+          restaurants={restaurants}
         />
       )}
 
-      {showDetailModal && selectedRestaurant && (
+      {showDetailModal && selectedRestaurantId && (
         <RestaurantDetailModal
           isOpen={showDetailModal}
           onClose={closeDetailModal}
-          restaurantId={selectedRestaurant.id}
+          restaurantId={selectedRestaurantId}
         />
       )}
     </OwnerLayout>

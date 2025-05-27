@@ -7,10 +7,11 @@ export const refreshToken = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({}), // Thêm body rỗng để đảm bảo tương thích
     });
 
     const data = await res.json();
-    console.log("Refresh token response:", res.status, data);
+    console.log("Refresh token response:", { status: res.status, data });
 
     if (!res.ok) {
       throw new Error(data.message || "Không thể làm mới token");
@@ -22,6 +23,7 @@ export const refreshToken = async () => {
     }
 
     localStorage.setItem("accessToken", newAccessToken);
+    console.log("New access token stored:", newAccessToken);
     return { accessToken: newAccessToken };
   } catch (err) {
     console.error("Refresh token error:", err.message);

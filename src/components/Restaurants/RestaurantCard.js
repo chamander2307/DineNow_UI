@@ -26,7 +26,7 @@ const formatNumber = (num) => {
   return num.toString();
 };
 
-const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits }) => {
+const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, reservationCount }) => {
   const { isLogin = false } = useContext(UserContext);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -86,7 +86,7 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, visits
         <h3 className="rc-name">{name}</h3>
         <div className="rc-meta">
           {renderStars(averageRating)}
-          <span className="rc-visit-count">{formatNumber(visits || 0)} Lượt đặt</span>
+          <span className="rc-visit-count">{formatNumber(reservationCount || 0)} Lượt đặt</span>
         </div>
         {address && <p className="rc-address">{address}</p>}
         <Link to={`/restaurant/${id}`}>

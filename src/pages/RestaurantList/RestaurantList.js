@@ -80,6 +80,7 @@ const RestaurantList = () => {
                     <RestaurantCard
                       {...item}
                       thumbnailUrl={item.thumbnailUrl || "https://via.placeholder.com/330x200"}
+                      visits={item.reservationCount || 0}
                     />
                   </div>
                 );

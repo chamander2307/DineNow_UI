@@ -9,11 +9,12 @@ import {
   updateRestaurant,
   fetchRestaurantTypes,
   fetchRestaurantTiers,
+  fetchRestaurantById,
 } from "../../services/restaurantService";
-import "../../assets/styles/owner/ModalForm.css"; 
+import "../../assets/styles/owner/ModalForm.css";
 Modal.setAppElement("#root");
 
-const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restaurants }) => {
+const RestaurantFormModal = ({ isOpen, onClose, restaurantId, onRefresh, restaurants }) => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -33,6 +34,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [changedFields, setChangedFields] = useState(new Set()); // Theo dõi các trường đã thay đổi
 
   useEffect(() => {
     const loadData = async () => {
@@ -53,57 +55,70 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
   }, [isOpen]);
 
   useEffect(() => {
-    if (restaurant) {
-      console.log("Cập nhật form cho nhà hàng:", restaurant.id);
-      const addressParts = restaurant.address?.split(", ") || [];
-      setFormData({
-        name: restaurant.name || "",
-        phone: restaurant.phone || "",
-        description: restaurant.description || "",
-        typeId: restaurant.type?.id || null,
-        restaurantTierId: restaurant.restaurantTierId || null,
-        addressDetail: addressParts[0] || "",
-        images: restaurant.imageUrls || [],
-      });
-
-      const autoFillAddress = async () => {
+    if (isOpen && restaurantId) {
+      console.log("Tải thông tin nhà hàng với ID:", restaurantId);
+      const loadRestaurantDetails = async () => {
         try {
-          const provinceName = addressParts[addressParts.length - 1] || "";
-          const districtName = addressParts[addressParts.length - 2] || "";
-          const wardName = addressParts[addressParts.length - 3] || "";
+          const restaurant = await fetchRestaurantById(restaurantId);
+          console.log("Dữ liệu nhà hàng từ API:", restaurant); // Thêm log để kiểm tra dữ liệu
+          
+          const addressParts = restaurant.address?.split(", ") || [];
+          const initialFormData = {
+            name: restaurant.name || "",
+            phone: restaurant.phone || "",
+            description: restaurant.description || "",
+            typeId: restaurant.type?.id || null,
+            restaurantTierId: restaurant.restaurantTierId || null,
+            addressDetail: addressParts[0] || "",
+            images: Array.isArray(restaurant.imageUrls) ? restaurant.imageUrls : [],
+          };
+          setFormData(initialFormData);
+          setImageFiles([]); // Reset imageFiles
+          setChangedFields(new Set()); // Reset các trường đã thay đổi
 
-          const provinceRes = await fetch("https://provinces.open-api.vn/api/p/");
-          const provincesData = await provinceRes.json();
-          const matchedProvince = provincesData.find((p) => p.name === provinceName);
-          if (matchedProvince) {
-            setSelectedProvince({ value: matchedProvince.code, label: matchedProvince.name });
+          const autoFillAddress = async () => {
+            try {
+              const provinceName = addressParts[addressParts.length - 1] || "";
+              const districtName = addressParts[addressParts.length - 2] || "";
+              const wardName = addressParts[addressParts.length - 3] || "";
 
-            const districtRes = await fetch(`https://provinces.open-api.vn/api/p/${matchedProvince.code}?depth=2`);
-            const districtData = await districtRes.json();
-            const matchedDistrict = districtData.districts.find((d) => d.name === districtName);
-            if (matchedDistrict) {
-              setSelectedDistrict({ value: matchedDistrict.code, label: matchedDistrict.name });
+              const provinceRes = await fetch("https://provinces.open-api.vn/api/p/");
+              const provincesData = await provinceRes.json();
+              const matchedProvince = provincesData.find((p) => p.name === provinceName);
+              if (matchedProvince) {
+                setSelectedProvince({ value: matchedProvince.code, label: matchedProvince.name });
 
-              const wardRes = await fetch(`https://provinces.open-api.vn/api/d/${matchedDistrict.code}?depth=2`);
-              const wardData = await wardRes.json();
-              const matchedWard = wardData.wards.find((w) => w.name === wardName);
-              if (matchedWard) {
-                setSelectedWard({ value: matchedWard.code, label: matchedWard.name });
+                const districtRes = await fetch(`https://provinces.open-api.vn/api/p/${matchedProvince.code}?depth=2`);
+                const districtData = await districtRes.json();
+                const matchedDistrict = districtData.districts.find((d) => d.name === districtName);
+                if (matchedDistrict) {
+                  setSelectedDistrict({ value: matchedDistrict.code, label: matchedDistrict.name });
+
+                  const wardRes = await fetch(`https://provinces.open-api.vn/api/d/${matchedDistrict.code}?depth=2`);
+                  const wardData = await wardRes.json();
+                  const matchedWard = wardData.wards.find((w) => w.name === wardName);
+                  if (matchedWard) {
+                    setSelectedWard({ value: matchedWard.code, label: matchedWard.name });
+                  }
+                  setWards(wardData.wards.map((w) => ({ value: w.code, label: w.name })));
+                }
+                setDistricts(districtData.districts.map((d) => ({ value: d.code, label: d.name })));
               }
-              setWards(wardData.wards.map((w) => ({ value: w.code, label: w.name })));
+            } catch (err) {
+              toast.error(`Không thể điền địa chỉ: ${err.message || "Lỗi không xác định"}`);
             }
-            setDistricts(districtData.districts.map((d) => ({ value: d.code, label: d.name })));
-          }
+          };
+          autoFillAddress();
         } catch (err) {
-          toast.error(`Không thể điền địa chỉ: ${err.message || "Lỗi không xác định"}`);
+          toast.error(`Không thể tải chi tiết nhà hàng: ${err.message || "Lỗi không xác định"}`);
         }
       };
-      autoFillAddress();
-    } else {
+      loadRestaurantDetails();
+    } else if (isOpen && !restaurantId) {
       console.log("Reset form cho nhà hàng mới");
       resetForm();
     }
-  }, [restaurant]);
+  }, [isOpen, restaurantId]);
 
   const resetForm = () => {
     setFormData({
@@ -121,6 +136,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
     setSelectedWard(null);
     setDistricts([]);
     setWards([]);
+    setChangedFields(new Set());
   };
 
   const handleClose = () => {
@@ -185,95 +201,151 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setChangedFields((prev) => new Set(prev).add(name)); // Đánh dấu trường đã thay đổi
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImageFiles(files);
+    setChangedFields((prev) => new Set(prev).add("images")); // Đánh dấu images đã thay đổi
     console.log("Ảnh đã chọn:", files.map((f) => f.name));
   };
 
   const handleSelectChange = (selected, fieldName) => {
     setFormData((prev) => ({ ...prev, [fieldName]: selected ? selected.value : null }));
+    setChangedFields((prev) => new Set(prev).add(fieldName)); // Đánh dấu trường đã thay đổi
+  };
+
+  const handleProvinceChange = (selected) => {
+    setSelectedProvince(selected);
+    setSelectedDistrict(null);
+    setSelectedWard(null);
+    loadDistricts(selected.value);
+    setChangedFields((prev) => new Set(prev).add("address")); // Đánh dấu địa chỉ thay đổi
+  };
+
+  const handleDistrictChange = (selected) => {
+    setSelectedDistrict(selected);
+    setSelectedWard(null);
+    loadWards(selected.value);
+    setChangedFields((prev) => new Set(prev).add("address")); // Đánh dấu địa chỉ thay đổi
+  };
+
+  const handleWardChange = (selected) => {
+    setSelectedWard(selected);
+    setChangedFields((prev) => new Set(prev).add("address")); // Đánh dấu địa chỉ thay đổi
+  };
+
+  const handleDescriptionChange = (event, editor) => {
+    const data = editor.getData();
+    setFormData((prev) => ({ ...prev, description: data }));
+    setChangedFields((prev) => new Set(prev).add("description")); // Đánh dấu description đã thay đổi
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form submit, ngăn GET mặc định");
 
-    const missingFields = [];
-    if (!formData.name) missingFields.push("Tên nhà hàng");
-    if (!formData.phone) missingFields.push("Số điện thoại");
-    if (!formData.typeId) missingFields.push("Loại nhà hàng");
-    if (!formData.restaurantTierId && !restaurant?.id) missingFields.push("Cấp độ nhà hàng");
-    if (!selectedProvince) missingFields.push("Tỉnh");
-    if (!formData.description) missingFields.push("Mô tả nhà hàng");
-    if (imageFiles.length === 0 && !restaurant?.id) missingFields.push("Ảnh nhà hàng");
+    // Chỉ kiểm tra các trường bắt buộc khi tạo mới
+    if (!restaurantId) {
+      const missingFields = [];
+      if (!formData.name) missingFields.push("Tên nhà hàng");
+      if (!formData.phone) missingFields.push("Số điện thoại");
+      if (!formData.typeId) missingFields.push("Loại nhà hàng");
+      if (!formData.restaurantTierId) missingFields.push("Cấp độ nhà hàng");
+      if (!selectedProvince) missingFields.push("Tỉnh");
+      if (!formData.description) missingFields.push("Mô tả nhà hàng");
+      if (imageFiles.length === 0) missingFields.push("Ảnh nhà hàng");
 
-    if (missingFields.length > 0) {
-      console.log("Thiếu thông tin:", missingFields.join(", "));
-      toast.error(`Vui lòng điền đầy đủ: ${missingFields.join(", ")}.`);
-      return;
+      if (missingFields.length > 0) {
+        console.log("Thiếu thông tin:", missingFields.join(", "));
+        toast.error(`Vui lòng điền đầy đủ: ${missingFields.join(", ")}.`);
+        return;
+      }
     }
 
-    const phoneRegex = /^0[0-9]{9}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      console.log("Số điện thoại không hợp lệ:", formData.phone);
-      toast.error("Số điện thoại không hợp lệ (0xxxxxxxxx).");
-      return;
+    // Kiểm tra định dạng số điện thoại nếu đã thay đổi hoặc khi tạo mới
+    if (changedFields.has("phone") || !restaurantId) {
+      const phoneRegex = /^0[0-9]{9}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        console.log("Số điện thoại không hợp lệ:", formData.phone);
+        toast.error("Số điện thoại không hợp lệ (0xxxxxxxxx).");
+        return;
+      }
     }
 
-    // Normalize and check for duplicate names
-    console.log("Kiểm tra tên nhà hàng trùng:", formData.name);
-    console.log("Danh sách nhà hàng:", restaurants);
-    const normalizedInputName = formData.name.trim().replace(/\s+/g, ' ').toLowerCase();
-    const isDuplicate = restaurants.some((r) => {
-      const normalizedExistingName = r.name?.trim().replace(/\s+/g, ' ').toLowerCase();
-      return normalizedExistingName === normalizedInputName && r.id !== restaurant?.id;
-    });
+    // Kiểm tra tên nhà hàng trùng nếu đã thay đổi hoặc khi tạo mới
+    if (changedFields.has("name") || !restaurantId) {
+      console.log("Kiểm tra tên nhà hàng trùng:", formData.name);
+      const normalizedInputName = formData.name.trim().replace(/\s+/g, ' ').toLowerCase();
+      const isDuplicate = restaurants.some((r) => {
+        const normalizedExistingName = r.name?.trim().replace(/\s+/g, ' ').toLowerCase();
+        return normalizedExistingName === normalizedInputName && r.id !== restaurantId;
+      });
 
-    if (isDuplicate) {
-      console.log("Tên nhà hàng trùng:", formData.name);
-      alert("Tên nhà hàng đã tồn tại. Vui lòng chọn tên khác.");
-      return;
+      if (isDuplicate) {
+        console.log("Tên nhà hàng trùng:", formData.name);
+        alert("Tên nhà hàng đã tồn tại. Vui lòng chọn tên khác.");
+        return;
+      }
     }
 
-    const fullAddress = [
-      formData.addressDetail,
-      selectedWard?.label,
-      selectedDistrict?.label,
-      selectedProvince?.label,
-    ].filter(Boolean).join(", ");
+    // Xây dựng địa chỉ đầy đủ nếu có thay đổi địa chỉ
+    let fullAddress = null;
+    if (changedFields.has("address") || changedFields.has("addressDetail") || !restaurantId) {
+      fullAddress = [
+        formData.addressDetail,
+        selectedWard?.label,
+        selectedDistrict?.label,
+        selectedProvince?.label,
+      ].filter(Boolean).join(", ");
 
-    if (!fullAddress) {
-      console.log("Thiếu thông tin địa chỉ đầy đủ");
-      toast.error("Vui lòng nhập địa chỉ đầy đủ.");
-      return;
+      if (!fullAddress) {
+        console.log("Thiếu thông tin địa chỉ đầy đủ");
+        toast.error("Vui lòng nhập địa chỉ đầy đủ.");
+        return;
+      }
     }
 
     const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("phone", formData.phone);
-    payload.append("address", fullAddress);
-    payload.append("description", formData.description);
-    payload.append("typeId", formData.typeId.toString());
-    if (!restaurant?.id) {
-      payload.append("restaurantTierId", formData.restaurantTierId.toString());
-    }
-    imageFiles.forEach((image, index) => {
-      if (image instanceof File) {
-        payload.append("images", image);
-        console.log(`Thêm ảnh ${index + 1}: ${image.name}`);
+    // Khi chỉnh sửa, chỉ gửi các trường đã thay đổi
+    if (restaurantId) {
+      if (changedFields.has("name")) payload.append("name", formData.name);
+      if (changedFields.has("phone")) payload.append("phone", formData.phone);
+      if (changedFields.has("address") || changedFields.has("addressDetail")) payload.append("address", fullAddress);
+      if (changedFields.has("description")) payload.append("description", formData.description);
+      if (changedFields.has("typeId")) payload.append("typeId", formData.typeId.toString());
+      if (changedFields.has("images")) {
+        imageFiles.forEach((image, index) => {
+          if (image instanceof File) {
+            payload.append("images", image);
+            console.log(`Thêm ảnh ${index + 1}: ${image.name}`);
+          }
+        });
       }
-    });
+    } else {
+      // Khi tạo mới, gửi tất cả các trường
+      payload.append("name", formData.name);
+      payload.append("phone", formData.phone);
+      payload.append("address", fullAddress);
+      payload.append("description", formData.description);
+      payload.append("typeId", formData.typeId.toString());
+      payload.append("restaurantTierId", formData.restaurantTierId.toString());
+      imageFiles.forEach((image, index) => {
+        if (image instanceof File) {
+          payload.append("images", image);
+          console.log(`Thêm ảnh ${index + 1}: ${image.name}`);
+        }
+      });
+    }
 
     console.log("Payload:", [...payload.entries()]);
 
     try {
       setLoading(true);
-      if (restaurant?.id) {
-        console.log(`Gửi PUT /api/owner/restaurants/${restaurant.id}`);
-        await updateRestaurant(restaurant.id, payload);
+      if (restaurantId) {
+        console.log(`Gửi PUT /api/owner/restaurants/${restaurantId}`);
+        await updateRestaurant(restaurantId, payload);
         toast.success("Cập nhật nhà hàng thành công!");
       } else {
         console.log("Gửi POST /api/owner/restaurants");
@@ -303,7 +375,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
       overlayClassName="ReactModal__Overlay"
     >
       <div className="modal-header">
-        <h2>{restaurant ? "Sửa nhà hàng" : "Thêm nhà hàng"}</h2>
+        <h2>{restaurantId ? "Sửa nhà hàng" : "Thêm nhà hàng"}</h2>
         <button className="close-btn" onClick={handleClose}>×</button>
       </div>
       <form onSubmit={handleSubmit} method="POST" className="modal-content">
@@ -351,8 +423,8 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
             value={restaurantTiers.find((tier) => tier.value === formData.restaurantTierId) || null}
             options={restaurantTiers}
             onChange={(selected) => handleSelectChange(selected, "restaurantTierId")}
-            required={!restaurant?.id}
-            isDisabled={restaurant?.id}
+            required={!restaurantId}
+            isDisabled={restaurantId}
           />
         </div>
 
@@ -364,12 +436,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
               placeholder="Chọn tỉnh"
               value={selectedProvince}
               options={provinces}
-              onChange={(selected) => {
-                setSelectedProvince(selected);
-                setSelectedDistrict(null);
-                setSelectedWard(null);
-                loadDistricts(selected.value);
-              }}
+              onChange={handleProvinceChange}
               required
             />
             <Select
@@ -377,11 +444,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
               placeholder="Chọn huyện"
               value={selectedDistrict}
               options={districts}
-              onChange={(selected) => {
-                setSelectedDistrict(selected);
-                setSelectedWard(null);
-                loadWards(selected.value);
-              }}
+              onChange={handleDistrictChange}
               isDisabled={!selectedProvince}
             />
             <Select
@@ -389,7 +452,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
               placeholder="Chọn xã"
               value={selectedWard}
               options={wards}
-              onChange={(selected) => setSelectedWard(selected)}
+              onChange={handleWardChange}
               isDisabled={!selectedDistrict}
             />
             <input
@@ -405,10 +468,15 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
         <div className="form-group full-width">
           <label>Hình ảnh hiện tại</label>
           <div className="image-preview">
-            {formData.images.length > 0 ? (
+            {formData.images && formData.images.length > 0 ? (
               formData.images.map((url, index) => (
                 <div key={index} className="image-wrapper">
-                  <img src={url} alt={`Hình ảnh ${index + 1}`} className="image-preview-img" />
+                  <img
+                    src={url}
+                    alt={`Hình ảnh ${index + 1}`}
+                    className="image-preview-img"
+                    onError={(e) => { e.target.src = "/fallback.jpg"; }}
+                  />
                 </div>
               ))
             ) : (
@@ -421,7 +489,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
             multiple
             onChange={handleImageChange}
             className="file-input"
-            required={!restaurant?.id && imageFiles.length === 0}
+            required={!restaurantId && formData.images.length === 0}
           />
         </div>
 
@@ -433,7 +501,7 @@ const RestaurantFormModal = ({ isOpen, onClose, restaurant, onRefresh, restauran
             config={{
               toolbar: ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "|", "undo", "redo"],
             }}
-            onChange={(event, editor) => setFormData({ ...formData, description: editor.getData() })}
+            onChange={handleDescriptionChange}
           />
         </div>
 

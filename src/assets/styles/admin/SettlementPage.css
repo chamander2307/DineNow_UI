@@ -7,8 +7,8 @@
 
 .settlement-page {
   font-family: 'Inter', sans-serif;
-  background-color: #f5f7fa;
-  color: #eae4e4;
+  background-color: #F9FAFB; /* Lighter, cleaner background */
+  color: #111827; /* Darker text for better contrast */
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
@@ -19,7 +19,7 @@
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #1a1a1a;
+  color: #111827; /* Consistent dark text */
 }
 
 /* Bộ lọc */
@@ -34,30 +34,31 @@
   padding: 10px;
   font-size: 14px;
   border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
+  border: 1px solid #D1D5DB; /* Subtle border */
+  background-color: #FFFFFF;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .settlement-page .filters select {
   min-width: 120px;
+  color: #111827; /* Dark text for readability */
 }
 
 .settlement-page .filters button {
-  background-color: #2563eb;
-  color: #fff;
+  background-color: #3B82F6; /* Unified primary blue */
+  color: #FFFFFF;
   border: none;
   padding: 10px 20px;
 }
 
 .settlement-page .filters button:hover {
-  background-color: #1d4ed8;
+  background-color: #2563EB; /* Slightly darker blue for hover */
 }
 
 /* Thông báo lỗi */
 .settlement-page .error {
-  color: #ef4444;
+  color: #EF4444; /* Retained error red */
   font-size: 14px;
   margin-bottom: 16px;
   text-align: center;
@@ -67,10 +68,10 @@
 .settlement-page table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #fff;
+  background-color: #FFFFFF;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
   margin-top: 20px;
 }
 
@@ -82,13 +83,14 @@
 }
 
 .settlement-page th {
-  background-color: #f1f5f9;
+  background-color: #E5E7EB; /* Subtle gray header */
   font-weight: 600;
-  color: #1a1a1a;
+  color: #111827; /* Dark text for contrast */
 }
 
 .settlement-page td {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #E5E7EB;
+  color: #111827; /* Consistent text color */
 }
 
 .settlement-page tr:last-child td {
@@ -96,7 +98,7 @@
 }
 
 .settlement-page tr:hover {
-  background-color: #f9fafb;
+  background-color: #F3F4F6; /* Lighter hover for subtle feedback */
 }
 
 /* Nút Quyết toán */
@@ -104,15 +106,40 @@
   padding: 8px 16px;
   font-size: 13px;
   border-radius: 6px;
-  background-color: #10b981;
-  color: #fff;
+  background-color: #10B981; /* Retained green for settlement action */
+  color: #FFFFFF;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .settlement-page td button:hover {
-  background-color: #059669;
+  background-color: #059669; /* Slightly darker green for hover */
+}
+
+/* View Toggle */
+.settlement-page .view-toggle {
+  margin-bottom: 20px;
+}
+
+.settlement-page .view-toggle button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #D1D5DB; /* Neutral gray for inactive */
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settlement-page .view-toggle button.active {
+  background-color: #3B82F6; /* Primary blue for active state */
+  color: #FFFFFF;
+}
+
+.settlement-page .view-toggle button:hover {
+  background-color: #9CA3AF; /* Darker gray for hover on inactive */
 }
 
 /* Modal */
@@ -121,10 +148,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
+  background-color: #FFFFFF;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
   width: 100%;
   max-width: 500px;
   z-index: 1000;
@@ -137,7 +164,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4); /* Slightly lighter overlay */
   z-index: -1;
 }
 
@@ -145,24 +172,25 @@
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #1a1a1a;
+  color: #111827; /* Dark text */
 }
 
 .settlement-page .modal p {
   font-size: 14px;
   margin-bottom: 12px;
-  color: #4b5563;
+  color: #6B7280; /* Secondary text color */
 }
 
 .settlement-page .modal textarea {
   width: 100%;
   padding: 10px;
   font-size: 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #D1D5DB;
   border-radius: 6px;
   resize: vertical;
   min-height: 80px;
   margin-bottom: 16px;
+  color: #111827; /* Dark text for input */
 }
 
 .settlement-page .modal button {
@@ -175,75 +203,29 @@
 }
 
 .settlement-page .modal button:first-of-type {
-  background-color: #ef4444;
+  background-color: #EF4444; /* Error red for cancel */
   margin-right: 10px;
 }
 
 .settlement-page .modal button:first-of-type:hover {
-  background-color: #dc2626;
+  background-color: #DC2626; /* Darker red for hover */
 }
 
 .settlement-page .modal button:last-of-type {
-  background-color: #2563eb;
+  background-color: #3B82F6; /* Primary blue for confirm */
 }
 
 .settlement-page .modal button:last-of-type:hover {
-  background-color: #1d4ed8;
+  background-color: #2563EB; /* Darker blue for hover */
 }
 
 /* Thông báo không có dữ liệu */
-.settlement-page td[colSpan="4"] {
+.settlement-page td[colSpan="4"],
+.settlement-page td[colSpan="6"] {
   text-align: center;
   padding: 20px;
-  color: #6b7280;
+  color: #6B7280; /* Secondary text color */
   font-style: italic;
 }
-.view-toggle {
-  margin-bottom: 20px;
-}
-.view-toggle button {
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: none;
-  cursor: pointer;
-}
-.view-toggle button.active {
-  background-color: #007bff;
-  color: white;
-}
-.view-toggle {
-  margin-bottom: 20px;
-}
-.view-toggle button {
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: none;
-  cursor: pointer;
-}
-.view-toggle button.active {
-  background-color: #007bff;
-  color: white;
-}
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  margin: 50px auto;
-}
-.modal h2 {
-  margin-top: 0;
-}
-.modal p {
-  margin: 10px 0;
-}
-.modal button {
-  padding: 10px 20px;
-  margin: 10px 5px;
-  cursor: pointer;
-}
-.error {
-  color: red;
-  margin: 10px 0;
-}
+
+/* Remove duplicate .modal and .error definitions */
