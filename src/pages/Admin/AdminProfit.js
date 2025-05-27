@@ -148,7 +148,7 @@ const ProfitManager = () => {
           )}
         </div>
 
-        {currentProfits && currentProfits.totalProfit !== undefined && (
+        {currentProfits && typeof currentProfits.totalProfit === 'number' && (
           <div className="profit-section">
             <h3>
               {viewType === "monthly" ? "Lợi nhuận theo tháng" : viewType === "total" ? "Tổng lợi nhuận từ khi tham gia" : "Lợi nhuận theo khoảng thời gian"}
@@ -159,6 +159,7 @@ const ProfitManager = () => {
                 <tr>
                   <th>Tên nhà hàng</th>
                   <th>Tổng khách</th>
+                  <th>Giá tiền</th>
                   <th>Tổng đơn hàng</th>
                   <th>Lợi nhuận</th>
                 </tr>
@@ -168,6 +169,7 @@ const ProfitManager = () => {
                   <tr key={item.restaurantName}>
                     <td>{item.restaurantName}</td>
                     <td>{item.totalGuests}</td>
+                    <td>{(item.feePerGuest || 0).toLocaleString()} VND</td>
                     <td>{item.totalOrders}</td>
                     <td>{(viewType === "monthly" ? item.profit : item.totalProfit || 0).toLocaleString()} VND</td>
                   </tr>

@@ -13,38 +13,65 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    const phoneRegex = /^0\d{9}$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
-    if (!phoneRegex.test(phone)) {
-      setError("Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0.");
-      return;
-    }
-
-    if (!passwordRegex.test(password)) {
-      setError("Mật khẩu phải dài ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Mật khẩu nhập lại không khớp.");
-      return;
-    }
-
-    try {
-      await register({ fullName, email, password, phone });
-      alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
-      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
-    } catch (err) {
-      console.error("Lỗi đăng ký:", err);
-      const message = err?.response?.data?.message || "Đăng ký thất bại.";
-      setError(message);
+  const getErrorMessage = (status, email, phone) => {
+    switch (status) {
+      case 400: // BAD_REQUEST
+        return "Yêu cầu không hợp lệ. Vui lòng kiểm tra thông tin nhập vào.";
+      case 406: // EXIST_EMAIL
+        return `Email ${email} đã được sử dụng.`;
+      case 407: // EXIST_PHONE
+        return `Số điện thoại ${phone} đã được sử dụng.`;
+      case 410: // INVALID_INPUT
+        return "Dữ liệu đầu vào không hợp lệ.";
+      case 415: // EMAIL_ERROR
+        return "Lỗi khi gửi email xác thực. Vui lòng thử lại sau.";
+      case 416: // ALREADY_EXISTS
+        return "Tài khoản đã tồn tại.";
+      case 500: // INTERNAL_SERVER_ERROR or RUNTIME_EXCEPTION
+        return "Lỗi máy chủ. Vui lòng thử lại sau.";
+      default:
+        return "Đăng ký thất bại. Vui lòng thử lại.";
     }
   };
+
+  const handleRegister = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  const phoneRegex = /^0\d{9}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+  if (!phoneRegex.test(phone)) {
+    setError("Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0.");
+    return;
+  }
+
+  if (!passwordRegex.test(password)) {
+    setError("Mật khẩu phải dài ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    setError("Mật khẩu nhập lại không khớp.");
+    return;
+  }
+
+  try {
+    const res = await register({ fullName, email, password, phone });
+    const { status, message } = res;
+
+    if (status === 201) {
+      alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+    } else {
+      setError(getErrorMessage(status, email, phone) || message);
+    }
+  } catch (err) {
+    console.error("Lỗi đăng ký:", err);
+    setError("Đăng ký thất bại. Vui lòng thử lại.");
+  }
+};
+
 
   return (
     <div className="auth auth--split">

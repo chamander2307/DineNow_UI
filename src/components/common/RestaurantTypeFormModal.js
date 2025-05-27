@@ -36,52 +36,45 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplica
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (!formData.name) {
-        setMessage("Vui lòng nhập tên loại nhà hàng");
-        return;
-      }
-      if (!initialData && checkDuplicateName(formData.name)) {
-        setMessage("Tên loại nhà hàng đã tồn tại");
-        return;
-      }
-      if (!initialData && !formData.image) {
-        setMessage("Vui lòng chọn ảnh đại diện");
-        return;
-      }
-
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("description", formData.description);
-      if (formData.image) {
-        data.append("imageUrl", formData.image);
-      } else if (initialData && !formData.image) {
-        data.append("imageUrl", initialData.imageUrl);
-      }
-
-      let res;
-      if (initialData) {
-        res = await updateRestaurantType(initialData.id, data);
-        if (res?.status === 200) {
-          onSuccess("Cập nhật thành công");
-        } else {
-          setMessage(res?.data?.message || "Cập nhật thất bại");
-        }
-      } else {
-        res = await createRestaurantType(data);
-        if (res?.status === 201) {
-          onSuccess("Tạo mới thành công");
-        } else {
-          setMessage(res?.data?.message || "Tạo mới thất bại");
-        }
-      }
-    } catch (err) {
-      console.error("Lỗi khi gửi form:", err);
-      setMessage(err.response?.data?.message || "Thao tác thất bại");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    if (!formData.name) {
+      setMessage("Vui lòng nhập tên loại nhà hàng");
+      return;
     }
-  };
+    if (!initialData && checkDuplicateName(formData.name)) {
+      setMessage("Tên loại nhà hàng đã tồn tại");
+      return;
+    }
+    if (!initialData && !formData.image) {
+      setMessage("Vui lòng chọn ảnh đại diện");
+      return;
+    }
+
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("description", formData.description);
+    if (formData.image) {
+      data.append("imageUrl", formData.image);
+    } else if (initialData && !formData.image) 
+    // {
+    //   data.append("imageUrl", initialData.imageUrl);
+    // }
+
+    if (initialData) {
+      await updateRestaurantType(initialData.id, data);
+      onSuccess("Cập nhật thành công");
+    } else {
+      await createRestaurantType(data);
+      onSuccess("Tạo mới thành công");
+    }
+
+  } catch (err) {
+    console.error("Lỗi khi gửi form:", err);
+    setMessage(err.response?.data?.message || "Thao tác thất bại");
+  }
+};
 
   const removeImage = () => {
     setFormData((prev) => ({ ...prev, image: null }));

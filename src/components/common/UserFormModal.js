@@ -16,19 +16,25 @@ const UserFormModal = ({ onClose, onSuccess }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Mật khẩu xác nhận không khớp");
-      return;
+  e.preventDefault();
+  if (formData.password !== formData.confirmPassword) {
+    setMessage("Mật khẩu xác nhận không khớp");
+    return;
+  }
+  try {
+    const payload = { ...formData };
+    delete payload.confirmPassword;
+    const result = await onSuccess(payload);
+    if (!result.success) {
+      setMessage(result.message); 
+    } else {
+      setMessage(""); 
     }
-    try {
-      const payload = { ...formData };
-      delete payload.confirmPassword;
-      await onSuccess(payload);
-    } catch {
-      setMessage("Tạo tài khoản thất bại");
-    }
-  };
+  } catch {
+    setMessage("Tạo tài khoản thất bại");
+  }
+};
+
 
   return (
     <div className="modal-overlay">

@@ -8,7 +8,19 @@
     align-items: center;
     z-index: 1000;
   }
-  
+  .error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
   .modal {
     background: white;
     padding: 24px;

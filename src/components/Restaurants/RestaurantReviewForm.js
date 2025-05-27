@@ -14,18 +14,16 @@ const RestaurantReviewForm = ({ restaurantId }) => {
   const { user } = useContext(UserContext);
   const currentUser = user?.fullName || user?.email || 'Người dùng';
 
-  // Lấy danh sách đánh giá và kiểm tra đơn hàng
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Lấy danh sách đánh giá
         const reviewResponse = await fetchRestaurantReviews(restaurantId);
-        console.log('Dữ liệu từ fetchRestaurantReviews:', reviewResponse); // Debug chi tiết
+        console.log('Dữ liệu từ fetchRestaurantReviews:', reviewResponse);
         let reviewData;
         if (Array.isArray(reviewResponse)) {
-          reviewData = reviewResponse; // Trường hợp cũ: mảng trực tiếp
+          reviewData = reviewResponse;
         } else {
-          reviewData = reviewResponse?.data?.data || []; // Trường hợp mới: object với data
+          reviewData = reviewResponse?.data?.data || [];
         }
         const processedReviews = reviewData.map(review => ({
           author: review.reviewerName || 'Ẩn danh',
@@ -52,33 +50,37 @@ const RestaurantReviewForm = ({ restaurantId }) => {
 
   // Gửi đánh giá mới
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (rating === 0 || comment.trim() === '') {
-      alert('Vui lòng chọn số sao và nhập bình luận!');
-      return;
-    }
+  e.preventDefault();
+  if (rating === 0 || comment.trim() === '') {
+    alert('Vui lòng chọn số sao và nhập bình luận!');
+    return;
+  }
 
-    const reviewData = { rating, comment };
-    try {
-      const newReview = await addRestaurantReview(restaurantId, reviewData);
-      if (newReview?.data) {
-        const processedReview = {
-          author: newReview.data.reviewerName || currentUser,
-          date: newReview.data.reviewDate || new Date().toISOString(),
-          comment: newReview.data.comment || comment,
-          rating: newReview.data.rating || rating,
-        };
-        setReviews([processedReview, ...reviews]);
-        setRating(0);
-        setComment('');
-      } else {
-        alert('Không thể gửi đánh giá. Vui lòng thử lại.');
-      }
-    } catch (error) {
-      console.error('Lỗi khi gửi đánh giá:', error);
-      alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+  const reviewData = { rating, comment };
+  try {
+    const res = await addRestaurantReview(restaurantId, reviewData);
+    const { status, message, data } = res;
+
+    if (status === 201) {
+      const processedReview = {
+        author: data.reviewerName || currentUser,
+        date: data.reviewDate || new Date().toISOString(),
+        comment: data.comment || comment,
+        rating: data.rating || rating,
+      };
+      setReviews([processedReview, ...reviews]);
+      setRating(0);
+      setComment('');
+      alert(message || 'Đánh giá thành công!');
+    } else {
+      alert(message || 'Không thể gửi đánh giá. Vui lòng thử lại.');
     }
-  };
+  } catch (error) {
+    console.error('Lỗi khi gửi đánh giá:', error);
+    alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+  }
+};
+
 
   return (
     <div className="rest-review-form-container">
