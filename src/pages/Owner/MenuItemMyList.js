@@ -111,7 +111,7 @@ const MenuItemMyList = () => {
             }}
             disabled={loading || !restaurants.length}
           >
-            <option value="" disabled>
+            <option value="" disabled>  
               Chọn nhà hàng
             </option>
             {restaurants.map((r) => (

@@ -494,7 +494,7 @@ const RestaurantDetail = () => {
 
             </div>
             <div className="rd-visits">
-              {(restaurant.visits || 0).toLocaleString()} lượt xem
+              {(restaurant.reservationCount || 0).toLocaleString()} lượt đến
             </div>
           </div>
           <div className="rd-tags">

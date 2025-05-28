@@ -34,35 +34,6 @@ const FilterBar = () => {
     }
   };
 
-  const loadDistricts = async (provinceName) => {
-    try {
-      const province = provinces.find((p) => p.value === provinceName);
-      if (!province || !province.code) {
-        console.log("Không tìm thấy tỉnh:", provinceName);
-        setDistricts([]);
-        setError("Không tìm thấy tỉnh này.");
-        return;
-      }
-      console.log("Province code:", province.code);
-      const res = await fetch(
-        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`
-      );
-      if (!res.ok) throw new Error("API không phản hồi");
-      const data = await res.json();
-      const districts = data.districts?.map((d) => ({
-        value: d.name,
-        label: d.name,
-      })) || [];
-      console.log("Districts found:", districts);
-      setDistricts(districts);
-      setDistrict("");
-    } catch (err) {
-      console.error("Lỗi khi tải danh sách huyện:", err);
-      setError("Không thể tải danh sách huyện.");
-      setDistricts([]);
-    }
-  };
-
   const loadMainCategories = async () => {
     try {
       const data = await fetchMainCategories();
@@ -83,14 +54,6 @@ const FilterBar = () => {
     loadMainCategories();
   }, []);
 
-  useEffect(() => {
-    if (city) {
-      loadDistricts(city);
-    } else {
-      setDistricts([]);
-      setDistrict("");
-    }
-  }, [city]);
 
   const handleFilter = async () => {
     setLoading(true);
@@ -149,21 +112,6 @@ const FilterBar = () => {
           </option>
         ))}
       </select>
-
-      <select
-        className="filter-select"
-        value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-        disabled={!city}
-      >
-        <option value="">Chọn Quận/Huyện</option>
-        {districts.map((district) => (
-          <option key={district.value} value={district.value}>
-            {district.label}
-          </option>
-        ))}
-      </select>
-
       <select
         className="filter-select"
         value={category}

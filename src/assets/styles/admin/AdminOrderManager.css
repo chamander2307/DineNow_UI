@@ -1,101 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 .admin-order-manager {
-    padding: 24px;
-    background-color: #fff;
-    border-radius: 8px;
-  }
-  
-  .admin-order-manager h2 {
-    font-size: 24px;
-    margin-bottom: 16px;
-  }
-  
-  .filter-section {
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .filter-section label {
-    font-weight: 500;
-  }
-  
-  .filter-section select {
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-  }
-  
-  .admin-table th,
-  .admin-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
+  padding: 20px;
+  background-color: #fffaf7;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-order-manager h2 {
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: #3c2f2f;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-section label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #3c2f2f;
+}
+
+.filter-section select {
+  padding: 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.filter-section select:focus {
+  outline: none;
+  border-color: #f4a261;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #f0e6e2;
+  padding: 12px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
 .admin-table th {
   background-color: #f2f2f2;
   color: #3c2f2f;
-  font-weight: 600;
+  font-weight: 500;
+  text-transform: uppercase;
 }
-  
-  .admin-table button {
-    padding: 4px 10px;
-    border: none;
-    background-color: #4caf50;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .admin-table button:hover {
-    background-color: #388e3c;
-  }
-  
-  .message {
-    color: red;
-    margin-bottom: 12px;
-  }
-  
-  /* Chi tiết đơn hàng popup */
-  .order-detail-popup {
-    margin-top: 24px;
-    border: 1px solid #ccc;
-    padding: 16px;
-    background-color: #fafafa;
-    border-radius: 8px;
-  }
-  
-  .order-detail-popup h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-  }
-  
-  .order-detail-popup p {
-    margin: 4px 0;
-  }
-  
-  .order-detail-popup ul {
-    margin: 0 0 8px 20px;
-    padding: 0;
-  }
-  
-  .order-detail-popup button {
-    padding: 6px 12px;
-    border: none;
-    background-color: #777;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .order-detail-popup button:hover {
-    background-color: #555;
-  }
-  
+
+.admin-table tr:hover {
+  background-color: #fef5f1;
+}
+
+.admin-table button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #f4a261;
+  color: #fffaf7;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.admin-table button:hover {
+  background-color: #e76f51;
+}
+
+.message {
+  color: #e63946;
+  background: #ffe6e6;
+  border: 1px solid #e63946;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.order-detail-popup {
+  margin-top: 16px;
+  border: 1px solid #f0e6e2;
+  padding: 20px;
+  background-color: #fffaf7;
+  border-radius: 6px;
+}
+
+.order-detail-popup h3 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3c2f2f;
+}
+
+.order-detail-popup p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+}
+
+.order-detail-popup ul {
+  margin: 0 0 8px 20px;
+  padding: 0;
+  font-size: 0.95rem;
+}
+
+.order-detail-popup button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #6b5b5b;
+  color: #fffaf7;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.order-detail-popup button:hover {
+  background-color: #555;
+}

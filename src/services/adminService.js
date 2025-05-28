@@ -43,7 +43,8 @@ export const createRestaurantType = async (formData) => {
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tạo loại nhà hàng:", error);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Lỗi khi tạo loại nhà hàng";
+    throw new Error(errorMessage);
   }
 };
 
