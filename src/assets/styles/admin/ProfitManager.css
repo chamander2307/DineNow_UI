@@ -1,28 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 .profit-manager {
-  max-width: 900px;
-  margin: 1.5rem auto;
-  padding: 20px;
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 24px;
   background: #fffaf7;
   border: 1px solid #f0e6e2;
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: 'Inter', sans-serif;
 }
 
 .profit-manager h2 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: #3c2f2f;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
 }
 
 .profit-manager .message {
-  padding: 8px 12px;
-  margin-bottom: 16px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -38,68 +38,81 @@
   border: 1px solid #e63946;
 }
 
-.view-selector {
+.profit-manager .view-selector {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: auto 1fr;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.view-selector label {
-  font-size: 0.95rem;
+.profit-manager .view-selector label {
+  font-size: 1rem;
   color: #3c2f2f;
   font-weight: 500;
 }
 
-.view-selector select {
-  padding: 12px;
-  font-size: 0.95rem;
+.profit-manager .view-selector select {
+  padding: 14px;
+  font-size: 1rem;
   border: 1px solid #f0e6e2;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: #3c2f2f;
   cursor: pointer;
 }
 
-.view-selector select:focus {
+.profit-manager .view-selector select:focus {
   outline: none;
   border-color: #f4a261;
 }
 
-.time-inputs {
+.profit-manager .view-selector select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+.profit-manager .time-inputs {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
   align-items: center;
 }
 
-.time-inputs .month-picker-wrapper {
+.profit-manager .time-inputs .month-picker-wrapper {
   position: relative;
   width: 100%;
-  max-width: 150px;
+  max-width: 160px;
 }
 
-.time-inputs .month-picker-input {
-  padding: 12px;
+.profit-manager .time-inputs .month-picker-input {
+  padding: 14px;
   border: 1px solid #f0e6e2;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-size: 1rem;
   color: #3c2f2f;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b5b5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>') no-repeat right 8px center;
-  background-size: 16px;
-  background-color: #fff;
+  background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%236b5b5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>') no-repeat right 10px center;
+  background-size: 18px;
   width: 100%;
-  max-width: 150px;
+  max-width: 160px;
 }
 
-.time-inputs .month-picker-input:focus {
+.profit-manager .time-inputs .month-picker-input:focus {
   outline: none;
   border-color: #f4a261;
 }
 
-.time-inputs .month-picker-backdrop {
+.profit-manager .time-inputs .month-picker-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+.profit-manager .time-inputs .month-picker-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -109,197 +122,315 @@
   z-index: 999;
 }
 
-.time-inputs .month-picker-modal {
+.profit-manager .time-inputs .month-picker-modal {
   position: absolute;
-  top: calc(100% + 5px);
+  top: calc(100% + 6px);
   left: 0;
   z-index: 1000;
   background-color: #fffaf7;
   border: 1px solid #f0e6e2;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 12px;
-  width: 280px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  width: 300px;
 }
 
-.time-inputs .month-picker-header {
+.profit-manager .time-inputs .month-picker-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
-.time-inputs .year-nav-btn {
+.profit-manager .time-inputs .year-nav-btn {
   background: none;
   border: none;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #3c2f2f;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 6px 10px;
 }
 
-.time-inputs .year-nav-btn:hover {
+.profit-manager .time-inputs .year-nav-btn:hover {
   color: #f4a261;
 }
 
-.time-inputs .year-display {
-  font-size: 0.95rem;
+.profit-manager .time-inputs .year-display {
+  font-size: 1rem;
   font-weight: 500;
   color: #3c2f2f;
 }
 
-.time-inputs .month-picker-grid {
+.profit-manager .time-inputs .month-picker-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
-.time-inputs .month-btn {
-  padding: 8px;
+.profit-manager .time-inputs .month-btn {
+  padding: 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #fef5f1;
   color: #3c2f2f;
-  font-size: 0.95rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
-.time-inputs .month-btn:hover {
+.profit-manager .time-inputs .month-btn:hover {
   background-color: #f4a261;
   color: #fffaf7;
 }
 
-.time-inputs .month-btn.selected {
+.profit-manager .time-inputs .month-btn.selected {
   background-color: #f4a261;
   color: #fffaf7;
 }
 
-.time-inputs .month-picker-footer {
+.profit-manager .time-inputs .month-picker-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
-.time-inputs .select-btn {
-  padding: 8px 16px;
+.profit-manager .time-inputs .select-btn {
+  padding: 10px 18px;
   border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   background-color: #f4a261;
   color: #fffaf7;
 }
 
-.time-inputs .select-btn:hover {
+.profit-manager .time-inputs .select-btn:hover {
   background-color: #e76f51;
 }
 
-.time-inputs button {
-  padding: 8px 16px;
-  font-size: 0.95rem;
+.profit-manager .time-inputs button {
+  padding: 10px 18px;
+  font-size: 1rem;
   color: #fffaf7;
   background: #f4a261;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.time-inputs button:hover {
+.profit-manager .time-inputs button:hover {
   background: #e76f51;
 }
 
-.time-inputs p {
-  font-size: 0.95rem;
+.profit-manager .time-inputs button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+.profit-manager .time-inputs > p {
+  font-size: 1rem;
   color: #3c2f2f;
   margin: 0;
   font-weight: 500;
 }
 
-.profit-section {
-  margin-top: 16px;
+.profit-manager .profit-section {
+  margin-top: 20px;
 }
 
-.profit-section h3 {
-  font-size: 1.3rem;
+.profit-manager .profit-section h3 {
+  font-size: 1.4rem;
   color: #3c2f2f;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   font-weight: 500;
 }
 
-.profit-section p {
-  font-size: 0.95rem;
+.profit-manager .profit-section > p:not(.message) {
+  font-size: 1rem;
   color: #3c2f2f;
   font-weight: 500;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.admin-table {
+.profit-manager .admin-table {
   width: 100%;
   border-collapse: collapse;
   background: #fffaf7;
   border: 1px solid #f0e6e2;
-  border-radius: 6px;
+  border-radius: 8px;
+  overflow-x: auto;
+  display: block;
 }
 
-.admin-table th,
-.admin-table td {
-  padding: 12px;
+.profit-manager .admin-table th,
+.profit-manager .admin-table td {
+  padding: 14px;
   text-align: left;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
-.admin-table th {
+.profit-manager .admin-table th {
   background-color: #f2f2f2;
   color: #3c2f2f;
   font-weight: 500;
 }
 
-.admin-table td {
+.profit-manager .admin-table td {
   border-bottom: 1px solid #f0e6e2;
   color: #3c2f2f;
 }
 
-.admin-table tr:nth-child(even) {
+.profit-manager .admin-table tr:nth-child(even) {
   background: #fef5f1;
 }
 
-.admin-table tr:hover {
+.profit-manager .admin-table tr:hover {
   background: #f0f0f0;
+}
+
+.profit-manager .chart-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 8px;
+  overflow-x: auto;
+  min-height: 900px;
+  text-align: center;
+  display: block;
+}
+
+.profit-manager .chart-section h3 {
+  font-size: 1.4rem;
+  color: #3c2f2f;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.profit-manager .chart-section .recharts-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-height: 850px;
+  margin: 0 auto;
+  display: block;
+  box-sizing: border-box;
+}
+
+.profit-manager .chart-section .recharts-surface {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.profit-manager .chart-section .recharts-pie-label {
+  font-size: 1rem;
+  fill: #3c2f2f;
+  font-weight: 500;
+}
+
+.profit-manager .chart-section .recharts-legend-item {
+  font-size: 1.1rem;
+  color: #3c2f2f;
+  margin-bottom: 12px;
+}
+
+.profit-manager .chart-section .recharts-tooltip-wrapper .recharts-tooltip {
+  font-size: 1.1rem;
+}
+
+.profit-manager .chart-section .recharts-text.recharts-cartesian-axis-tick {
+  font-size: 1rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 200px;
+}
+
+.profit-manager .chart-section .recharts-line {
+  stroke-width: 2.5;
+}
+
+.profit-manager .filter-input {
+  padding: 8px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.profit-manager .sort-select {
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.profit-manager .pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.profit-manager .pagination-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #f4a261;
+  color: #fffaf7;
+  border: none;
+  cursor: pointer;
+}
+
+.profit-manager .pagination-button:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.profit-manager .pagination-span {
+  align-self: center;
 }
 
 @media (max-width: 768px) {
   .profit-manager {
-    padding: 12px;
-    margin: 12px;
+    max-width: 100%;
+    padding: 16px;
+    margin: 16px;
   }
-  .view-selector {
+  .profit-manager .view-selector {
+    -ms-grid-columns: 1fr;
     grid-template-columns: 1fr;
   }
-  .time-inputs {
+  .profit-manager .time-inputs {
     flex-direction: column;
     align-items: stretch;
   }
-  .time-inputs .month-picker-wrapper {
+  .profit-manager .time-inputs .month-picker-wrapper {
     max-width: 100%;
   }
-  .time-inputs .month-picker-modal {
+  .profit-manager .time-inputs .month-picker-modal {
     width: 100%;
-    max-width: 280px;
+    max-width: 300px;
   }
-  .admin-table th,
-  .admin-table td {
-    font-size: 0.85rem;
-    padding: 8px;
+  .profit-manager .admin-table th,
+  .profit-manager .admin-table td {
+    font-size: 0.9rem;
+    padding: 10px;
   }
-}
-
-.profit-manager p:not(.message) {
-  text-align: center;
-  color: #3c2f2f;
-  font-size: 0.95rem;
-  margin-top: 16px;
-  font-weight: 500;
+  .profit-manager .chart-section {
+    min-height: 600px;
+    padding: 16px;
+  }
+  .profit-manager .chart-section .recharts-wrapper {
+    min-height: 550px;
+  }
+  .profit-manager .chart-section .recharts-pie-label,
+  .profit-manager .chart-section .recharts-legend-item,
+  .profit-manager .chart-section .recharts-tooltip-wrapper .recharts-tooltip,
+  .profit-manager .chart-section .recharts-text.recharts-cartesian-axis-tick {
+    font-size: 0.9rem;
+  }
 }

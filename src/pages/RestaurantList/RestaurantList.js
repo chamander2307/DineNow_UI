@@ -4,6 +4,7 @@ import RestaurantCard from "../../components/Restaurants/RestaurantCard";
 import FilterBar from "../../components/basicComponents/FilterBar";
 import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
 import "../../assets/styles/Restaurant/RestaurantList.css";
+import BookingGuide from "../../components/basicComponents/BookingGuide";
 import {
   fetchAllRestaurants,
   searchRestaurants,
@@ -107,6 +108,7 @@ const RestaurantList = () => {
           </button>
         </div>
       </div>
+      <BookingGuide />
     </div>
   );
 };

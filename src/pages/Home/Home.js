@@ -9,6 +9,8 @@ import RestaurantCard from "../../components/Restaurants/RestaurantCard";
 import RelatedArticles from "../../components/RelatedArticles";
 import { fetchListOfFeaturedRestaurants } from "../../services/restaurantService";
 import { fetchFeaturedMenuItems } from "../../services/menuItemService";
+import BookingGuide from "../../components/basicComponents/BookingGuide";
+
 
 const Home = () => {
   const [featuredRestaurants, setFeaturedRestaurants] = useState([]);
@@ -140,6 +142,7 @@ const Home = () => {
       </section>
 
       <section className="home-section">
+        <BookingGuide />
         <RelatedArticles />
       </section>
     </div>

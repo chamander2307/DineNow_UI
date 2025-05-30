@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { filterMenuItems } from "../../services/menuItemService";
-import { fetchMainCategories } from "../../services/menuItemService";
+import { filterMenuItems, fetchMainCategories} from "../../services/menuItemService";
+import { fetchRestaurantTypes } from "../../services/restaurantService";
 import "../../assets/styles/home/FilterBar.css";
 
 const FilterBar = () => {
@@ -12,7 +12,7 @@ const FilterBar = () => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [restaurantType, setRestaurantType] = useState("");
+  const [restaurantTypes, setRestaurantTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -49,11 +49,26 @@ const FilterBar = () => {
     }
   };
 
+  const loadRestaurantTypes = async () => {
+    try {
+      const data = await fetchRestaurantTypes();
+      setRestaurantTypes(
+        data.map((type) => ({
+          value: type.id,
+          label: type.name,
+        }))
+      );
+    } catch (error) {
+      console.error("Lỗi khi tải loại nhà hàng:", error);
+      setError("Không thể tải loại nhà hàng.");
+    }
+  };
+
   useEffect(() => {
     loadProvinces();
     loadMainCategories();
+    loadRestaurantTypes();
   }, []);
-
 
   const handleFilter = async () => {
     setLoading(true);
@@ -64,7 +79,7 @@ const FilterBar = () => {
       if (city) filterData.city = city;
       if (district) filterData.district = district;
       if (category) filterData.mainCategoryId = category;
-      if (restaurantType) filterData.restaurantTypeId = restaurantType;
+      if (restaurantTypes) filterData.restaurantTypeId = restaurantTypes;
       if (price) {
         const [minPrice, maxPrice] = price.split("-").map(Number);
         filterData.minPrice = minPrice || 0;
@@ -76,7 +91,7 @@ const FilterBar = () => {
       if (city) queryParams.append("city", city);
       if (district) queryParams.append("district", district);
       if (category) queryParams.append("mainCategoryId", category);
-      if (restaurantType) queryParams.append("restaurantTypeId", restaurantType);
+      if (restaurantTypes) queryParams.append("restaurantTypeId", restaurantTypes);
       if (price) {
         const [minPrice, maxPrice] = price.split("-").map(Number);
         queryParams.append("minPrice", minPrice || 0);
@@ -124,18 +139,18 @@ const FilterBar = () => {
           </option>
         ))}
       </select>
-
       <select
         className="filter-select"
-        value={restaurantType}
-        onChange={(e) => setRestaurantType(e.target.value)}
+        value={restaurantTypes}
+        onChange={(e) => setRestaurantTypes(e.target.value)}
       >
         <option value="">Loại nhà hàng</option>
-        <option value="1">Fine Dining</option>
-        <option value="2">Casual Dining</option>
-        <option value="3">Fast Food</option>
+        {restaurantTypes.map((type) => (
+          <option key={type.value} value={type.value}>
+            {type.label}
+          </option>
+        ))}
       </select>
-
       <select
         className="filter-select"
         value={price}
@@ -146,7 +161,6 @@ const FilterBar = () => {
         <option value="100000-200000">100k - 200k</option>
         <option value="200000-500000">200k - 500k</option>
       </select>
-
       <button
         className="filter-button"
         onClick={handleFilter}
