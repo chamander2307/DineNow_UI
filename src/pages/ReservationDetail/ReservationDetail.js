@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import '../../assets/styles/Restaurant/ReservationDetail.css';
 import { getCustomerOrders, cancelOrder } from '../../services/orderService';
-import { createPaymentUrl } from '../../services/paymentService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
 // Hàm định dạng ngày và giờ
@@ -28,15 +27,10 @@ const formatTime = (timeString) => {
 const ReservationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
   const [reservation, setReservation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cancelLoading, setCancelLoading] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState(queryParams.get('paymentStatus') || null);
-  const [latestPayment, setLatestPayment] = useState(null);
 
   const fetchReservationDetail = async () => {
     setLoading(true);
@@ -70,11 +64,11 @@ const ReservationDetail = () => {
           thumbnail: order.restaurants?.thumbnailUrl ? order.restaurants.thumbnailUrl : restaurant1,
           name: order.restaurants?.name || 'Nhà hàng không xác định',
           address: order.restaurants?.address || 'Chưa có địa chỉ',
+          id: order.restaurants?.id || 1,
         },
         date: order.reservationSimpleResponse?.reservationTime,
         time: order.reservationSimpleResponse?.reservationTime,
         guests: (order.reservationSimpleResponse?.numberOfPeople || 0) + (order.reservationSimpleResponse?.numberOfChild || 0),
-        payments: order.payments || [], // Quay lại sử dụng payments từ getCustomerOrders
         numberOfAdults: order.reservationSimpleResponse?.numberOfPeople || 0,
         numberOfChildren: order.reservationSimpleResponse?.numberOfChild || 0,
         note: order.note || '',
@@ -92,36 +86,6 @@ const ReservationDetail = () => {
   useEffect(() => {
     fetchReservationDetail();
   }, [id]);
-
-  useEffect(() => {
-    console.log('Payment Status from URL:', paymentStatus);
-    if (paymentStatus) {
-      if (paymentStatus === 'SUCCESS') {
-        alert('Thanh toán thành công! Cảm ơn bạn đã đặt bàn.');
-        setLatestPayment({
-          method: 'VNPAY',
-          amount: reservation?.totalAmount || 0,
-          status: 'SUCCESS',
-          transaction_id: queryParams.get('transaction_id') || null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-        fetchReservationDetail();
-      } else if (paymentStatus === 'FAILED') {
-        alert('Thanh toán thất bại. Vui lòng thử lại.');
-        setLatestPayment({
-          method: 'VNPAY',
-          amount: reservation?.totalAmount || 0,
-          status: 'FAILED',
-          transaction_id: queryParams.get('transaction_id') || null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-        fetchReservationDetail();
-      }
-      setPaymentStatus(null);
-    }
-  }, [paymentStatus, reservation?.totalAmount]);
 
   const handleCancelOrder = async () => {
     if (window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
@@ -157,24 +121,14 @@ const ReservationDetail = () => {
           image: reservation.restaurant.thumbnail || restaurant1,
         },
       };
-      navigate('/order', { state: { isRebook: true, ...rebookData } });
+      navigate(`/re-order/${id}`, { state: { isRebook: true, ...rebookData } });
     }
   };
 
-  const handlePayment = async () => {
-    setPaymentLoading(true);
-    setError('');
-
-    try {
-      const paymentUrl = await createPaymentUrl(id);
-      console.log('Payment URL:', paymentUrl);
-      window.location.href = paymentUrl;
-    } catch (err) {
-      setError('Lỗi khi tạo liên kết thanh toán: ' + err.message);
-      console.error('Lỗi khi tạo thanh toán:', err);
-    } finally {
-      setPaymentLoading(false);
-    }
+  const handleReview = (dishId) => {
+    navigate(`/restaurant/${reservation.restaurant.id}`, {
+      state: { selectedDishId: dishId },
+    });
   };
 
   if (loading) {
@@ -190,7 +144,7 @@ const ReservationDetail = () => {
       <div className="reservation-detail-container">
         <h2>Lỗi</h2>
         <p>{error}</p>
-        <Link to="/reservation-history" className="back-btn">
+        <Link to="/reservation-history" className="back-btn111">
           Quay lại
         </Link>
       </div>
@@ -201,7 +155,7 @@ const ReservationDetail = () => {
     return (
       <div className="reservation-detail-container">
         <h2>Không tìm thấy đơn đặt bàn</h2>
-        <Link to="/reservation-history" className="back-btn">
+        <Link to="/reservation-history" className="back-btn111">
           Quay lại
         </Link>
       </div>
@@ -241,6 +195,7 @@ const ReservationDetail = () => {
                 <th>Số lượng</th>
                 <th>Giá</th>
                 <th>Tổng</th>
+                {reservation.status === 'COMPLETED' && <th>Hành động</th>}
               </tr>
             </thead>
             <tbody>
@@ -258,6 +213,16 @@ const ReservationDetail = () => {
                   <td>{dish.quantity}</td>
                   <td>{(dish.price || 0).toLocaleString('vi-VN')} VNĐ</td>
                   <td>{((dish.quantity || 0) * (dish.price || 0)).toLocaleString('vi-VN')} VNĐ</td>
+                  {reservation.status === 'COMPLETED' && (
+                    <td>
+                      <button
+                        className="review-btn"
+                        onClick={() => handleReview(dish.id)}
+                      >
+                        Đánh giá
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -267,80 +232,23 @@ const ReservationDetail = () => {
         )}
       </div>
 
-      {/* Thông tin thanh toán dạng bảng */}
+      {/* Thông tin thanh toán */}
       <div className="payment-section">
         <h3>Thông tin thanh toán</h3>
-        <p><strong>Tổng tiền:</strong> {(reservation.totalAmount || 0).toLocaleString('vi-VN')} VNĐ</p>
-        {(reservation.payments.length > 0 || latestPayment) && (
-          <table className="payment-table">
-            <thead>
-              <tr>
-                <th>Hình thức thanh toán</th>
-                <th>Số tiền thanh toán</th>
-                <th>Transaction ID</th>
-                <th>Trạng thái</th>
-                <th>Thời gian tạo</th>
-                <th>Thời gian cập nhật</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservation.payments.map((payment, index) => (
-                <tr key={index}>
-                  <td>{payment.method || 'Chưa xác định'}</td>
-                  <td>{(payment.amount || 0).toLocaleString('vi-VN')} VNĐ</td>
-                  <td>{payment.transaction_id || 'Chưa có'}</td>
-                  <td>
-                    <span className={`payment-status ${payment.status?.toLowerCase() || ''}`}>
-                      {payment.status || 'Chưa xác định'}
-                    </span>
-                  </td>
-                  <td>{formatDate(payment.created_at) + ' ' + formatTime(payment.created_at)}</td>
-                  <td>{formatDate(payment.updated_at) + ' ' + formatTime(payment.updated_at)}</td>
-                </tr>
-              ))}
-              {latestPayment && (
-                <tr>
-                  <td>{latestPayment.method}</td>
-                  <td>{latestPayment.amount.toLocaleString('vi-VN')} VNĐ</td>
-                  <td>{latestPayment.transaction_id || 'Chưa có'}</td>
-                  <td>
-                    <span className={`payment-status ${latestPayment.status.toLowerCase()}`}>
-                      {latestPayment.status}
-                    </span>
-                  </td>
-                  <td>{formatDate(latestPayment.created_at) + ' ' + formatTime(latestPayment.created_at)}</td>
-                  <td>{formatDate(latestPayment.updated_at) + ' ' + formatTime(latestPayment.updated_at)}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-        {!reservation.payments.length && !latestPayment && (
-          <p>Chưa có thông tin thanh toán.</p>
-        )}
+        <p><strong>Tổng tiền:</strong> <span className="price">{(reservation.totalAmount || 0).toLocaleString('vi-VN')} VNĐ</span></p>
+        <p><strong>Hình thức thanh toán:</strong> VNPay</p>
       </div>
 
-      {/* Nút hủy, thanh toán, đặt lại và quay lại */}
+      {/* Nút hủy, đặt lại, quay lại và đánh giá nhà hàng */}
       <div className="button-section">
         {reservation.status === 'PENDING' && (
-          <>
-            <button
-              onClick={handleCancelOrder}
-              className="cancel-btn111"
-              disabled={cancelLoading}
-            >
-              {cancelLoading ? 'Đang hủy...' : 'Hủy đơn hàng'}
-            </button>
-            {!reservation.payments.some(payment => payment.status === 'SUCCESS') && (
-              <button
-                onClick={handlePayment}
-                className="payment-btn"
-                disabled={paymentLoading}
-              >
-                {paymentLoading ? 'Đang xử lý...' : 'Thanh toán'}
-              </button>
-            )}
-          </>
+          <button
+            onClick={handleCancelOrder}
+            className="cancel-btn111"
+            disabled={cancelLoading}
+          >
+            {cancelLoading ? 'Đang hủy...' : 'Hủy đơn hàng'}
+          </button>
         )}
         {(reservation.status === 'FAILED' || reservation.status === 'CANCELLED') && (
           <button
@@ -353,6 +261,14 @@ const ReservationDetail = () => {
         <Link to="/reservation-history" className="back-btn111">
           Quay lại
         </Link>
+        {reservation.status === 'COMPLETED' && (
+          <Link
+            to={`/restaurant/${reservation.restaurant.id}`}
+            className="review-btn"
+          >
+            Đánh giá nhà hàng
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { getUserProfile } from "../services/userService";
+import { jwtDecode } from "jwt-decode"; // Use named import
 
 export const UserContext = createContext();
 
@@ -12,19 +13,34 @@ export const UserProvider = ({ children }) => {
     const init = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
+        console.log("No token found, user not logged in");
         setLoading(false);
         return;
       }
 
       try {
+        console.log("Decoding token...");
+        const decoded = jwtDecode(token); // Use named jwtDecode
+        console.log("Decoded token:", decoded);
+
+        const isGoogleAccount = decoded.provider === "google";
+
+        console.log("Fetching user profile...");
         const profile = await getUserProfile();
-        setUser(profile);
+        console.log("Profile fetched:", profile);
+
+        setUser({ ...profile, isGoogleAccount });
         setIsLogin(true);
       } catch (err) {
-        console.error("Lỗi lấy profile:", err);
+        console.error("Error fetching profile or decoding token:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+        });
         localStorage.removeItem("accessToken");
         setUser(null);
         setIsLogin(false);
+        window.location.href = "/login";
       } finally {
         setLoading(false);
       }
@@ -34,6 +50,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
+    console.log("Logging out user");
     localStorage.removeItem("accessToken");
     setUser(null);
     setIsLogin(false);

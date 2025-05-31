@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  createRestaurantTier,
-  updateRestaurantTier,
-} from "../../services/restaurantService";
+import { createRestaurantTier, updateRestaurantTier } from "../../services/restaurantService";
 import "../../assets/styles/admin/RestaurantTierFormModal.css";
+import { toast } from "react-toastify";
+import httpStatusMessages from "../../constants/httpStatusMessages";
 
 const RestaurantTierFormModal = ({ onClose, onSuccess, initialData, checkDuplicateName }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +10,6 @@ const RestaurantTierFormModal = ({ onClose, onSuccess, initialData, checkDuplica
     feePerGuest: "",
     description: "",
   });
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     console.log("RestaurantTierFormModal rendered with initialData:", initialData);
@@ -35,12 +33,12 @@ const RestaurantTierFormModal = ({ onClose, onSuccess, initialData, checkDuplica
       console.log("Submitting form with data:", formData);
       if (!formData.name || !formData.feePerGuest || !formData.description) {
         console.log("Validation failed: Missing required fields");
-        setMessage("Vui lòng điền đầy đủ thông tin");
+        toast.error(httpStatusMessages[410] || "Vui lòng điền đầy đủ thông tin");
         return;
       }
       if (!initialData && checkDuplicateName(formData.name)) {
         console.log("Validation failed: Duplicate name");
-        setMessage("Tên hạng đã tồn tại");
+        toast.error("Tên hạng đã tồn tại");
         return;
       }
 
@@ -55,28 +53,32 @@ const RestaurantTierFormModal = ({ onClose, onSuccess, initialData, checkDuplica
         console.log("Updating tier with ID:", initialData.id);
         res = await updateRestaurantTier(initialData.id, data);
         console.log("Update response:", res);
-        if (res.status === 200) {
-          console.log("Update successful, calling onSuccess");
-          onSuccess("Cập nhật thành công");
+        if (res.status === 200 || (res.data && res.data.status === 200)) {
+          console.log("Update successful, calling onSuccess and closing modal");
+          onSuccess(httpStatusMessages[200] || "Cập nhật thành công");
+          onClose();
         } else {
           console.log("Update failed:", res.data?.message);
-          setMessage(res.data?.message || "Cập nhật thất bại");
+          toast.error(res.data?.message || httpStatusMessages[400] || "Cập nhật thất bại");
         }
       } else {
         console.log("Creating new tier");
         res = await createRestaurantTier(data);
         console.log("Create response:", res);
-        if (res.status === 201) {
-          console.log("Create successful, calling onSuccess");
-          onSuccess("Tạo mới thành công");
+        // Kiểm tra cả res.status và res.data.status
+        if (res.status === 201 || (res.data && res.data.status === 201)) {
+          console.log("Create successful, calling onSuccess and closing modal");
+          onSuccess(httpStatusMessages[201] || "Tạo mới thành công");
+          onClose();
         } else {
           console.log("Create failed:", res.data?.message);
-          setMessage(res.data?.message || "Tạo mới thất bại");
+          toast.error(httpStatusMessages[400] || "Tạo mới thất bại");
         }
       }
     } catch (err) {
       console.error("Lỗi khi gửi form:", err);
-      setMessage(err.response?.data?.message || "Thao tác thất bại");
+      const status = err.response?.status || 500;
+      toast.error(err.response?.data?.message || httpStatusMessages[status] || "Thao tác thất bại");
     }
   };
 
@@ -132,7 +134,6 @@ const RestaurantTierFormModal = ({ onClose, onSuccess, initialData, checkDuplica
             <button type="submit">{initialData ? "Cập nhật" : "Tạo mới"}</button>
             <button type="button" onClick={onClose}>Hủy</button>
           </div>
-          {message && <p className="message">{message}</p>}
         </form>
       </div>
     </div>

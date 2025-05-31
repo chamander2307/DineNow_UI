@@ -45,15 +45,21 @@ const UserManager = () => {
     setShowDetailModal(true);
   };
 
-  const handleCreateOwner = async (data) => {
-    try {
-      await createOwner(data);
-      loadUsers();
-      setShowFormModal(false);
-    } catch {
-      console.error("Tạo owner thất bại");
+const handleCreateOwner = async (data) => {
+  try {
+    const res = await createOwner(data); // Gọi API
+    if (res.status !== 201) {
+      return { success: false, message: res.message || "Tạo owner thất bại" };
     }
-  };
+    loadUsers();
+    setShowFormModal(false);
+    return { success: true };
+  } catch (err) {
+    console.error("Tạo owner thất bại:", err);
+    return { success: false, message: "Có lỗi xảy ra khi tạo owner" };
+  }
+};
+
 
   return (
     <AdminLayout>

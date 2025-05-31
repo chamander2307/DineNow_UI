@@ -95,3 +95,33 @@
     font-size: 14px;
   }
 }
+.rl-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.rl-pagination button {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #5fabf7, #4e9eed);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.rl-pagination button:hover {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.rl-pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.rl-pagination span {
+  font-size: 16px;
+  line-height: 32px;
+}

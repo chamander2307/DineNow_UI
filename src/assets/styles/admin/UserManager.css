@@ -1,18 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 .user-manager {
   padding: 20px;
+  font-family: 'Inter', sans-serif;
 }
 
 .user-manager h2 {
+  font-size: 1.6rem;
   margin-bottom: 16px;
+  font-weight: 600;
+  color: #3c2f2f;
 }
 
 .user-manager .filter-group {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
 .user-manager .filter-group select,
 .user-manager .filter-group button {
-  padding: 6px 12px;
+  padding: 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.user-manager .filter-group select:focus,
+.user-manager .filter-group button:focus {
+  outline: none;
+  border-color: #f4a261;
+}
+
+.user-manager .filter-group button {
+  background-color: #f4a261;
+  color: #fffaf7;
+  border: none;
+}
+
+.user-manager .filter-group button:hover {
+  background-color: #e76f51;
+}
+
+.error-message {
+  color: #e63946;
+  background: #ffe6e6;
+  border: 1px solid #e63946;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.success-message {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border: 1px solid #2e7d32;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  text-align: center;
+  border-radius: 6px;
 }

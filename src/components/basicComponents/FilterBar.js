@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { filterMenuItems } from "../../services/menuItemService";
-import { fetchMainCategories } from "../../services/menuItemService";
+import { filterMenuItems, fetchMainCategories } from "../../services/menuItemService";
+import { fetchRestaurantTypes } from "../../services/restaurantService";
 import "../../assets/styles/home/FilterBar.css";
 
 const FilterBar = () => {
   const [city, setCity] = useState("");
-  const [district, setDistrict] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [restaurantType, setRestaurantType] = useState("");
+  const [restaurantTypeList, setRestaurantTypeList] = useState([]);
+  const [selectedRestaurantType, setSelectedRestaurantType] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -26,40 +25,10 @@ const FilterBar = () => {
         label: p.name,
         code: p.code,
       }));
-      console.log("Provinces loaded:", provinces);
       setProvinces(provinces);
     } catch (err) {
       console.error("Lỗi khi tải danh sách tỉnh:", err);
       setError("Không thể tải danh sách tỉnh.");
-    }
-  };
-
-  const loadDistricts = async (provinceName) => {
-    try {
-      const province = provinces.find((p) => p.value === provinceName);
-      if (!province || !province.code) {
-        console.log("Không tìm thấy tỉnh:", provinceName);
-        setDistricts([]);
-        setError("Không tìm thấy tỉnh này.");
-        return;
-      }
-      console.log("Province code:", province.code);
-      const res = await fetch(
-        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`
-      );
-      if (!res.ok) throw new Error("API không phản hồi");
-      const data = await res.json();
-      const districts = data.districts?.map((d) => ({
-        value: d.name,
-        label: d.name,
-      })) || [];
-      console.log("Districts found:", districts);
-      setDistricts(districts);
-      setDistrict("");
-    } catch (err) {
-      console.error("Lỗi khi tải danh sách huyện:", err);
-      setError("Không thể tải danh sách huyện.");
-      setDistricts([]);
     }
   };
 
@@ -78,42 +47,45 @@ const FilterBar = () => {
     }
   };
 
+  const loadRestaurantTypes = async () => {
+    try {
+      const data = await fetchRestaurantTypes();
+      setRestaurantTypeList(
+        data.map((type) => ({
+          value: type.id,
+          label: type.name,
+        }))
+      );
+    } catch (error) {
+      console.error("Lỗi khi tải loại nhà hàng:", error);
+      setError("Không thể tải loại nhà hàng.");
+    }
+  };
+
   useEffect(() => {
     loadProvinces();
     loadMainCategories();
+    loadRestaurantTypes();
   }, []);
-
-  useEffect(() => {
-    if (city) {
-      loadDistricts(city);
-    } else {
-      setDistricts([]);
-      setDistrict("");
-    }
-  }, [city]);
 
   const handleFilter = async () => {
     setLoading(true);
     setError("");
     try {
-      // Tạo body cho API /api/menu-items/filter
       const filterData = {};
       if (city) filterData.city = city;
-      if (district) filterData.district = district;
       if (category) filterData.mainCategoryId = category;
-      if (restaurantType) filterData.restaurantTypeId = restaurantType;
+      if (selectedRestaurantType) filterData.restaurantTypeId = selectedRestaurantType;
       if (price) {
         const [minPrice, maxPrice] = price.split("-").map(Number);
         filterData.minPrice = minPrice || 0;
         filterData.maxPrice = maxPrice || undefined;
       }
 
-      // Tạo query params để chuyển hướng
       const queryParams = new URLSearchParams();
       if (city) queryParams.append("city", city);
-      if (district) queryParams.append("district", district);
       if (category) queryParams.append("mainCategoryId", category);
-      if (restaurantType) queryParams.append("restaurantTypeId", restaurantType);
+      if (selectedRestaurantType) queryParams.append("restaurantTypeId", selectedRestaurantType);
       if (price) {
         const [minPrice, maxPrice] = price.split("-").map(Number);
         queryParams.append("minPrice", minPrice || 0);
@@ -121,10 +93,8 @@ const FilterBar = () => {
       }
 
       console.log("Dữ liệu lọc:", filterData);
-      // Gọi API filterMenuItems
       await filterMenuItems(filterData, 0, 20);
 
-      // Chuyển hướng đến all-dishes
       navigate(`/all-dishes?${queryParams.toString()}`);
     } catch (error) {
       console.error("Lỗi khi lọc:", error);
@@ -149,21 +119,6 @@ const FilterBar = () => {
           </option>
         ))}
       </select>
-
-      <select
-        className="filter-select"
-        value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-        disabled={!city}
-      >
-        <option value="">Chọn Quận/Huyện</option>
-        {districts.map((district) => (
-          <option key={district.value} value={district.value}>
-            {district.label}
-          </option>
-        ))}
-      </select>
-
       <select
         className="filter-select"
         value={category}
@@ -176,18 +131,18 @@ const FilterBar = () => {
           </option>
         ))}
       </select>
-
       <select
         className="filter-select"
-        value={restaurantType}
-        onChange={(e) => setRestaurantType(e.target.value)}
+        value={selectedRestaurantType}
+        onChange={(e) => setSelectedRestaurantType(e.target.value)}
       >
         <option value="">Loại nhà hàng</option>
-        <option value="1">Fine Dining</option>
-        <option value="2">Casual Dining</option>
-        <option value="3">Fast Food</option>
+        {restaurantTypeList.map((type) => (
+          <option key={type.value} value={type.value}>
+            {type.label}
+          </option>
+        ))}
       </select>
-
       <select
         className="filter-select"
         value={price}
@@ -198,7 +153,6 @@ const FilterBar = () => {
         <option value="100000-200000">100k - 200k</option>
         <option value="200000-500000">200k - 500k</option>
       </select>
-
       <button
         className="filter-button"
         onClick={handleFilter}

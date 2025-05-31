@@ -1,20 +1,67 @@
-.order-page { /* Đổi từ payment-page thành order-page */
+.order-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Đảm bảo chiếm toàn bộ chiều cao viewport */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Container cho nội dung chính */
+.content-container {
   display: flex;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
   gap: 20px;
 }
 
+/* Container cho thông báo lỗi */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 15px;
+  padding: 40px;
+}
+
+.error-container h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.error-container p {
+  font-size: 16px;
+  color: #555;
+  margin: 0;
+}
+
+.error-container .back-btn {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.error-container .back-btn:hover {
+  background-color: #2980b9;
+}
+
 /* Bên trái: Thông tin đơn hàng */
-.order-left { /* Đổi từ payment-left thành order-left */
+.order-left {
   flex: 1;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
 
-.order-left h2 { /* Đổi từ payment-left thành order-left */
+.order-left h2 {
   font-size: 24px;
   margin-bottom: 20px;
   color: #333;
@@ -34,46 +81,52 @@
   margin-bottom: 10px;
 }
 
-.restaurant-image {
+.restaurant-image1111 {
   width: 100%;
-  height: 200px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
 }
 
-.selected-items {
-  list-style: none;
-  padding: 0;
+.selected-items-table {
+  width: 100%;
+  border-collapse: collapse;
   margin-bottom: 20px;
 }
 
-.selected-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
+.selected-items-table td {
+  padding: 10px;
+  text-align: left;
   border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
 }
 
-.item-details {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
+.selected-items-table .item-name {
+  width: 55%;
 }
 
-.item-details span:last-child {
-  font-weight: bold;
-  color: #e74c3c;
-  padding-right: 10px;
+.selected-items-table .item-actions {
+  text-align: right;
+  width: 45%;
 }
 
-.item-actions {
-  display: flex;
+.selected-items-table .price-quantity-remove {
+  display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+  flex-wrap: nowrap;
 }
 
-.quantity-input {
+.selected-items-table .price {
+  color: #e74c3c;
+  font-weight: bold;
+  white-space: nowrap;
+  min-width: 120px;
+  text-align: right;
+}
+
+.selected-items-table .quantity-input {
   width: 60px;
   padding: 5px;
   border: 1px solid #ddd;
@@ -81,7 +134,7 @@
   text-align: center;
 }
 
-.remove-btn111 {
+.selected-items-table .remove-btn111 {
   padding: 5px 10px;
   background-color: #e74c3c;
   color: white;
@@ -91,7 +144,7 @@
   transition: background-color 0.3s ease;
 }
 
-.remove-btn111:hover {
+.selected-items-table .remove-btn111:hover {
   background-color: #c0392b;
 }
 
@@ -100,21 +153,27 @@
   color: #333;
 }
 
+.total-price .price {
+  color: #e74c3c;
+  font-size: 24px;
+  font-weight: bold;
+}
+
 /* Bên phải: Form thanh toán */
-.order-right { /* Đổi từ payment-right thành order-right */
+.order-right {
   flex: 1;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
 }
 
-.order-right h2 { /* Đổi từ payment-right thành order-right */
+.order-right h2 {
   font-size: 24px;
   margin-bottom: 20px;
   color: #333;
 }
 
-.order-form { /* Đổi từ payment-form thành order-form */
+.order-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -160,7 +219,7 @@
   margin-bottom: 10px;
 }
 
-.payment-info span {
+.payment-info .price {
   font-weight: bold;
   color: #e74c3c;
 }
@@ -174,14 +233,6 @@
 .payment-method label {
   font-weight: bold;
   color: #555;
-}
-
-.payment-select {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 200px;
 }
 
 .payment-btn {

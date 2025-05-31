@@ -3,6 +3,8 @@ import { fetchAdminRestaurantTiers } from "../../services/restaurantService";
 import AdminLayout from "./AdminLayout";
 import RestaurantTierFormModal from "../../components/common/RestaurantTierFormModal.js";
 import "../../assets/styles/admin/RestaurantTierManager.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Debug import
 console.log("RestaurantTierFormModal:", RestaurantTierFormModal);
@@ -11,7 +13,6 @@ const RestaurantTierManager = () => {
   const [tiers, setTiers] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingData, setEditingData] = useState(null);
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -26,14 +27,13 @@ const RestaurantTierManager = () => {
       if (Array.isArray(data)) {
         console.log("Tiers loaded successfully:", data);
         setTiers(data);
-        setMessage("");
       } else {
         console.log("Invalid data format:", data);
-        setMessage("Dữ liệu không hợp lệ");
+        toast.error("Dữ liệu không hợp lệ");
       }
     } catch (err) {
       console.error("Lỗi khi lấy danh sách hạng:", err);
-      setMessage("Không thể tải danh sách hạng nhà hàng");
+      toast.error("Không thể tải danh sách hạng nhà hàng");
     } finally {
       setLoading(false);
     }
@@ -53,9 +53,7 @@ const RestaurantTierManager = () => {
 
   const handleSuccess = (msg) => {
     console.log("handleSuccess called with message:", msg);
-    console.log("Closing modal immediately");
-    setShowFormModal(false); // Đóng modal ngay lập tức
-    setMessage(msg || "Thành công");
+    toast.success(msg || "Thành công");
     // Tải lại dữ liệu sau 2 giây
     setTimeout(() => {
       console.log("Reloading tiers after 2 seconds");
@@ -69,6 +67,7 @@ const RestaurantTierManager = () => {
 
   return (
     <AdminLayout>
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="restaurant-tier-manager">
         <div className="manager-header">
           <h2>Quản lý hạng nhà hàng</h2>
@@ -82,12 +81,6 @@ const RestaurantTierManager = () => {
             + Thêm hạng
           </button>
         </div>
-
-        {message && (
-          <p className={message.includes("thành công") ? "message" : "error"}>
-            {message}
-          </p>
-        )}
 
         {loading ? (
           <div className="loading-spinner">
@@ -140,4 +133,4 @@ const RestaurantTierManager = () => {
   );
 };
 
-export default RestaurantTierManager;
+export default RestaurantTierManager; 

@@ -1,66 +1,79 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/styles/Restaurant/OrderPage.css';
-import { createOrder } from '../../services/orderService';
+import { getCustomerOrderDetail, createOrder } from '../../services/orderService';
 import restaurant1 from '../../assets/img/restaurant1.jpg';
 
-// Dữ liệu giả lập (dùng làm fallback nếu không có state)
-const mockRestaurant = {
-  name: 'Nhà hàng B',
-  address: '456 Đường Ẩm Thực, TP. HCM',
-  image: restaurant1,
-};
-
-const mockSelectedItems = [
-  { id: '4', name: 'Cơm Thố Heo Giòn Teriyaki', price: 99000, quantity: 1 },
-  { id: '5', name: 'Cơm Thố Gà + Ốp La', price: 37000, quantity: 1 },
-  { id: '7', name: 'Coca Cola', price: 11000, quantity: 1 },
-];
-
-const OrderPage = () => {
-  const location = useLocation();
+const ReOrderPage = () => {
+  const { id } = useParams(); // Lấy orderId từ URL (ví dụ: /re-order/3)
   const navigate = useNavigate();
 
-  // Lấy dữ liệu từ state
-  const { 
-    isRebook = false,
-    selectedItems: initialItemsData = mockSelectedItems,
-    restaurant: initialRestaurant = mockRestaurant,
-  } = location.state || {};
-
   // Di chuyển tất cả các Hook useState lên đầu component
-  const [selectedItems, setSelectedItems] = useState(() => {
-    const normalizedItems = Array.isArray(initialItemsData) && initialItemsData.length > 0 && initialItemsData[0].dishes
-      ? initialItemsData[0].dishes
-      : initialItemsData;
-    return normalizedItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      quantity: item.quantity,
-      price: parseFloat(item.price) || 0,
-    }));
-  });
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [restaurant, setRestaurant] = useState(null);
   const [numberOfAdults, setNumberOfAdults] = useState('');
   const [numberOfChildren, setNumberOfChildren] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [note, setNote] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('VNPay');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Sử dụng dữ liệu từ state
-  const restaurant = initialRestaurant;
+  // Fetch dữ liệu từ API khi component mount
+  useEffect(() => {
+    const fetchOrderDetail = async () => {
+      try {
+        const orderId = id || 3; // Sử dụng id từ URL hoặc mặc định là 3
+        const response = await getCustomerOrderDetail(orderId);
+        const orderData = response.data;
 
-  // Nếu không có location.state, hiển thị thông báo lỗi
-  if (!location.state) {
+        setRestaurant({
+          id: orderData.restaurant.id,
+          name: orderData.restaurant.name,
+          address: orderData.restaurant.address,
+          image: orderData.restaurant.thumbnailUrl || restaurant1,
+        });
+
+        setSelectedItems(
+          orderData.menuItems.map(item => ({
+            id: item.menuItemId,
+            name: item.menuItemName,
+            quantity: item.quantity,
+            price: parseFloat(item.menuItemPrice) || 0,
+          }))
+        );
+      } catch (err) {
+        setError('Không thể tải thông tin đơn hàng. Vui lòng thử lại.');
+        console.error('Lỗi khi lấy chi tiết đơn hàng:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetail();
+  }, [id]);
+
+  // Nếu đang tải, hiển thị thông báo
+  if (loading) {
     return (
       <div className="order-page">
         <div className="error-container">
-          <h2>Không tìm thấy thông tin đơn hàng</h2>
-          <p>Vui lòng quay lại giỏ hàng để đặt bàn.</p>
-          <button onClick={() => navigate('/')} className="back-btn">
-            Quay lại trang chủ
+          <h2>Đang tải...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu có lỗi hoặc không có dữ liệu, hiển thị thông báo
+  if (error || !restaurant) {
+    return (
+      <div className="order-page">
+        <div className="error-container">
+          <h2>Không tìm thấy thông tin đơn hàng để đặt lại</h2>
+          <p>{error || 'Vui lòng quay lại lịch sử đặt bàn để chọn đơn hàng.'}</p>
+          <button onClick={() => navigate('/reservation-history')} className="back-btn">
+            Quay lại lịch sử đặt bàn
           </button>
         </div>
       </div>
@@ -68,7 +81,7 @@ const OrderPage = () => {
   }
 
   // Tính tổng tiền dựa trên số lượng
-  const totalPrice = selectedItems.reduce((total, item) => total + ((parseFloat(item.price) || 0) * item.quantity), 0);
+  const totalPrice = selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   // Xử lý thay đổi số lượng
   const handleQuantityChange = (id, newQuantity) => {
@@ -85,7 +98,7 @@ const OrderPage = () => {
     setSelectedItems(selectedItems.filter((item) => item.id !== id));
   };
 
-  // Xử lý thanh toán
+  // Xử lý thanh toán (đặt lại)
   const handlePayment = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -124,16 +137,16 @@ const OrderPage = () => {
         })),
       };
 
-      await createOrder(restaurant.id || 1, orderData);
+      await createOrder(restaurant.id, orderData);
 
       const savedCart = JSON.parse(sessionStorage.getItem('cart')) || {};
-      delete savedCart[restaurant.id || 1];
+      delete savedCart[restaurant.id];
       sessionStorage.setItem('cart', JSON.stringify(savedCart));
 
-      alert('Đơn hàng đã được gửi đến nhà hàng thành công!');
-      navigate('/');
+      alert('Đơn hàng đã được đặt lại thành công!');
+      navigate('/reservation-history');
     } catch (err) {
-      setError('Lỗi khi gửi đơn hàng: ' + err.message);
+      setError('Lỗi khi đặt lại đơn hàng: ' + err.message);
       console.error('Lỗi khi thanh toán:', err);
     } finally {
       setLoading(false);
@@ -150,7 +163,10 @@ const OrderPage = () => {
               src={restaurant.image}
               alt={restaurant.name}
               className="restaurant-image1111"
-              onError={(e) => { e.target.src = restaurant1; }}
+              onError={(e) => {
+                console.log(`Không load được ảnh nhà hàng ${restaurant.name} từ URL: ${restaurant.image}`);
+                e.target.src = restaurant1;
+              }}
             />
             <h3>{restaurant.name}</h3>
           </div>
@@ -163,7 +179,7 @@ const OrderPage = () => {
                     <td className="item-name">{item.name}</td>
                     <td className="item-actions">
                       <div className="price-quantity-remove">
-                        <span className="price">{((parseFloat(item.price) || 0) * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
+                        <span className="price">{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
                         <input
                           type="number"
                           value={item.quantity}
@@ -195,7 +211,7 @@ const OrderPage = () => {
           {error && <div className="alert alert-danger">{error}</div>}
           <form onSubmit={handlePayment} className="order-form">
             <div className="booking-info">
-              <h3>Thông tin đặt chỗ</h3>
+              <h3>Thông tin đặt lại</h3>
               <div className="form-group">
                 <label>Số người lớn: <span className="required">*</span></label>
                 <input
@@ -247,7 +263,7 @@ const OrderPage = () => {
             </div>
 
             <button type="submit" className="payment-btn" disabled={loading}>
-              {loading ? 'Đang xử lý...' : 'Đặt bàn'}
+              {loading ? 'Đang xử lý...' : 'Đặt lại'}
             </button>
           </form>
         </div>
@@ -256,4 +272,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default ReOrderPage;

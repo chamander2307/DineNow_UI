@@ -71,37 +71,37 @@ const OwnerOrderManager = () => {
     }
   };
 
-const loadOrdersByStatus = async () => {
-  setLoadingOrders(true);
-  try {
-    const selectedStatus = STATUS_GROUPS.find(group => group.value === selectedStatusGroup);
-    const statusList = selectedStatus ? selectedStatus.statuses : ["PENDING"];
-    const res = await getOwnerOrdersByRestaurant(selectedRestaurantId, statusList);
-    setOrders(Array.isArray(res.data) ? res.data : []);
-  } catch (err) {
-    alert("Không thể tải danh sách đơn hàng.");
-  } finally {
-    setLoadingOrders(false);
-  }
-};
+  const loadOrdersByStatus = async () => {
+    setLoadingOrders(true);
+    try {
+      const selectedStatus = STATUS_GROUPS.find(group => group.value === selectedStatusGroup);
+      const statusList = selectedStatus ? selectedStatus.statuses : ["PENDING"];
+      const res = await getOwnerOrdersByRestaurant(selectedRestaurantId, statusList);
+      setOrders(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      alert("Không thể tải danh sách đơn hàng.");
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 
   const canUpdateStatus = (currentStatus, newStatus) => {
     const allowedStatuses = ALLOWED_STATUS_TRANSITIONS[currentStatus] || [];
     return allowedStatuses.includes(newStatus);
   };
 
-  const handleApprove = async (id, currentStatus) => {
-    if (!canUpdateStatus(currentStatus, "CONFIRMED")) {
-      alert(`Không thể duyệt đơn hàng từ trạng thái ${STATUS_LABELS[currentStatus]}.`);
+  const handleApprove = async (id, currentStatus, newStatus) => {
+    if (!canUpdateStatus(currentStatus, newStatus)) {
+      alert(`Không thể cập nhật trạng thái từ ${STATUS_LABELS[currentStatus]} sang ${STATUS_LABELS[newStatus]}.`);
       return;
     }
-    if (!window.confirm("Xác nhận duyệt đơn hàng này?")) return;
+    if (!window.confirm(`Xác nhận cập nhật trạng thái đơn hàng sang ${STATUS_LABELS[newStatus]}?`)) return;
     try {
-      await updateOrderStatus(id, "CONFIRMED");
-      alert("Duyệt đơn hàng thành công.");
+      await updateOrderStatus(id, newStatus);
+      alert(`Cập nhật trạng thái thành công: ${STATUS_LABELS[newStatus]}.`);
       await loadOrdersByStatus();
     } catch (err) {
-      alert("Không thể duyệt đơn hàng: " + (err.response?.data?.message || err.message));
+      alert("Không thể cập nhật trạng thái đơn hàng: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -129,7 +129,7 @@ const loadOrdersByStatus = async () => {
   const handleViewDetail = async (id) => {
     try {
       const res = await getOrderDetail(id);
-      setSelectedOrder(res || null);
+      setSelectedOrder(res.data || null);
       setIsDetailOpen(true);
     } catch (err) {
       alert("Không thể lấy chi tiết đơn hàng: " + (err.response?.data?.message || err.message));
@@ -225,11 +225,17 @@ const loadOrdersByStatus = async () => {
                 <td>
                   {order.status === "PENDING" && (
                     <>
-                      <button onClick={() => handleApprove(order.id, order.status)}>Duyệt</button>
+                      <button onClick={() => handleApprove(order.id, order.status, "CONFIRMED")}>Duyệt</button>
                       <button onClick={() => openRejectModal(order.id)}>Hủy</button>
                     </>
                   )}
-                  {selectedStatusGroup !== "PENDING" && (
+                  {(order.status === "CONFIRMED" || order.status === "PAID") && (
+                    <>
+                      <button onClick={() => handleApprove(order.id, order.status, "COMPLETED")}>Hoàn thành</button>
+                      <button onClick={() => handleViewDetail(order.id)}>Chi tiết</button>
+                    </>
+                  )}
+                  {order.status !== "PENDING" && order.status !== "CONFIRMED" && order.status !== "PAID" && (
                     <button onClick={() => handleViewDetail(order.id)}>Chi tiết</button>
                   )}
                 </td>

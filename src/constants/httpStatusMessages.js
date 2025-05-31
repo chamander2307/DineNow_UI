@@ -1,24 +1,44 @@
-// src/constants/httpStatusMessages.js
 const httpStatusMessages = {
   // 🔹 Chuẩn HTTP
   200: "Thành công",
   201: "Tạo mới thành công",
+  204: "Xóa thành công",
+  400: "Yêu cầu không hợp lệ hoặc thiếu tham số",
   401: "Chưa đăng nhập hoặc phiên làm việc đã hết hạn",
   403: "Không có quyền truy cập",
   404: "Tài nguyên không tìm thấy",
   405: "Phương thức không được hỗ trợ",
   500: "Lỗi máy chủ nội bộ",
 
-  // 🔸 Custom code (tùy backend bạn định nghĩa)
+  // 🔸 Custom code
   402: "Token không hợp lệ hoặc hết hạn",
   406: "Email đã tồn tại",
   407: "Số điện thoại đã tồn tại",
-  408: "Người dùng đã tồn tại",
+  408: "Tài nguyên đang được sử dụng",
   409: "Mật khẩu hoặc email không hợp lệ",
   410: "Dữ liệu đầu vào không hợp lệ",
   411: "OTP không hợp lệ",
   412: "Yêu cầu đổi mật khẩu không hợp lệ hoặc đã hết hạn",
+  413: "Tài khoản đã bị vô hiệu hóa",
+  414: "Token không hợp lệ hoặc đã hết hạn",
+  415: "Lỗi khi gửi email",
+  416: "Tài nguyên đã tồn tại",
+  417: "Nhà hàng chưa được phê duyệt hoặc hiện không khả dụng",
   418: "Tài khoản chưa được xác thực",
+  419: "Tên đã tồn tại",
+  420: "Tải hình ảnh lên thất bại",
+  421: "Xóa hình ảnh thất bại",
+  422: "Không tìm thấy hình ảnh",
+  423: "Loại hình ảnh không hợp lệ. Chỉ cho phép PNG, JPG, JPEG và GIF",
+  424: "Không tìm thấy nhà hàng",
+  425: "Hành động không hợp lệ",
+  426: "Thực thể không hợp lệ",
+  427: "Không thể đánh giá vì bạn chưa trải nghiệm",
+  428: "Khoảng thời gian không hợp lệ. Ngày bắt đầu phải trước ngày kết thúc",
+  429: "Chỉ số kỳ không hợp lệ. Phải là 1 hoặc 2",
+  430: "Xử lý callback thất bại",
+  431: "Dữ liệu không hợp lệ",
+  432: "Địa chỉ không hợp lệ",
 };
 
 export default httpStatusMessages;

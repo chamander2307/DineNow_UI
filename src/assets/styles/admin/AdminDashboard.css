@@ -1,62 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 .admin-dashboard-container {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Inter', sans-serif;
 }
 
 .admin-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .admin-header h2 {
-  font-size: 24px;
-  color: #333;
+  font-size: 1.6rem;
+  color: #3c2f2f;
+  font-weight: 600;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 12px;
   margin-bottom: 40px;
 }
 
 .stat-card {
-  background: #fff;
-  border-radius: 8px;
+  background: #fffaf7;
+  border-radius: 6px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .stat-card h3 {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #6b5b5b;
+  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .stat-card p {
-  font-size: 24px;
-  color: #333;
-  font-weight: bold;
+  font-size: 1.6rem;
+  color: #3c2f2f;
+  font-weight: 600;
 }
 
 .chart-section {
-  background: #fff;
-  border-radius: 8px;
+  background: #fffaf7;
+  border-radius: 6px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chart-section h3 {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: #3c2f2f;
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .error-message {
-  color: red;
+  color: #e63946;
+  background: #ffe6e6;
+  border: 1px solid #e63946;
+  padding: 8px 12px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .loading-spinner {
@@ -67,6 +78,26 @@
 }
 
 .loading-spinner span {
-  font-size: 18px;
-  color: #666;
+  font-size: 0.95rem;
+  color: #6b5b5b;
+  position: relative;
+}
+
+.loading-spinner span::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f4a261;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

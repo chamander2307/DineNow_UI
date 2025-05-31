@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/home/Profile.css';
 import { UserContext } from '../../contexts/UserContext';
 import { updateUserProfile } from '../../services/userService';
+import { toast, ToastContainer } from 'react-toastify'; // Add ToastContainer import
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for react-toastify
+import httpStatusMessages from '../../constants/httpStatusMessages';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
@@ -35,14 +38,19 @@ const Profile = () => {
   };
 
   const handleSubmit = async () => {
+    if (user?.isGoogleAccount) {
+      toast.error('Tài khoản Google không thể thay đổi thông tin.');
+      return;
+    }
+
     if (!formData.fullName.trim()) {
-      alert("❌ Tên không được để trống");
+      toast.error(httpStatusMessages[410] || 'Tên không được để trống.');
       return;
     }
 
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone)) {
-      alert("❌ Số điện thoại không hợp lệ. Phải là 10 chữ số.");
+      toast.error(httpStatusMessages[410] || 'Số điện thoại không hợp lệ. Phải là 10 chữ số.');
       return;
     }
 
@@ -51,16 +59,20 @@ const Profile = () => {
         fullName: formData.fullName,
         phone: formData.phone,
       });
-      setUser(updated);
-      alert("✅ Cập nhật thành công!");
+      setUser({ ...updated, isGoogleAccount: user.isGoogleAccount });
+      toast.success(httpStatusMessages[200] || 'Cập nhật thành công!');
     } catch (err) {
-      console.error("❌ Cập nhật thất bại:", err);
-      alert("❌ Cập nhật thất bại. Vui lòng thử lại.");
+      console.error('Cập nhật thất bại:', err);
+      const status = err.response?.status || 500;
+      toast.error(httpStatusMessages[status] || 'Cập nhật thất bại. Vui lòng thử lại.');
     }
   };
 
+  const isGoogleAccount = user?.isGoogleAccount || false;
+
   return (
     <div className="profile-page">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="profile-layout">
         <aside className="profile-sidebar">
           <div className="profile-user">
@@ -69,8 +81,6 @@ const Profile = () => {
           <nav>
             <ul>
               <li className="active">Hồ Sơ</li>
-              <li>Đơn Mua</li>
-              <li>Cài Đặt Thông Báo</li>
             </ul>
           </nav>
         </aside>
@@ -88,6 +98,7 @@ const Profile = () => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
+                  disabled={isGoogleAccount}
                 />
               </div>
 
@@ -103,16 +114,22 @@ const Profile = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  disabled={isGoogleAccount}
                 />
               </div>
 
               <div className="form-actions">
-                <button className="save-btn" onClick={handleSubmit}>
+                <button
+                  className="save-btn"
+                  onClick={handleSubmit}
+                  disabled={isGoogleAccount}
+                >
                   Lưu
                 </button>
                 <button
                   className="change-password-btn"
-                  onClick={() => navigate("/change-password")}
+                  onClick={() => navigate('/change-password')}
+                  disabled={isGoogleAccount}
                 >
                   Đổi mật khẩu
                 </button>

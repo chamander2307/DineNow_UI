@@ -92,12 +92,12 @@ export const addRestaurantReview = async (restaurantId, reviewData) => {
       `/api/customer/reviews/restaurant/${restaurantId}/add`,
       reviewData
     );
-    return response?.data?.data || null;
+    return response.data;
   } catch (error) {
     console.error(
       "Lỗi khi thêm đánh giá nhà hàng:",
       error?.response?.data?.message || error.message
     );
-    return null;
+    throw error; 
   }
 };

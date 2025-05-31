@@ -22,11 +22,16 @@ const AdminOrderManager = () => {
   const loadOrders = async () => {
     setIsLoading(true);
     try {
-      const data = statusFilter
-        ? await fetchAdminOrdersByStatus(statusFilter)
-        : await fetchAdminOrders();
-      console.log("Orders data:", data); // Debug data
-      setOrders(Array.isArray(data) ? data : []);
+      let data = [];
+      if (statusFilter) {
+        const response = await fetchAdminOrdersByStatus(statusFilter, 0, 10);
+        data = Array.isArray(response.data) ? response.data : [];
+      } else {
+        data = await fetchAdminOrders(0, 10); // Cái này đã trả về mảng rồi
+      }
+
+      console.log("Orders data:", data);
+      setOrders(data);
       setMessage(data.length === 0 ? "Không có đơn hàng" : "");
     } catch (error) {
       console.error("Error loading orders:", error);
@@ -36,6 +41,7 @@ const AdminOrderManager = () => {
       setIsLoading(false);
     }
   };
+
 
   const viewOrderDetails = async (orderId) => {
     setIsLoading(true);
@@ -60,10 +66,12 @@ const AdminOrderManager = () => {
   const statusText = {
     PENDING: "Chờ xử lý",
     CONFIRMED: "Đã xác nhận",
-    REJECTED: "Bị từ chối",
+    PAID: "Đã thanh toán",
+    CANCELLED: "Đã hủy",
     FAILED: "Thất bại",
     COMPLETED: "Hoàn tất",
   };
+
 
   return (
     <AdminLayout>
@@ -79,12 +87,12 @@ const AdminOrderManager = () => {
             <option value="">Tất cả</option>
             <option value="PENDING">Chờ xử lý</option>
             <option value="CONFIRMED">Đã xác nhận</option>
-            <option value="REJECTED">Bị từ chối</option>
+            <option value="PAID">Đã thanh toán</option>
+            <option value="CANCELLED">Đã huỷ</option>
             <option value="FAILED">Thất bại</option>
             <option value="COMPLETED">Hoàn tất</option>
           </select>
         </div>
-
         <table className="admin-table">
           <thead>
             <tr>
@@ -109,8 +117,8 @@ const AdminOrderManager = () => {
                   <td>
                     {o.reservation?.reservationTime
                       ? new Date(o.reservation.reservationTime).toLocaleString("vi-VN", {
-                          timeZone: "Asia/Ho_Chi_Minh",
-                        })
+                        timeZone: "Asia/Ho_Chi_Minh",
+                      })
                       : "N/A"}
                   </td>
                   <td>

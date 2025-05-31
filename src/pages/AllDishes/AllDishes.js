@@ -9,6 +9,9 @@ const AllDishes = () => {
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 20;
   const location = useLocation();
 
   useEffect(() => {
@@ -19,17 +22,17 @@ const AllDishes = () => {
         const params = new URLSearchParams(location.search);
         const filterData = {
           city: params.get("city") || "",
-          district: params.get("district") || "",
           mainCategoryId: params.get("mainCategoryId") || "",
           restaurantTypeId: params.get("restaurantTypeId") || "",
           minPrice: params.get("minPrice") ? Number(params.get("minPrice")) : undefined,
           maxPrice: params.get("maxPrice") ? Number(params.get("maxPrice")) : undefined,
         };
 
-        const response = await filterMenuItems(filterData, 0, 20);
+        const response = await filterMenuItems(filterData, currentPage, itemsPerPage);
         const dishesData = Array.isArray(response.data) ? response.data : [];
-        console.log("Dishes data in AllDishes:", dishesData); // Debug
         setDishes(dishesData);
+        setTotalItems(response.totalItems || dishesData.length);
+        console.log("Dishes data in AllDishes:", dishesData);
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
         setError("Không tìm thấy món ăn phù hợp.");
@@ -38,7 +41,15 @@ const AllDishes = () => {
       }
     };
     loadDishes();
-  }, [location.search]);
+  }, [location.search, currentPage]);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div>
@@ -51,15 +62,40 @@ const AllDishes = () => {
         ) : dishes.length === 0 ? (
           <p className="ad-no-results">Không tìm thấy món ăn.</p>
         ) : (
-          <div className="ad-dishes-grid">
-            {dishes.map((dish) => (
-              <DishCard
-                key={dish.id}
-                dish={dish} // Truyền dish trực tiếp
-                restaurantId={dish.restaurantId || null}
-              />
-            ))}
-          </div>
+          <>
+            <div className="ad-dishes-grid">
+              {dishes.map((dish) => (
+                <DishCard
+                  key={dish.id}
+                  dish={dish}
+                  restaurantId={dish.restaurantId || null}
+                />
+              ))}
+            </div>
+            <div className="rl-pagination">
+              <button
+                disabled={currentPage === 0}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Trang trước
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={currentPage === index ? "active" : ""}
+                  onClick={() => handlePageChange(index)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                disabled={currentPage === totalPages - 1}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Trang sau
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>

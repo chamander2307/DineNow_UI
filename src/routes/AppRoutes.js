@@ -25,10 +25,13 @@ import RestaurantDetail from "../pages/RestaurantDetail/RestaurantDetail";
 import RestaurantList from "../pages/RestaurantList/RestaurantList";
 import RestaurantReviewForm from "../components/Restaurants/RestaurantReviewForm";
 import OrderPage from "../pages/OrderPage/OrderPage";
+import ReOrderPage from "../pages/OrderPage/ReOrderPage";
+
 // Chính sách & Thanh toán
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import PaymentStatus from "../pages/PaymentPage/PaymentStatus";
 import PolicyPage from "../pages/Policy/PolicyPage";
+
 // Quản trị (admin)
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminMainCategoryManager from "../pages/Admin/AdminMainCategoryManager";
@@ -40,6 +43,7 @@ import RevenueDashboard from "../pages/Admin/RevenueDashboard";
 import SettlementPage from "../pages/Admin/SettlementPage";
 import UserManager from "../pages/Admin/UserManager";
 import RestaurantTierManager from "../pages/Admin/RestaurantTierManager";
+
 // Quản trị (owner)
 import BankAccountManager from "../pages/Owner/BankAccountManager";
 import FoodCategoryMyList from "../pages/Owner/FoodCategoryMyList";
@@ -76,6 +80,7 @@ const AppRoutes = () => {
       <Route path="/reservation-history" element={<ReservationHistory />} />
       <Route path="/reservation/:id" element={<ReservationDetail />} />
       <Route path="/order" element={<OrderPage />} />
+      <Route path="/re-order/:id" element={<ReOrderPage />} />
 
       {/* Nhà hàng & món ăn */}
       <Route path="/all-dishes" element={<AllDishes />} />
@@ -86,7 +91,7 @@ const AppRoutes = () => {
 
       {/* Chính sách & Thanh toán */}
       <Route path="/payment/:id" element={<PaymentPage />} />
-      <Route path="/payment-status/:id" element={<PaymentStatus />} />
+      <Route path="/payment-status" element={<PaymentStatus />} />
       <Route path="/policy" element={<PolicyPage />} />
 
       {/* Quản trị - Admin */}

@@ -38,45 +38,49 @@ const RestaurantTypeFormModal = ({ onClose, onSuccess, initialData, checkDuplica
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(""); // Reset message trước khi xử lý
+
     try {
+      // Kiểm tra tên nhà hàng
       if (!formData.name) {
         setMessage("Vui lòng nhập tên loại nhà hàng");
         return;
       }
+
+      // Kiểm tra trùng tên khi tạo mới
       if (!initialData && checkDuplicateName(formData.name)) {
         setMessage("Tên loại nhà hàng đã tồn tại");
         return;
       }
+
+      // Kiểm tra ảnh đại diện khi tạo mới
       if (!initialData && !formData.image) {
         setMessage("Vui lòng chọn ảnh đại diện");
         return;
       }
 
+      // Tạo FormData để gửi dữ liệu
       const data = new FormData();
       data.append("name", formData.name);
       data.append("description", formData.description);
       if (formData.image) {
         data.append("imageUrl", formData.image);
-      } else if (initialData && !formData.image) {
-        data.append("imageUrl", initialData.imageUrl);
       }
 
-      let res;
       if (initialData) {
-        res = await updateRestaurantType(initialData.id, data);
-        if (res?.status === 200) {
-          onSuccess("Cập nhật thành công");
-        } else {
-          setMessage(res?.data?.message || "Cập nhật thất bại");
-        }
+        // Cập nhật loại nhà hàng
+        await updateRestaurantType(initialData.id, data);
+        onSuccess("Cập nhật thành công");
       } else {
-        res = await createRestaurantType(data);
-        if (res?.status === 201) {
-          onSuccess("Tạo mới thành công");
-        } else {
-          setMessage(res?.data?.message || "Tạo mới thất bại");
-        }
+        // Tạo mới loại nhà hàng
+        await createRestaurantType(data);
+        onSuccess("Tạo mới thành công");
       }
+
+      // Reset form sau khi thành công
+      setFormData({ name: "", description: "", image: null });
+      setPreview(null);
+      onClose();
     } catch (err) {
       console.error("Lỗi khi gửi form:", err);
       setMessage(err.response?.data?.message || "Thao tác thất bại");

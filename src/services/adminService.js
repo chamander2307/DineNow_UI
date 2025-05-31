@@ -17,8 +17,9 @@ export const createOwner = async (data) => {
     const res = await axios.post("/api/admin/users/owner", data);
     return res.data;
   } catch (error) {
-    console.error("Lỗi khi tạo tài khoản Owner:", error);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Lỗi khi tạo tài khoản Owner";
+    console.error("Lỗi khi tạo tài khoản Owner:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -42,7 +43,8 @@ export const createRestaurantType = async (formData) => {
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tạo loại nhà hàng:", error);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Lỗi khi tạo loại nhà hàng";
+    throw new Error(errorMessage);
   }
 };
 
@@ -171,7 +173,7 @@ export const fetchAdminOrdersByStatus = async (status, page = 0, size = 10) => {
     const res = await axios.get("/api/admin/orders/status", {
       params: { status, page, size },
     });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi lọc đơn hàng theo trạng thái:", error);
     throw error;
