@@ -7,37 +7,6 @@ import {
 import AdminLayout from "./AdminLayout";
 import MonthPicker from "../../components/admin/MonthPicker";
 import "../../assets/styles/admin/ProfitManager.css";
-import {
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-
-const COLORS = [
-  "#0099FF",
-  "#FF6B6B",
-  "#4CAF50",
-  "#FFC107",
-  "#9C27B0",
-  "#FF9800",
-  "#673AB7",
-  "#00BCD4",
-  "#E91E63",
-  "#8BC34A",
-  "#FF5722",
-  "#3F51B5",
-  "#CDDC39",
-  "#F44336",
-  "#2196F3",
-];
 
 const MAX_RESTAURANTS = 10;
 
@@ -178,51 +147,6 @@ const ProfitManager = () => {
     currentPage * MAX_RESTAURANTS
   );
 
-  const chartData = paginatedDetails.map((item) => ({
-    restaurantName: item.restaurantName,
-    profit: viewType === "monthly" ? item.profit : item.totalProfit || item.profit || 0,
-    totalOrders: item.totalOrders,
-    totalGuests: item.totalGuests,
-  }));
-
-  const pieChartData =
-    viewType === "total"
-      ? filteredDetails
-          .slice(0, MAX_RESTAURANTS - 1)
-          .map((item) => ({
-            restaurantName: item.restaurantName,
-            profit: item.totalProfit || 0,
-          }))
-          .concat(
-            filteredDetails.length > MAX_RESTAURANTS - 1
-              ? [
-                  {
-                    restaurantName: "Khác",
-                    profit: filteredDetails
-                      .slice(MAX_RESTAURANTS - 1)
-                      .reduce((sum, item) => sum + (item.totalProfit || 0), 0),
-                  },
-                ]
-              : []
-          )
-      : chartData;
-
-  const customTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="custom-tooltip" style={{ background: "#fff", padding: "8px", border: "1px solid #f0e6e2", borderRadius: "4px" }}>
-          <p style={{ margin: "0", fontWeight: "500" }}>{label}</p>
-          {payload.map((entry, index) => (
-            <p key={index} style={{ margin: "4px 0", color: entry.color || "#3c2f2f" }}>
-              {entry.name}: {entry.value.toLocaleString()} {entry.name.includes("Lợi nhuận") ? "VND" : entry.name.includes("đơn") ? "đơn" : "khách"}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <AdminLayout>
       <div className="profit-manager">
@@ -354,97 +278,6 @@ const ProfitManager = () => {
                   Trang sau
                 </button>
               </div>
-            )}
-
-            {/* Biểu đồ Monthly */}
-            {viewType === "monthly" && chartData.length > 0 && (
-              <div className="chart-section">
-                <h3>Biểu đồ lợi nhuận theo tháng</h3>
-                <ResponsiveContainer width="100%" height={900}>
-                  <BarChart
-                    data={chartData}
-                    layout="vertical"
-                    margin={{ top: 30, right: 60, left: 200, bottom: 30 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(value) => `${value.toLocaleString()} VND`} />
-                    <YAxis
-                      dataKey="restaurantName"
-                      type="category"
-                      tick={{ fontSize: 12 }}
-                      width={180}
-                      tickMargin={15}
-                    />
-                    <Tooltip content={customTooltip} />
-                    <Legend verticalAlign="top" height={40} />
-                    <Bar dataKey="profit" name="Lợi nhuận" fill="#0099FF" />
-                    <Bar dataKey="totalOrders" name="Số đơn hàng" fill="#FF6B6B" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {/* Biểu đồ Total */}
-            {viewType === "total" && pieChartData.length > 0 && (
-              <div className="chart-section">
-                <h3>Biểu đồ tổng lợi nhuận</h3>
-                <ResponsiveContainer width="100%" height={900}>
-                  <PieChart>
-                    <Pie
-                      data={pieChartData}
-                      dataKey="profit"
-                      nameKey="restaurantName"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={200}
-                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(1)}%)`}
-                      labelLine={{ length: 30 }}
-                    >
-                      {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={customTooltip} />
-                    <Legend verticalAlign="bottom" />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {/* Biểu đồ Range */}
-            {viewType === "range" && chartData.length > 0 && (
-              <div className="chart-section">
-                <h3>Biểu đồ lợi nhuận theo khoảng thời gian</h3>
-                <ResponsiveContainer width="100%" height={900}>
-                  <BarChart
-                    data={chartData}
-                    layout="vertical"
-                    margin={{ top: 30, right: 60, left: 200, bottom: 30 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(value) => `${value.toLocaleString()} VND`} />
-                    <YAxis
-                      dataKey="restaurantName"
-                      type="category"
-                      tick={{ fontSize: 12 }}
-                      width={180}
-                      tickMargin={15}
-                    />
-                    <Tooltip content={customTooltip} />
-                    <Legend verticalAlign="top" height={40} />
-                    <Bar dataKey="profit" name="Lợi nhuận" fill="#0099FF" />
-                    <Bar dataKey="totalOrders" name="Số đơn hàng" fill="#FF6B6B" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {/* Thông báo nếu không có dữ liệu */}
-            {(viewType === "monthly" || viewType === "range") && chartData.length === 0 && (
-              <p>Không có dữ liệu lợi nhuận để hiển thị.</p>
-            )}
-            {viewType === "total" && pieChartData.length === 0 && (
-              <p>Không có dữ liệu lợi nhuận để hiển thị.</p>
             )}
           </div>
         ) : (

@@ -76,7 +76,7 @@ const RevenueDashboard = () => {
     <AdminLayout>
       <div className="dashboard-container">
         <div className="manager-header">
-          <h2>Thống Kê Doanh Thu (Admin)</h2>
+          <h2>Thống Kê Doanh Thu</h2>
         </div>
         <div className="top-actions">
           <div className="control-item">
