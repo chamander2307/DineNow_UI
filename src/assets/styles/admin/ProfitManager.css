@@ -258,25 +258,29 @@
 
 .profit-manager .admin-table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   background: #fffaf7;
   border: 1px solid #f0e6e2;
   border-radius: 8px;
   overflow-x: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .profit-manager .admin-table th,
 .profit-manager .admin-table td {
-  padding: 14px;
+  padding: 16px;
   text-align: left;
   font-size: 1rem;
+  min-width: 120px; /* Ensure columns have a minimum width */
 }
 
 .profit-manager .admin-table th {
   background-color: #f2f2f2;
   color: #3c2f2f;
   font-weight: 500;
+  width: auto; /* Allow columns to expand naturally */
 }
 
 .profit-manager .admin-table td {
@@ -290,70 +294,6 @@
 
 .profit-manager .admin-table tr:hover {
   background: #f0f0f0;
-}
-
-.profit-manager .chart-section {
-  margin-top: 20px;
-  padding: 20px;
-  background: #fffaf7;
-  border: 1px solid #f0e6e2;
-  border-radius: 8px;
-  overflow-x: auto;
-  min-height: 900px;
-  text-align: center;
-  display: block;
-}
-
-.profit-manager .chart-section h3 {
-  font-size: 1.4rem;
-  color: #3c2f2f;
-  margin-bottom: 20px;
-  font-weight: 500;
-  text-align: center;
-}
-
-.profit-manager .chart-section .recharts-wrapper {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  width: 100%;
-  max-width: 100%;
-  min-height: 850px;
-  margin: 0 auto;
-  display: block;
-  box-sizing: border-box;
-}
-
-.profit-manager .chart-section .recharts-surface {
-  margin: 0 auto;
-  width: 100%;
-}
-
-.profit-manager .chart-section .recharts-pie-label {
-  font-size: 1rem;
-  fill: #3c2f2f;
-  font-weight: 500;
-}
-
-.profit-manager .chart-section .recharts-legend-item {
-  font-size: 1.1rem;
-  color: #3c2f2f;
-  margin-bottom: 12px;
-}
-
-.profit-manager .chart-section .recharts-tooltip-wrapper .recharts-tooltip {
-  font-size: 1.1rem;
-}
-
-.profit-manager .chart-section .recharts-text.recharts-cartesian-axis-tick {
-  font-size: 1rem;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  max-width: 200px;
-}
-
-.profit-manager .chart-section .recharts-line {
-  stroke-width: 2.5;
 }
 
 .profit-manager .filter-input {
@@ -418,19 +358,7 @@
   .profit-manager .admin-table th,
   .profit-manager .admin-table td {
     font-size: 0.9rem;
-    padding: 10px;
-  }
-  .profit-manager .chart-section {
-    min-height: 600px;
-    padding: 16px;
-  }
-  .profit-manager .chart-section .recharts-wrapper {
-    min-height: 550px;
-  }
-  .profit-manager .chart-section .recharts-pie-label,
-  .profit-manager .chart-section .recharts-legend-item,
-  .profit-manager .chart-section .recharts-tooltip-wrapper .recharts-tooltip,
-  .profit-manager .chart-section .recharts-text.recharts-cartesian-axis-tick {
-    font-size: 0.9rem;
+    padding: 12px;
+    min-width: 100px; /* Slightly smaller min-width for mobile */
   }
 }
