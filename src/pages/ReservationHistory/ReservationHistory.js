@@ -30,7 +30,7 @@ const ReservationHistory = () => {
       'Không xác định': 'Không xác định',
     };
     const localized = statusMap[status] || statusMap['Không xác định'];
-    console.log(`Localized status for ${status}: ${localized}`); // Debug
+    console.log(`Localized status for ${status}: ${localized}`);
     return localized;
   };
 
@@ -48,6 +48,7 @@ const ReservationHistory = () => {
         const formattedReservations = data.map(order => ({
           id: order.id,
           restaurant: {
+            id: order.restaurants?.id || 1, // Thêm restaurantId để sử dụng trong Link
             name: order.restaurants?.name || 'Không xác định',
           },
           status: localizeStatus(order.status || 'Không xác định'),
@@ -145,10 +146,18 @@ const ReservationHistory = () => {
                     {reservation.status}
                   </span>
                 </td>
-                <td>
+                <td className="action-column">
                   <Link to={`/reservation/${reservation.id}`} className="action-btn">
                     Xem chi tiết
                   </Link>
+                  {reservation.status === 'Hoàn thành' && (
+                    <Link
+                      to={`/restaurant/${reservation.restaurant.id}`}
+                      className="review-btn"
+                    >
+                      Đánh giá
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

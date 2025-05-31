@@ -64,7 +64,7 @@ const ReservationDetail = () => {
           thumbnail: order.restaurants?.thumbnailUrl ? order.restaurants.thumbnailUrl : restaurant1,
           name: order.restaurants?.name || 'Nhà hàng không xác định',
           address: order.restaurants?.address || 'Chưa có địa chỉ',
-          id: order.restaurants?.id || 1, // Thêm restaurantId để sử dụng trong navigate
+          id: order.restaurants?.id || 1,
         },
         date: order.reservationSimpleResponse?.reservationTime,
         time: order.reservationSimpleResponse?.reservationTime,
@@ -239,7 +239,7 @@ const ReservationDetail = () => {
         <p><strong>Hình thức thanh toán:</strong> VNPay</p>
       </div>
 
-      {/* Nút hủy, đặt lại và quay lại */}
+      {/* Nút hủy, đặt lại, quay lại và đánh giá nhà hàng */}
       <div className="button-section">
         {reservation.status === 'PENDING' && (
           <button
@@ -261,6 +261,14 @@ const ReservationDetail = () => {
         <Link to="/reservation-history" className="back-btn111">
           Quay lại
         </Link>
+        {reservation.status === 'COMPLETED' && (
+          <Link
+            to={`/restaurant/${reservation.restaurant.id}`}
+            className="review-btn"
+          >
+            Đánh giá nhà hàng
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -83,6 +83,13 @@
   font-weight: 500;
 }
 
+/* Style cho cột Hành động */
+.action-column {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các nút */
+  align-items: center;
+}
+
 .action-btn {
   display: inline-block;
   padding: 8px 16px;
@@ -96,6 +103,22 @@
 
 .action-btn:hover {
   background-color: #0056b3;
+}
+
+/* Style cho nút Đánh giá */
+.review-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #2ecc71; /* Màu xanh lá để phân biệt với nút Xem chi tiết */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.review-btn:hover {
+  background-color: #27ae60;
 }
 
 /* Responsive */
@@ -128,5 +151,18 @@
   .restaurant-filter,
   .status-filter {
     width: 100%;
+  }
+
+  /* Điều chỉnh cột Hành động trên màn hình nhỏ */
+  .action-column {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .action-btn,
+  .review-btn {
+    width: 100%;
+    text-align: center;
   }
 }
