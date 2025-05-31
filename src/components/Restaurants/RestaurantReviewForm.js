@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { fetchRestaurantReviews, addRestaurantReview } from '../../services/reviewService';
 import { getCustomerOrdersByRestaurant } from '../../services/orderService';
+import httpStatusMessages from '../../constants/httpStatusMessages';
 import '../../assets/styles/Restaurant/RestaurantReviewForm.css';
 
 const RestaurantReviewForm = ({ restaurantId }) => {
@@ -33,14 +34,13 @@ const RestaurantReviewForm = ({ restaurantId }) => {
         }));
         setReviews(processedReviews);
 
-        // Kiểm tra đơn hàng
         if (user) {
           const orderData = await getCustomerOrdersByRestaurant(restaurantId);
           setHasOrdered(Array.isArray(orderData?.data) && orderData.data.length > 0);
         }
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
-        setReviews([]); // Đảm bảo reviews không bị lỗi
+        setReviews([]);
       } finally {
         setLoading(false);
       }
@@ -48,44 +48,50 @@ const RestaurantReviewForm = ({ restaurantId }) => {
     loadData();
   }, [restaurantId, user]);
 
-  // Gửi đánh giá mới
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (rating === 0 || comment.trim() === '') {
-    alert('Vui lòng chọn số sao và nhập bình luận!');
-    return;
-  }
-
-  const reviewData = { rating, comment };
-  try {
-    const res = await addRestaurantReview(restaurantId, reviewData);
-    const { status, message, data } = res;
-
-    if (status === 201) {
-      const processedReview = {
-        author: data.reviewerName || currentUser,
-        date: data.reviewDate || new Date().toISOString(),
-        comment: data.comment || comment,
-        rating: data.rating || rating,
-      };
-      setReviews([processedReview, ...reviews]);
-      setRating(0);
-      setComment('');
-      alert(message || 'Đánh giá thành công!');
-    } else {
-      alert(message || 'Không thể gửi đánh giá. Vui lòng thử lại.');
+    e.preventDefault();
+    if (rating === 0 || comment.trim() === '') {
+      alert('Vui lòng chọn số sao và nhập bình luận!');
+      return;
     }
-  } catch (error) {
-    console.error('Lỗi khi gửi đánh giá:', error);
-    alert('Không thể gửi đánh giá. Vui lòng thử lại.');
-  }
-};
 
+    const reviewData = { rating, comment };
+    try {
+      const res = await addRestaurantReview(restaurantId, reviewData);
+      console.log('API response from addRestaurantReview:', res); // Debug log
+
+      const status = res.status || 500;
+      const message = res.message || '';
+      const data = res.data || {};
+
+      if ([200, 201].includes(status)) {
+        const processedReview = {
+          author: data.reviewerName || currentUser,
+          date: data.reviewDate || new Date().toISOString(),
+          comment: data.comment || comment,
+          rating: data.rating || rating,
+        };
+        setReviews([processedReview, ...reviews]);
+        setRating(0);
+        setComment('');
+        alert(httpStatusMessages[status] || 'Đánh giá thành công!');
+      } else {
+        const errorMessage = httpStatusMessages[status] || res?.message || 'Không thể gửi đánh giá. Vui lòng thử lại.';
+        alert(errorMessage);
+
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi đánh giá:', error);
+      const status = error.response?.data?.status || error.response?.status || 500;
+      const apiMessage = error.response?.data?.message || error.message;
+      const errorMessage = apiMessage || httpStatusMessages[status] || httpStatusMessages[500] || 'Không thể gửi đánh giá. Vui lòng thử lại.';
+      alert(errorMessage);
+    }
+  };
 
   return (
     <div className="rest-review-form-container">
       <h2>Đánh giá nhà hàng</h2>
-
       {hasOrdered && user ? (
         <form onSubmit={handleSubmit} className="rest-review-form">
           <div className="rest-rating-input">
@@ -107,7 +113,6 @@ const RestaurantReviewForm = ({ restaurantId }) => {
               })}
             </div>
           </div>
-
           <div className="rest-comment-input">
             <label>Bình luận:</label>
             <textarea
@@ -127,7 +132,6 @@ const RestaurantReviewForm = ({ restaurantId }) => {
       ) : (
         <p>Bạn cần đặt hàng và đăng nhập để gửi đánh giá.</p>
       )}
-
       <div className="rest-reviews-list">
         <h3>Các đánh giá ({reviews.length})</h3>
         {loading ? (

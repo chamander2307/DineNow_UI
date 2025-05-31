@@ -9,9 +9,9 @@ const AllDishes = () => {
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-  const [totalItems, setTotalItems] = useState(0); // Tổng số món ăn
-  const itemsPerPage = 20; // Số món mỗi trang
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 20;
   const location = useLocation();
 
   useEffect(() => {
@@ -22,7 +22,6 @@ const AllDishes = () => {
         const params = new URLSearchParams(location.search);
         const filterData = {
           city: params.get("city") || "",
-          district: params.get("district") || "",
           mainCategoryId: params.get("mainCategoryId") || "",
           restaurantTypeId: params.get("restaurantTypeId") || "",
           minPrice: params.get("minPrice") ? Number(params.get("minPrice")) : undefined,
@@ -32,7 +31,7 @@ const AllDishes = () => {
         const response = await filterMenuItems(filterData, currentPage, itemsPerPage);
         const dishesData = Array.isArray(response.data) ? response.data : [];
         setDishes(dishesData);
-        setTotalItems(response.totalItems || dishesData.length); // Giả sử API trả về totalItems
+        setTotalItems(response.totalItems || dishesData.length);
         console.log("Dishes data in AllDishes:", dishesData);
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
@@ -42,12 +41,10 @@ const AllDishes = () => {
       }
     };
     loadDishes();
-  }, [location.search, currentPage]); // Thêm currentPage vào dependencies
+  }, [location.search, currentPage]);
 
-  // Tính tổng số trang
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  // Xử lý chuyển trang
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
       setCurrentPage(page);
@@ -75,7 +72,6 @@ const AllDishes = () => {
                 />
               ))}
             </div>
-            {/* Phân trang */}
             <div className="rl-pagination">
               <button
                 disabled={currentPage === 0}
