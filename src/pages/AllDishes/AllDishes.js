@@ -29,10 +29,28 @@ const AllDishes = () => {
         };
 
         const response = await filterMenuItems(filterData, currentPage, itemsPerPage);
-        const dishesData = Array.isArray(response.data) ? response.data : [];
-        setDishes(dishesData);
-        setTotalItems(response.totalItems || dishesData.length);
-        console.log("Dishes data in AllDishes:", dishesData);
+        console.log("Raw API response:", response);
+
+        // Xử lý dữ liệu
+        let dishesData = [];
+        if (Array.isArray(response.data)) {
+          dishesData = response.data;
+        } else if (Array.isArray(response.data.content)) {
+          dishesData = response.data.content;
+        } else {
+          console.error("Unexpected API response structure:", response.data);
+        }
+
+        // Phân trang trong frontend
+        const startIndex = currentPage * itemsPerPage;
+        const paginatedDishes = dishesData.slice(startIndex, startIndex + itemsPerPage);
+
+        setDishes(paginatedDishes);
+        const totalItemsValue = response.data.totalElements || response.data.totalItems || dishesData.length;
+        setTotalItems(totalItemsValue);
+        console.log("Dishes data:", paginatedDishes);
+        console.log("Total items:", totalItemsValue);
+        console.log("Total pages:", Math.ceil(totalItemsValue / itemsPerPage));
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
         setError("Không tìm thấy món ăn phù hợp.");
@@ -47,6 +65,7 @@ const AllDishes = () => {
 
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
+      console.log("Changing to page:", page);
       setCurrentPage(page);
     }
   };
@@ -64,13 +83,16 @@ const AllDishes = () => {
         ) : (
           <>
             <div className="ad-dishes-grid">
-              {dishes.map((dish) => (
-                <DishCard
-                  key={dish.id}
-                  dish={dish}
-                  restaurantId={dish.restaurantId || null}
-                />
-              ))}
+              {dishes.map((dish) => {
+                console.log("Rendering dish:", dish);
+                return (
+                  <DishCard
+                    key={dish.id}
+                    dish={dish}
+                    restaurantId={dish.restaurantId || null}
+                  />
+                );
+              })}
             </div>
             <div className="rl-pagination">
               <button

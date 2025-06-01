@@ -1,4 +1,19 @@
 import axios from "../config/axios";
+import httpStatusMessages from '../constants/httpStatusMessages';
+
+const handleResponse = (response) => {
+  const resData = response.data;
+  const statusCode = resData.status || response.status || 500;
+
+  if (statusCode !== 200 && statusCode !== 201 && statusCode !== 204) {
+    const message = resData.message || httpStatusMessages[statusCode] || 'Lỗi không xác định';
+    const error = new Error(message);
+    error.response = { status: statusCode, data: resData };
+    throw error;
+  }
+
+  return resData;
+};
 
 // ========== OWNER ==========
 
@@ -34,13 +49,9 @@ export const updateRestaurant = async (id, formData) => {
 
 export const fetchRestaurantsByOwner = async () => {
   try {
-    const response = await axios.get("/api/owner/restaurants");
-    return response.data;
+    const response = await axios.get('/api/owner/restaurants');
+    return handleResponse(response);
   } catch (error) {
-    console.error(
-      "Lỗi khi lấy danh sách nhà hàng của chủ sở hữu:",
-      error.response?.data || error.message
-    );
     throw error;
   }
 };

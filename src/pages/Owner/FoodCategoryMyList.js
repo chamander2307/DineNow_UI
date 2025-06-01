@@ -1,11 +1,12 @@
-// FoodCategoryMyList.js
 import React, { useEffect, useState } from "react";
 import OwnerLayout from "./OwnerLayout";
 import FoodCategoryFormModal from "../../components/Owner/FoodCategoryFormModal";
 import { getFoodCategoriesByRestaurant, deleteFoodCategory } from "../../services/foodCategoryService";
 import { fetchRestaurantsByOwner } from "../../services/restaurantService";
 import { fetchMainCategories } from "../../services/menuItemService";
+import httpStatusMessages from "../../constants/httpStatusMessages";
 import "../../assets/styles/owner/MenuItem.css";
+
 const FoodCategoryMyList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
@@ -33,7 +34,9 @@ const FoodCategoryMyList = () => {
       if (data.length > 0) setSelectedRestaurantId(data[0].id);
       else alert("Vui lòng tạo nhà hàng trước khi quản lý danh mục.");
     } catch (err) {
-      alert("Không thể tải danh sách nhà hàng: " + (err.message || "Lỗi không xác định"));
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || "Lỗi không xác định";
+      alert(`Không thể tải danh sách nhà hàng: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -44,7 +47,9 @@ const FoodCategoryMyList = () => {
       const res = await fetchMainCategories();
       setMainCategories(res.map((cat) => ({ value: cat.id, label: cat.name })));
     } catch (err) {
-      alert("Không thể tải danh mục chính: " + (err.message || "Lỗi không xác định"));
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || "Lỗi không xác định";
+      alert(`Không thể tải danh mục chính: ${errorMessage}`);
     }
   };
 
@@ -54,7 +59,13 @@ const FoodCategoryMyList = () => {
       const res = await getFoodCategoriesByRestaurant(restaurantId);
       setCategories(res || []);
     } catch (err) {
-      alert("Không thể tải danh sách danh mục: " + (err.message || "Lỗi không xác định"));
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || "Lỗi không xác định";
+      let displayMessage = errorMessage;
+      if (statusCode === 417) {
+        displayMessage += " Vui lòng kiểm tra trạng thái phê duyệt nhà hàng hoặc liên hệ admin.";
+      }
+      alert(`Không thể tải danh sách danh mục: ${displayMessage}`);
     } finally {
       setLoading(false);
     }
@@ -67,7 +78,9 @@ const FoodCategoryMyList = () => {
       alert("Xóa danh mục thành công.");
       loadCategories(selectedRestaurantId);
     } catch (err) {
-      alert("Không thể xóa danh mục: " + (err.response?.data?.message || err.message));
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || "Lỗi không xác định";
+      alert(`Không thể xóa danh mục: ${errorMessage}`);
     }
   };
 

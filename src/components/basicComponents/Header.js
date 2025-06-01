@@ -21,6 +21,9 @@ const Header = () => {
   const { isLogin, user, logout, loading } = useContext(UserContext);
   const userName = user?.fullName || user?.email || "Người dùng";
 
+  // Kiểm tra xem người dùng có phải là ADMIN hoặc OWNER hay không
+  const isAdminOrOwner = isLogin && (user?.role === "ADMIN" || user?.role === "OWNER");
+
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -65,7 +68,6 @@ const Header = () => {
           const { latitude, longitude } = position.coords;
           console.log(`Vị trí: lat=${latitude}, lng=${longitude}`);
           try {
-            // Thêm page và size vào query params
             const response = await axios.get(
               `http://localhost:8080/api/restaurants/nearby?lng=${longitude}&lat=${latitude}&radius=10&page=0&size=20`
             );
@@ -137,7 +139,8 @@ const Header = () => {
                 ))}
               </div>
             )}
-            {isLogin && (
+            {/* Chỉ hiển thị "Nhà hàng yêu thích" nếu không phải ADMIN hoặc OWNER */}
+            {!isAdminOrOwner && isLogin && (
               <Link to="/favorite-restaurants" className="nav-item">
                 <FaHeart style={{ marginRight: 6 }} />
                 Yêu Thích
@@ -147,16 +150,19 @@ const Header = () => {
         </div>
 
         <div className="account-area">
-          <div className="cart-container">
-            <div
-              className="cart-link"
-              onClick={() => setIsCartDialogOpen(true)}
-            >
-              <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
+          {/* Chỉ hiển thị "Giỏ hàng" nếu không phải ADMIN hoặc OWNER */}
+          {!isAdminOrOwner && (
+            <div className="cart-container">
+              <div
+                className="cart-link"
+                onClick={() => setIsCartDialogOpen(true)}
+              >
+                <FaShoppingBag style={{ fontSize: "18px", color: "white" }} />
+              </div>
             </div>
-          </div>
+          )}
 
-          {isCartDialogOpen && (
+          {isCartDialogOpen && !isAdminOrOwner && (
             <>
               <div className="cart-dialog-overlay" />
               <div className="cart-dialog" ref={dialogRef}>

@@ -1,42 +1,43 @@
 import { Link } from "react-router-dom";
-import fallbackImage from "../../assets/img/fallback.jpg"; 
+import fallbackImage from "../../assets/img/fallback.jpg";
 import "../../assets/styles/Dish/DishCard.css";
 
 const DishCard = ({ dish, restaurantId }) => {
-  // Sử dụng biến môi trường hoặc mặc định
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
-  // Format price with Vietnamese currency (VNĐ)
   const formattedPrice = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(Number(dish.price || 0));
 
-  // Render star icons based on averageRating
   const renderStars = (rating) => {
     const stars = [];
-    const fullStars = Math.floor(rating || 0);
+    const roundedRating = rating !== undefined ? rating : 0;
+    const fullStars = Math.floor(roundedRating);
+    const hasHalfStar = roundedRating - fullStars >= 0.5;
+
     for (let i = 0; i < 5; i++) {
-      stars.push(
-        <span key={i} className={i < fullStars ? "dc-star filled" : "dc-star"}>
-          ★
-        </span>
-      );
+      if (i < fullStars) {
+        stars.push(<span key={i} className="dc-star filled">★</span>);
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(<span key={i} className="dc-star half-filled">★</span>);
+      } else {
+        stars.push(<span key={i} className="dc-star">★</span>);
+      }
     }
     return stars;
   };
 
-  // Xác định URL ảnh
   let imageUrl = fallbackImage;
   if (dish.imageUrl && dish.imageUrl.trim() !== "") {
     if (dish.imageUrl.startsWith("http")) {
       imageUrl = dish.imageUrl;
     } else {
-      // Xóa các dấu / thừa ở đầu
       imageUrl = `${BASE_URL}/uploads/${dish.imageUrl.replace(/^\/+/, '')}`;
     }
   }
-  console.log("Image URL for dish", dish.name, ":", imageUrl); // Debug
+  console.log("Image URL for dish", dish.name, ":", imageUrl);
+  console.log("Average rating for dish", dish.name, ":", dish.averageRating);
 
   return (
     <Link
@@ -62,7 +63,10 @@ const DishCard = ({ dish, restaurantId }) => {
           <p className="dc-type">{dish.typeName || "Không xác định"}</p>
           <div className="dc-meta">
             <span className="dc-price">{formattedPrice}</span>
-            <span className="dc-rating">{renderStars(dish.averageRating)}</span>
+            <span className="dc-rating">
+              {renderStars(dish.averageRating)}
+              {dish.averageRating !== undefined ? dish.averageRating.toFixed(1) : "Chưa có"}
+            </span>
           </div>
         </div>
       </div>

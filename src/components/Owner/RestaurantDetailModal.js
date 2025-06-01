@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchRestaurantById } from "../../services/restaurantService";
+import { fetchRestaurantById, updateOwnerRestaurantStatus } from "../../services/restaurantService";
 import Modal from "react-modal";
 
 Modal.setAppElement("#root");
 
 const RestaurantDetailModal = ({ isOpen, onClose, restaurantId }) => {
   const [restaurant, setRestaurant] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen && restaurantId) {
@@ -14,11 +15,50 @@ const RestaurantDetailModal = ({ isOpen, onClose, restaurantId }) => {
   }, [isOpen, restaurantId]);
 
   const loadRestaurantDetails = async () => {
+    setLoading(true);
     try {
       const data = await fetchRestaurantById(restaurantId);
       setRestaurant(data || null);
     } catch (error) {
-      alert("Không thể tải chi tiết nhà hàng.");
+      const errorMessage =
+        error.response?.data?.message ||
+        (error.response?.status === 403
+          ? "Nhà hàng chưa được duyệt hoặc đã bị khóa."
+          : "Không thể tải chi tiết nhà hàng.");
+      alert(errorMessage);
+      onClose(); // Đóng modal nếu có lỗi
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleRestaurantStatus = async () => {
+    if (!restaurant || !["APPROVED", "SUSPENDED"].includes(restaurant.status)) {
+      alert("Trạng thái nhà hàng không hợp lệ để thay đổi.");
+      return;
+    }
+
+    const newStatus = restaurant.status === "APPROVED" ? "SUSPENDED" : "APPROVED";
+    const actionText = restaurant.status === "APPROVED" ? "khóa" : "mở khóa";
+
+    if (!window.confirm(`Bạn có chắc muốn ${actionText} nhà hàng này?`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await updateOwnerRestaurantStatus(restaurantId, newStatus);
+      if (response.status === 200 && response.data === true) {
+        alert(`Nhà hàng đã được ${actionText} thành công!`);
+        setRestaurant({ ...restaurant, status: newStatus });
+      } else {
+        throw new Error("Phản hồi không hợp lệ từ server");
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || "Lỗi không xác định";
+      alert(`Lỗi khi ${actionText} nhà hàng: ${errorMessage}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,6 +131,13 @@ const RestaurantDetailModal = ({ isOpen, onClose, restaurantId }) => {
       </div>
 
       <div className="modal-buttons">
+        <button
+          className="toggle-status-btn"
+          onClick={toggleRestaurantStatus}
+          disabled={loading || !["APPROVED", "SUSPENDED"].includes(restaurant.status)}
+        >
+          {restaurant.status === "APPROVED" ? "Khóa" : restaurant.status === "SUSPENDED" ? "Mở khóa" : "N/A"}
+        </button>
         <button className="cancel-btn" onClick={onClose}>Đóng</button>
       </div>
     </Modal>

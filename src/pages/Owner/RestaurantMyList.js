@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OwnerLayout from "./OwnerLayout";
-import { fetchRestaurantsByOwner } from "../../services/restaurantService";
+import { fetchRestaurantsByOwner, updateOwnerRestaurantStatus } from "../../services/restaurantService";
 import RestaurantFormModal from "../../components/Owner/RestaurantFormModal";
 import RestaurantDetailModal from "../../components/Owner/RestaurantDetailModal";
+import httpStatusMessages from "../../constants/httpStatusMessages";
 import Modal from "react-modal";
 import "../../assets/styles/owner/OwnerRestaurant.css";
 
@@ -14,7 +15,7 @@ const RestaurantMyList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null); // Thay đổi từ selectedRestaurant
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,10 +26,51 @@ const RestaurantMyList = () => {
     setLoading(true);
     try {
       const res = await fetchRestaurantsByOwner();
-      setRestaurants(res?.data || []);
+      const data = res?.data || [];
+
+      if (res?.status !== 200) {
+        const statusCode = res?.status || 500;
+        const errorMessage = res?.message || httpStatusMessages[statusCode] || "Lỗi không xác định";
+        throw new Error(errorMessage);
+      }
+
+      setRestaurants(data);
     } catch (err) {
-      alert("Không thể tải danh sách nhà hàng: " + (err.response?.data?.message || err.message));
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || err.message || "Lỗi không xác định";
+      alert(`Không thể tải danh sách nhà hàng: ${errorMessage}`);
       setRestaurants([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleRestaurantStatus = async (restaurantId, currentStatus) => {
+    if (!["APPROVED", "SUSPENDED"].includes(currentStatus)) {
+      alert("Trạng thái nhà hàng không hợp lệ để thay đổi.");
+      return;
+    }
+
+    const newStatus = currentStatus === "APPROVED" ? "SUSPENDED" : "APPROVED";
+    const actionText = currentStatus === "APPROVED" ? "khóa" : "mở khóa";
+
+    if (!window.confirm(`Bạn có chắc muốn ${actionText} nhà hàng này?`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await updateOwnerRestaurantStatus(restaurantId, newStatus);
+      if (response.status === 200 && response.data === true) {
+        alert(`Nhà hàng đã được ${actionText} thành công!`);
+        await loadRestaurants();
+      } else {
+        throw new Error("Phản hồi không hợp lệ từ server");
+      }
+    } catch (err) {
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || err.message || "Lỗi không xác định";
+      alert(`Lỗi khi ${actionText} nhà hàng: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -40,12 +82,20 @@ const RestaurantMyList = () => {
   };
 
   const openEditModal = (restaurant) => {
-    setSelectedRestaurantId(restaurant.id); // Truyền ID thay vì object
+    setSelectedRestaurantId(restaurant.id);
     setShowFormModal(true);
   };
 
   const openDetailModal = (restaurant) => {
-    setSelectedRestaurantId(restaurant.id); // Truyền ID
+    if (restaurant.status !== "APPROVED") {
+      alert(
+        restaurant.status === "PENDING"
+          ? "Nhà hàng chưa được duyệt, không thể xem chi tiết."
+          : "Nhà hàng đã bị khóa, không thể xem chi tiết."
+      );
+      return;
+    }
+    setSelectedRestaurantId(restaurant.id);
     setShowDetailModal(true);
   };
 
@@ -86,6 +136,7 @@ const RestaurantMyList = () => {
               <th>Hạng</th>
               <th>Đánh giá TB</th>
               <th>Số lượng đặt bàn</th>
+              <th>Trạng thái</th>
               <th>Thao tác</th>
             </tr>
           </thead>
@@ -102,15 +153,27 @@ const RestaurantMyList = () => {
                   />
                 </td>
                 <td>{r.id}</td>
-                <td>{r.name}</td>
-                <td>{r.address}</td>
-                <td>{r.type?.name || r.typeName || "N/A"}</td>
+                <td>{r.name || "N/A"}</td>
+                <td>{r.address || "N/A"}</td>
+                <td>{r.typeName || "N/A"}</td>
                 <td>{r.restaurantTierName || "N/A"}</td>
                 <td>{r.averageRating ? r.averageRating.toFixed(1) : "0.0"}</td>
                 <td>{r.reservationCount ?? "0"}</td>
                 <td>
-                  <button onClick={() => openEditModal(r)}>Sửa</button>
-                  <button onClick={() => openDetailModal(r)}>Xem</button>
+                  {r.status === "APPROVED" ? "Đã duyệt" : 
+                   r.status === "PENDING" ? "Đang chờ" : 
+                   r.status === "SUSPENDED" ? "Đã khóa" : 
+                   r.status === "BLOCKED" ? "Bị chặn" : "N/A"}
+                </td>
+                <td>
+                  <button onClick={() => openEditModal(r)} disabled={loading}>Sửa</button>
+                  <button onClick={() => openDetailModal(r)} disabled={loading || r.status !== "APPROVED"}>Xem</button>
+                  <button
+                    onClick={() => toggleRestaurantStatus(r.id, r.status)}
+                    disabled={loading || !["APPROVED", "SUSPENDED"].includes(r.status)}
+                  >
+                    {r.status === "APPROVED" ? "Khóa" : r.status === "SUSPENDED" ? "Mở khóa" : "N/A"}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -122,7 +185,7 @@ const RestaurantMyList = () => {
         <RestaurantFormModal
           isOpen={showFormModal}
           onClose={closeFormModal}
-          restaurantId={selectedRestaurantId} // Truyền restaurantId
+          restaurantId={selectedRestaurantId}
           onRefresh={loadRestaurants}
           restaurants={restaurants}
         />

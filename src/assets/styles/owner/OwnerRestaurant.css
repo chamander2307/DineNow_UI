@@ -160,3 +160,32 @@
     transform: rotate(360deg);
   }
 }
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.toggle-status-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #dc3545; /* Màu đỏ cho nút khóa/mở khóa */
+  color: white;
+  cursor: pointer;
+}
+
+.toggle-status-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #6c757d;
+  color: white;
+  cursor: pointer;
+}
