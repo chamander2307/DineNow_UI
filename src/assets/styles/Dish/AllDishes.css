@@ -26,13 +26,13 @@
 
 .ad-dishes-grid {
   display: grid;
-  grid-template-columns: repeat(4, 330px); /* 4 thẻ/hàng */
-  gap: 32px; /* Khoảng cách ngang và dọc */
+  grid-template-columns: repeat(4, 330px); 
+  gap: 32px; 
   justify-content: center;
 }
 
 .ad-dishes-grid > * {
-  margin-bottom: 24px; /* Thêm margin-bottom để tăng khoảng cách dọc (~56px tổng) */
+  margin-bottom: 24px;
 }
 
 .ad-error-message {
@@ -59,17 +59,17 @@
 /* Responsive */
 @media (max-width: 1400px) {
   .ad-dishes-grid {
-    grid-template-columns: repeat(3, 330px); /* 3 thẻ/hàng */
+    grid-template-columns: repeat(3, 330px);
     gap: 24px;
   }
   .ad-dishes-grid > * {
-    margin-bottom: 16px; /* Giảm khoảng cách dọc */
+    margin-bottom: 16px; 
   }
 }
 
 @media (max-width: 1000px) {
   .ad-dishes-grid {
-    grid-template-columns: repeat(2, 330px); /* 2 thẻ/hàng */
+    grid-template-columns: repeat(2, 330px);
     gap: 20px;
   }
   .ad-dishes-grid > * {
@@ -82,7 +82,7 @@
     padding: 20px; /* Giảm padding cho mobile */
   }
   .ad-dishes-grid {
-    grid-template-columns: 330px; /* 1 thẻ/hàng */
+    grid-template-columns: 330px;
     gap: 16px;
   }
   .ad-dishes-grid > * {
@@ -95,33 +95,79 @@
     font-size: 14px;
   }
 }
+
+/* Nút phân trang */
 .rl-pagination {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin: 20px 0;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0;
 }
 
 .rl-pagination button {
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #5fabf7, #4e9eed);
-  color: white;
-  border: none;
-  border-radius: 6px;
+  padding: 6px 10px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  min-width: 28px;
+  text-align: center;
 }
 
 .rl-pagination button:hover {
-  background: linear-gradient(135deg, #34495e, #2c3e50);
+  background: #bbdefb; 
+  border-color: #1976d2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.rl-pagination button.page-number.active {
+  background: #1976d2; 
+  color: white;
+  border-color: #1976d2;
+  font-weight: 600;
 }
 
 .rl-pagination button:disabled {
-  background: #ccc;
+  background: #f5f5f5;
+  color: #bdbdbd; 
+  border-color: #e0e0e0;
   cursor: not-allowed;
+  box-shadow: none; 
+}
+
+/* Mũi tên */
+.rl-pagination button.prev,
+.rl-pagination button.next {
+  font-size: 14px; 
+  padding: 6px 8px;
+}
+
+/* Mũi tên tinh tế hơn */
+.rl-pagination button.prev::before {
+  content: "←"; 
+}
+
+.rl-pagination button.next::before {
+  content: "→";
+}
+
+/* Mũi tên khi disabled */
+.rl-pagination button.prev:disabled::before,
+.rl-pagination button.next:disabled::before {
+  color: #bdbdbd; 
+}
+
+
+.rl-pagination button.page-number {
+  padding: 6px 10px;
 }
 
 .rl-pagination span {
-  font-size: 16px;
-  line-height: 32px;
+  font-size: 14px;
+  line-height: 28px;
+  color: #333;
 }

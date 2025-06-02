@@ -89,7 +89,7 @@ const AllDishes = () => {
   };
 
   const renderPaginationButtons = () => {
-    const maxButtons = 5;
+    const maxButtons = 5; // 2 trang trước + trang hiện tại + 2 trang sau
     const half = Math.floor(maxButtons / 2);
     let start = Math.max(0, currentPage - half);
     let end = Math.min(totalPages, start + maxButtons);
@@ -101,7 +101,7 @@ const AllDishes = () => {
     return Array.from({ length: end - start }, (_, index) => start + index).map((page) => (
       <button
         key={page}
-        className={currentPage === page ? "active" : ""}
+        className={`page-number ${currentPage === page ? "active" : ""}`}
         onClick={() => handlePageChange(page)}
       >
         {page + 1}
@@ -132,18 +132,16 @@ const AllDishes = () => {
             {totalPages > 1 && (
               <div className="rl-pagination">
                 <button
+                  className="prev"
                   disabled={currentPage === 0}
                   onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  Trang trước
-                </button>
+                ></button>
                 {renderPaginationButtons()}
                 <button
+                  className="next"
                   disabled={currentPage === totalPages - 1}
                   onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  Trang sau
-                </button>
+                ></button>
               </div>
             )}
           </>
