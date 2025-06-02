@@ -50,16 +50,28 @@ const DishItem = ({
   const handleClick = useCallback(() => setSelectedDish(dish), [dish, setSelectedDish]);
   const handleAdd = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     addToCart(dish.id);
-  }, [dish.id, addToCart]);
+  }, [dish.id, addToCart, isUserRestricted]);
   const handleIncrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     increaseQuantity(dish.id);
-  }, [dish.id, increaseQuantity]);
+  }, [dish.id, increaseQuantity, isUserRestricted]);
   const handleDecrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
     decreaseQuantity(dish.id);
-  }, [dish.id, decreaseQuantity]);
+  }, [dish.id, decreaseQuantity, isUserRestricted]);
 
   return (
     <div className="dish-item" onClick={handleClick} id={`dish-${dish.id}`}>
@@ -84,12 +96,12 @@ const DishItem = ({
       </div>
       {cart[dish.id] ? (
         <div className="add-item-container">
-          <button className="remove-btn" onClick={handleDecrease} disabled={isUserRestricted}>−</button>
+          <button className="remove-btn" onClick={handleDecrease}>−</button>
           <span className="item-quantity">{cart[dish.id]}</span>
-          <button className="add-btn" onClick={handleIncrease} disabled={isUserRestricted}>+</button>
+          <button className="add-btn" onClick={handleIncrease}>+</button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={handleAdd} disabled={isUserRestricted}>Thêm</button>
+        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
       )}
     </div>
   );
@@ -120,20 +132,32 @@ const DishDetail = ({
 
   const handleAdd = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     addToCart(dish.id);
-  }, [dish.id, addToCart]);
+  }, [dish.id, addToCart, isUserRestricted]);
 
   const handleIncrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     increaseQuantity(dish.id);
     const newQuantity = (cart[dish.id] || 0) + 1;
     setToastMessage(`Đã tăng số lượng "${dish.name}" lên ${newQuantity}!`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
-  }, [dish.id, dish.name, cart, increaseQuantity, setToastMessage, setShowToast]);
+  }, [dish.id, dish.name, cart, increaseQuantity, setToastMessage, setShowToast, isUserRestricted]);
 
   const handleDecrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
     const currentQuantity = cart[dish.id] || 0;
     decreaseQuantity(dish.id);
     const newQuantity = currentQuantity - 1;
@@ -144,7 +168,7 @@ const DishDetail = ({
     }
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
-  }, [dish.id, dish.name, cart, decreaseQuantity, setToastMessage, setShowToast]);
+  }, [dish.id, dish.name, cart, decreaseQuantity, setToastMessage, setShowToast, isUserRestricted]);
 
   const handleBack = useCallback((e) => {
     e.preventDefault();
@@ -277,12 +301,12 @@ const DishDetail = ({
           <div className="dish-actions-Detail">
             {cart[dish.id] ? (
               <div className="add-item-container-Detail">
-                <button className="remove-btn-Detail" onClick={handleDecrease} disabled={isUserRestricted}>−</button>
+                <button className="remove-btn-Detail" onClick={handleDecrease}>−</button>
                 <span className="item-quantity-Detail">{cart[dish.id]}</span>
-                <button className="add-btn-Detail" onClick={handleIncrease} disabled={isUserRestricted}>+</button>
+                <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
               </div>
             ) : (
-              <button className="add-to-cart-Detail" onClick={handleAdd} disabled={isUserRestricted}>Thêm</button>
+              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
             )}
           </div>
         </div>
@@ -392,7 +416,10 @@ const RestaurantDetail = () => {
 
   // Hàm xử lý giỏ hàng
   const addToCart = useCallback(async (dishId) => {
-    if (isUserRestricted) return;
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     try {
       let newQuantity;
       setCart(prev => {
@@ -417,7 +444,10 @@ const RestaurantDetail = () => {
   }, [id, menuItems, isUserRestricted]);
 
   const increaseQuantity = useCallback((dishId) => {
-    if (isUserRestricted) return;
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     setCart(prev => ({
       ...prev,
       [dishId]: prev[dishId] + 1,
@@ -425,7 +455,10 @@ const RestaurantDetail = () => {
   }, [isUserRestricted]);
 
   const decreaseQuantity = useCallback((dishId) => {
-    if (isUserRestricted) return;
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
     setCart(prev => {
       const newQuantity = prev[dishId] - 1;
       if (newQuantity <= 0) {
@@ -464,6 +497,7 @@ const RestaurantDetail = () => {
 
   const handleBookTable = useCallback(() => {
     if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể đặt bàn.');
       return;
     }
 
@@ -663,7 +697,7 @@ const RestaurantDetail = () => {
             )}
           </div>
           <div className="rd-actions">
-            <button className="book-btn" onClick={handleBookTable} disabled={isUserRestricted}>
+            <button className="book-btn" onClick={handleBookTable}>
               Đặt bàn ngay
             </button>
             <button className="heart" onClick={toggleLike}>
