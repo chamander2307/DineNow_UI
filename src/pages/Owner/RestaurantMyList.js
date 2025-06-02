@@ -82,9 +82,19 @@ const RestaurantMyList = () => {
   };
 
   const openEditModal = (restaurant) => {
-    setSelectedRestaurantId(restaurant.id);
-    setShowFormModal(true);
-  };
+  if (restaurant.status !== "APPROVED") {
+    alert(
+      restaurant.status === "PENDING"
+        ? "Nhà hàng chưa được duyệt, không thể chỉnh sửa."
+        : "Nhà hàng đã bị khóa, không thể chỉnh sửa."
+    );
+    return;
+  }
+
+  setSelectedRestaurantId(restaurant.id);
+  setShowFormModal(true);
+};
+
 
   const openDetailModal = (restaurant) => {
     if (restaurant.status !== "APPROVED") {
@@ -166,8 +176,8 @@ const RestaurantMyList = () => {
                    r.status === "BLOCKED" ? "Bị chặn" : "N/A"}
                 </td>
                 <td>
-                  <button onClick={() => openEditModal(r)} disabled={loading}>Sửa</button>
-                  <button onClick={() => openDetailModal(r)} disabled={loading || r.status !== "APPROVED"}>Xem</button>
+                    <button onClick={() => openEditModal(r)} disabled={loading}>Sửa</button>
+                  <button onClick={() => openDetailModal(r)} disabled={loading}>Xem</button>
                   <button
                     onClick={() => toggleRestaurantStatus(r.id, r.status)}
                     disabled={loading || !["APPROVED", "SUSPENDED"].includes(r.status)}
