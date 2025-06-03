@@ -5,9 +5,7 @@ import RestaurantTierFormModal from "../../components/common/RestaurantTierFormM
 import "../../assets/styles/admin/RestaurantTierManager.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-// Debug import
-console.log("RestaurantTierFormModal:", RestaurantTierFormModal);
+import adminHttpStatusMessages from "../../constants/adminHttpStatusMessages";
 
 const RestaurantTierManager = () => {
   const [tiers, setTiers] = useState([]);
@@ -29,11 +27,12 @@ const RestaurantTierManager = () => {
         setTiers(data);
       } else {
         console.log("Invalid data format:", data);
-        toast.error("Dữ liệu không hợp lệ");
+        toast.error(adminHttpStatusMessages[410] || "Dữ liệu không hợp lệ");
       }
     } catch (err) {
       console.error("Lỗi khi lấy danh sách hạng:", err);
-      toast.error("Không thể tải danh sách hạng nhà hàng");
+      const status = err.response?.status || 500;
+      toast.error(adminHttpStatusMessages[status] || "Không thể tải danh sách hạng nhà hàng");
     } finally {
       setLoading(false);
     }
@@ -53,7 +52,7 @@ const RestaurantTierManager = () => {
 
   const handleSuccess = (msg) => {
     console.log("handleSuccess called with message:", msg);
-    toast.success(msg || "Thành công");
+    toast.success(msg || adminHttpStatusMessages[200] || "Thành công");
     // Tải lại dữ liệu sau 2 giây
     setTimeout(() => {
       console.log("Reloading tiers after 2 seconds");
@@ -133,4 +132,4 @@ const RestaurantTierManager = () => {
   );
 };
 
-export default RestaurantTierManager; 
+export default RestaurantTierManager;

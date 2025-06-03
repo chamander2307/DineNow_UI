@@ -1,20 +1,45 @@
-// src/pages/Admin/RevenueDashboard.js
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import AdminLayout from "./AdminLayout";
-import "../../assets/styles/owner/OwnerRevenueDashboard.css";
+import "../../assets/styles/admin/RevenueDashboard.css";
 import { fetchAdminMonthlyRevenue, fetchAdminTotalRevenue, fetchAdminRevenueInRange } from "../../services/revenueService";
 import MonthPicker from "../../components/admin/MonthPicker";
 
 const RevenueDashboard = () => {
+  // Hàm lấy thời gian hiện tại
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    return {
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth() + 1, // getMonth() trả về 0-11, cần +1
+    };
+  };
+
   const [revenueStats, setRevenueStats] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [viewType, setViewType] = useState("monthly");
-  const [selectedMonth, setSelectedMonth] = useState({ year: 2025, month: 5 }); // Mặc định 05/2025
-  const [startDate, setStartDate] = useState({ year: 2023, month: 1 });
-  const [endDate, setEndDate] = useState({ year: 2025, month: 12 });
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentDate()); // Thời gian hiện tại
+  const [startDate, setStartDate] = useState({ year: 2025, month: 4 }); // 01/04/2025
+  const [endDate, setEndDate] = useState(getCurrentDate()); // Thời gian hiện tại
+  const [searchTerm, setSearchTerm] = useState(""); // Bộ lọc tên nhà hàng
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Kiểm tra và cập nhật thời gian mỗi ngày
+  useEffect(() => {
+    const checkDate = () => {
+      const newDate = getCurrentDate();
+      if (newDate.year !== selectedMonth.year || newDate.month !== selectedMonth.month) {
+        setSelectedMonth(newDate);
+      }
+      if (newDate.year !== endDate.year || newDate.month !== endDate.month) {
+        setEndDate(newDate);
+      }
+    };
+
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000); // Kiểm tra mỗi 24 giờ
+    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+  }, [selectedMonth, endDate]);
 
   useEffect(() => {
     handleViewData();
@@ -72,6 +97,11 @@ const RevenueDashboard = () => {
     }
   };
 
+  // Lọc dữ liệu dựa trên searchTerm
+  const filteredStats = revenueStats.filter((item) =>
+    item.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <AdminLayout>
       <div className="dashboard-container">
@@ -105,13 +135,24 @@ const RevenueDashboard = () => {
               </div>
             </>
           )}
+          <div className="control-item">
+            <label>Tìm kiếm nhà hàng:</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Nhập tên nhà hàng..."
+              className="search-input"
+              disabled={loading}
+            />
+          </div>
         </div>
         {error && <p className="error-message">{error}</p>}
         {loading ? (
           <div className="loading-spinner">
             <span>Đang tải...</span>
           </div>
-        ) : revenueStats.length === 0 ? (
+        ) : filteredStats.length === 0 ? (
           <p style={{ textAlign: "center", padding: "20px" }}>Không có dữ liệu để hiển thị.</p>
         ) : (
           <>
@@ -121,7 +162,7 @@ const RevenueDashboard = () => {
             <div className="chart-section">
               <h3>Biểu đồ doanh thu</h3>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={revenueStats}>
+                <BarChart data={filteredStats}>
                   <XAxis dataKey="restaurantName" />
                   <YAxis />
                   <Tooltip formatter={(value, name) => [
@@ -136,7 +177,7 @@ const RevenueDashboard = () => {
             </div>
             <div className="order-table">
               <h3>Chi tiết doanh thu</h3>
-              <table className="admin-table">
+              <table className="revenue-table">
                 <thead>
                   <tr>
                     <th>Nhà hàng</th>
@@ -146,7 +187,7 @@ const RevenueDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {revenueStats.map((item, index) => (
+                  {filteredStats.map((item, index) => (
                     <tr key={index}>
                       <td>{item.restaurantName}</td>
                       <td>{item.totalOrders}</td>
@@ -156,8 +197,8 @@ const RevenueDashboard = () => {
                   ))}
                   <tr>
                     <td><strong>Tổng</strong></td>
-                    <td>{revenueStats.reduce((sum, item) => sum + item.totalOrders, 0)}</td>
-                    <td>{totalRevenue.toLocaleString()}</td>
+                    <td>{filteredStats.reduce((sum, item) => sum + item.totalOrders, 0)}</td>
+                    <td>{filteredStats.reduce((sum, item) => sum + item.totalRevenue, 0).toLocaleString()}</td>
                     <td>100.00</td>
                   </tr>
                 </tbody>

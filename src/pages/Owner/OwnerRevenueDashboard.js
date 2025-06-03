@@ -1,4 +1,3 @@
-// src/pages/Owner/OwnerRevenueDashboard.js
 import React, { useEffect, useState } from "react";
 import OwnerLayout from "./OwnerLayout";
 import "../../assets/styles/owner/OwnerRevenueDashboard.css";
@@ -20,15 +19,40 @@ import {
 import MonthPicker from "../../components/admin/MonthPicker";
 
 const OwnerRevenueDashboard = () => {
+  // Hàm lấy thời gian hiện tại
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    return {
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth() + 1, // getMonth() trả về 0-11, cần +1
+    };
+  };
+
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
   const [revenueStats, setRevenueStats] = useState([]);
   const [viewType, setViewType] = useState("monthly");
-  const [selectedYear, setSelectedYear] = useState(2026);
-  const [startDate, setStartDate] = useState({ year: 2023, month: 1 });
-  const [endDate, setEndDate] = useState({ year: 2026, month: 12 });
+  const [selectedYear, setSelectedYear] = useState(getCurrentDate().year); // Năm hiện tại
+  const [startDate, setStartDate] = useState({ year: 2025, month: 4 }); // 01/04/2025
+  const [endDate, setEndDate] = useState(getCurrentDate()); // Thời gian hiện tại
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Kiểm tra và cập nhật thời gian mỗi ngày
+  useEffect(() => {
+    const checkDate = () => {
+      const newDate = getCurrentDate();
+      if (newDate.year !== selectedYear) {
+        setSelectedYear(newDate.year);
+      }
+      if (newDate.year !== endDate.year || newDate.month !== endDate.month) {
+        setEndDate(newDate);
+      }
+    };
+
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000); // Kiểm tra mỗi 24 giờ
+    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+  }, [selectedYear, endDate]);
 
   useEffect(() => {
     loadRestaurants();
@@ -183,7 +207,7 @@ const OwnerRevenueDashboard = () => {
                 <BarChart data={revenueStats}>
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `${value.toLocaleString()} VND`} />
+                  <Tooltip formatter={(item) => `${item.toLocaleString()} VND`} />
                   <Legend />
                   <Bar dataKey="totalRevenue" name="Doanh thu" fill="#0099FF" />
                 </BarChart>
@@ -191,7 +215,7 @@ const OwnerRevenueDashboard = () => {
             </div>
             <div className="order-table">
               <h3>Chi tiết doanh thu</h3>
-              <table className="admin-table">
+              <table>
                 <thead>
                   <tr>
                     <th>Tháng/Năm</th>

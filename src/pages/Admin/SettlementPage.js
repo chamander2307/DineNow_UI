@@ -4,7 +4,21 @@ import AdminLayout from './AdminLayout';
 import '../../assets/styles/admin/SettlementPage.css';
 
 const SettlementPage = () => {
-  const [filters, setFilters] = useState({ year: 2025, month: 5, periodIndex: 2 });
+  // Hàm lấy filters dựa trên thời gian hiện tại
+  const getCurrentFilters = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // getMonth() trả về 0-11, cần +1
+    const currentDay = currentDate.getDate();
+    const defaultPeriodIndex = currentDay <= 15 ? 1 : 2;
+    return {
+      year: currentYear,
+      month: currentMonth,
+      periodIndex: defaultPeriodIndex,
+    };
+  };
+
+  const [filters, setFilters] = useState(getCurrentFilters());
   const [restaurants, setRestaurants] = useState([]);
   const [settledRestaurants, setSettledRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -12,6 +26,24 @@ const SettlementPage = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('unsettled');
 
+  // Kiểm tra và cập nhật filters mỗi ngày
+  useEffect(() => {
+    const checkDate = () => {
+      const newFilters = getCurrentFilters();
+      if (
+        newFilters.year !== filters.year ||
+        newFilters.month !== filters.month ||
+        newFilters.periodIndex !== filters.periodIndex
+      ) {
+        setFilters(newFilters);
+      }
+    };
+
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000); // Kiểm tra mỗi 24 giờ
+    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+  }, [filters]);
+
+  // Tải dữ liệu khi viewMode hoặc filters thay đổi
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -63,7 +95,7 @@ const SettlementPage = () => {
             Đã tất toán
           </button>
         </div>
-        {viewMode === 'settled' && ( // Chỉ hiển thị bộ lọc khi ở chế độ 'settled'
+        {viewMode === 'settled' && (
           <div className="filters">
             <select
               value={filters.year}

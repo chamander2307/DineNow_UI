@@ -29,6 +29,21 @@ const ProfitManager = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [filterName, setFilterName] = useState("");
 
+  // Hàm helper để set message và tự động xóa sau 3 giây
+  const showMessage = (msg) => {
+    setMessage(msg);
+  };
+
+  // Tự động xóa message sau 3 giây
+  useEffect(() => {
+    if (message) {
+      const timeout = setTimeout(() => {
+        setMessage("");
+      }, 3000); // 3 giây
+      return () => clearTimeout(timeout); // Dọn dẹp timeout khi message thay đổi hoặc component unmount
+    }
+  }, [message]);
+
   const parseMonthString = (monthStr) => {
     if (!monthStr) return { year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
     const [year, month] = monthStr.split("-").map(Number);
@@ -37,7 +52,7 @@ const ProfitManager = () => {
 
   const loadMonthlyProfits = async () => {
     if (!yearMonth) {
-      setMessage("Vui lòng chọn tháng");
+      showMessage("Vui lòng chọn tháng");
       return;
     }
     setLoading(true);
@@ -46,11 +61,11 @@ const ProfitManager = () => {
       setMonthlyProfits(res);
       setTotalProfits(null);
       setRangeProfits(null);
-      setMessage("Tải lợi nhuận tháng thành công");
+      showMessage("Tải lợi nhuận tháng thành công");
       setCurrentPage(1);
     } catch (err) {
       console.error("Error fetching monthly profits:", err);
-      setMessage("Không thể tải lợi nhuận tháng");
+      showMessage("Không thể tải lợi nhuận tháng");
       setMonthlyProfits(null);
     } finally {
       setLoading(false);
@@ -64,11 +79,11 @@ const ProfitManager = () => {
       setTotalProfits(res);
       setMonthlyProfits(null);
       setRangeProfits(null);
-      setMessage("Tải tổng lợi nhuận thành công");
+      showMessage("Tải tổng lợi nhuận thành công");
       setCurrentPage(1);
     } catch (err) {
       console.error("Error fetching total profits:", err);
-      setMessage("Không thể tải tổng lợi nhuận");
+      showMessage("Không thể tải tổng lợi nhuận");
       setTotalProfits(null);
     } finally {
       setLoading(false);
@@ -77,13 +92,13 @@ const ProfitManager = () => {
 
   const loadRangeProfits = async () => {
     if (!startMonth || !endMonth) {
-      setMessage("Vui lòng chọn khoảng thời gian");
+      showMessage("Vui lòng chọn khoảng thời gian");
       return;
     }
     const startDate = new Date(startMonth);
     const endDate = new Date(endMonth);
     if (startDate > endDate) {
-      setMessage("Tháng bắt đầu phải trước tháng kết thúc");
+      showMessage("Tháng bắt đầu phải trước tháng kết thúc");
       return;
     }
     setLoading(true);
@@ -92,11 +107,11 @@ const ProfitManager = () => {
       setRangeProfits(res);
       setMonthlyProfits(null);
       setTotalProfits(null);
-      setMessage("Tải lợi nhuận khoảng thời gian thành công");
+      showMessage("Tải lợi nhuận khoảng thời gian thành công");
       setCurrentPage(1);
     } catch (err) {
       console.error("Error fetching range profits:", err);
-      setMessage("Không thể tải lợi nhuận khoảng thời gian");
+      showMessage("Không thể tải lợi nhuận khoảng thời gian");
       setRangeProfits(null);
     } finally {
       setLoading(false);
@@ -115,7 +130,7 @@ const ProfitManager = () => {
 
   const handleViewChange = (e) => {
     setViewType(e.target.value);
-    setMessage("");
+    showMessage("");
     setCurrentPage(1);
     setFilterName("");
   };
@@ -132,6 +147,11 @@ const ProfitManager = () => {
 
   const currentProfits = viewType === "monthly" ? monthlyProfits : viewType === "total" ? totalProfits : rangeProfits;
   const profitDetails = currentProfits?.monthlyProfitDetails || currentProfits?.totalProfitDetails || [];
+
+  // Tính tổng platformFee (nếu có)
+  const totalPlatformFee = profitDetails.reduce((sum, item) => {
+    return sum + (item.feePerGuest || 0) * (item.totalGuests || 0);
+  }, 0);
 
   const filteredDetails = profitDetails
     .filter((item) => item.restaurantName.toLowerCase().includes(filterName.toLowerCase()))
@@ -219,7 +239,8 @@ const ProfitManager = () => {
                 ? "Tổng lợi nhuận từ khi tham gia"
                 : "Lợi nhuận theo khoảng thời gian"}
             </h3>
-            <p>Tổng lợi nhuận: {currentProfits.totalProfit.toLocaleString()} VND</p>
+            <p className="highlight-total">Tổng lợi nhuận: {currentProfits.totalProfit.toLocaleString()} VND</p>
+            <b className="highlight-total">Tổng phí nền tảng: {totalPlatformFee.toLocaleString()} VND</b>
 
             {/* Bảng dữ liệu */}
             <table className="admin-table">
@@ -238,7 +259,7 @@ const ProfitManager = () => {
                   <tr key={item.restaurantName}>
                     <td>{item.restaurantName}</td>
                     <td>{item.totalGuests}</td>
-                    <td>{(item.feePerGuest || 0).toLocaleString()} VND</td>
+                    <td className="highlight-fee">{(item.feePerGuest || 0).toLocaleString()} VND</td>
                     <td>{item.totalOrders}</td>
                     <td>
                       {(viewType === "monthly" ? item.profit : item.totalProfit || item.profit || 0).toLocaleString()} VND
