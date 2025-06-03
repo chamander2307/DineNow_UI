@@ -141,7 +141,7 @@ const MenuItemFormModal = ({ isOpen, onClose, restaurantId, initialData, menuIte
     payload.append("name", formData.name);
     payload.append("price", formData.price);
     payload.append("description", formData.description || "");
-    payload.append("category", formData.categoryId.toString());
+    payload.append("foodCategoryId", formData.categoryId.toString());
     if (imageFile) {
       payload.append("imageUrl", imageFile);
     }
