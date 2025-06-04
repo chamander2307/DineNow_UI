@@ -31,7 +31,7 @@ const RestaurantCart = ({ onCheckout }) => {
         const restaurantPromises = restaurantIds.map(async (id) => {
           try {
             const restaurantRes = await fetchRestaurantById(id);
-            console.log(`Restaurant data for ID ${id}:`, restaurantRes); // Debug restaurant data
+            console.log(`Restaurant data for ID ${id}:`, restaurantRes);
             const menuRes = await fetchSimpleMenuByRestaurant(id);
             const restaurantData = restaurantRes || {};
             const menuData = menuRes.data || [];
@@ -45,6 +45,7 @@ const RestaurantCart = ({ onCheckout }) => {
                 name: dish.name,
                 price: parseFloat(dish.price) || 0,
                 quantity: savedCart[id][String(dish.id)],
+                imageUrl: dish.imageUrl || '/fallback.jpg',
               }));
 
             console.log(`Filtered dishes for restaurant ${id}:`, dishes);
@@ -52,7 +53,7 @@ const RestaurantCart = ({ onCheckout }) => {
             return {
               id: restaurantData.id,
               name: restaurantData.name || 'Nhà hàng không xác định',
-              image: restaurantData.thumbnailUrl || (restaurantData.imageUrls && restaurantData.imageUrls.length > 0 ? restaurantData.imageUrls[0] : 'https://via.placeholder.com/150?text=No+Image'),
+              image: restaurantData.thumbnailUrl || (restaurantData.imageUrls && restaurantData.imageUrls.length > 0 ? restaurantData.imageUrls[0] : '/fallback.jpg'),
               address: restaurantData.address || 'Chưa có địa chỉ',
               dishes,
             };
@@ -176,6 +177,7 @@ const RestaurantCart = ({ onCheckout }) => {
         name: dish.name,
         price: dish.price,
         quantity: cartItems[restaurant.id][dish.id],
+        imageUrl: dish.imageUrl,
       }));
 
     if (selectedItems.length === 0) {
@@ -185,7 +187,7 @@ const RestaurantCart = ({ onCheckout }) => {
 
     navigate('/order', { state: { selectedItems, restaurant: { id: restaurant.id, name: restaurant.name, image: restaurant.image, address: restaurant.address } } });
     if (onCheckout) {
-      onCheckout(); // Đóng dialog sau khi navigate
+      onCheckout();
     }
   };
 
@@ -205,7 +207,7 @@ const RestaurantCart = ({ onCheckout }) => {
                 src={restaurant.image}
                 alt={restaurant.name}
                 className="restaurant-images"
-                onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=No+Image'; }} // Fallback on error
+                onError={(e) => { e.target.onerror = null; e.target.src = '/fallback.jpg'; }}
               />
               <div className="restaurant-infos">
                 <div className="restaurant-name-wrappers">
@@ -225,23 +227,31 @@ const RestaurantCart = ({ onCheckout }) => {
                   <ul className="dish-lists">
                     {restaurant.dishes.map(dish => (
                       <li key={dish.id} className="dish-items">
-                        <span className="dish-names">{dish.name}</span>
-                        <div className="dish-price-quantity">
-                          <span className="dish-price">{dish.price.toLocaleString('vi-VN')} VNĐ</span>
-                          <div className="quantity-controls">
-                            <button
-                              className="decrease-btn"
-                              onClick={() => decreaseQuantity(restaurant.id, dish.id)}
-                            >
-                              −
-                            </button>
-                            <span className="quantity">{cartItems[restaurant.id]?.[dish.id] || 0}</span>
-                            <button
-                              className="increase-btn"
-                              onClick={() => increaseQuantity(restaurant.id, dish.id)}
-                            >
-                              +
-                            </button>
+                        <img
+                          src={dish.imageUrl}
+                          alt={dish.name}
+                          className="dish-image-custom"
+                          onError={(e) => { e.target.onerror = null; e.target.src = '/fallback.jpg'; }}
+                        />
+                        <div className="dish-details">
+                          <span className="dish-names">{dish.name}</span>
+                          <div className="dish-price-quantity">
+                            <span className="dish-price">{dish.price.toLocaleString('vi-VN')} VNĐ</span>
+                            <div className="quantity-controls">
+                              <button
+                                className="decrease-btn"
+                                onClick={() => decreaseQuantity(restaurant.id, dish.id)}
+                              >
+                                −
+                              </button>
+                              <span className="quantity">{cartItems[restaurant.id]?.[dish.id] || 0}</span>
+                              <button
+                                className="increase-btn"
+                                onClick={() => increaseQuantity(restaurant.id, dish.id)}
+                              >
+                                +
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </li>

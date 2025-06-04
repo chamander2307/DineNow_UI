@@ -4,11 +4,10 @@ import AdminLayout from './AdminLayout';
 import '../../assets/styles/admin/SettlementPage.css';
 
 const SettlementPage = () => {
-  // Hàm lấy filters dựa trên thời gian hiện tại
   const getCurrentFilters = () => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // getMonth() trả về 0-11, cần +1
+    const currentMonth = currentDate.getMonth() + 1;
     const currentDay = currentDate.getDate();
     const defaultPeriodIndex = currentDay <= 15 ? 1 : 2;
     return {
@@ -26,7 +25,6 @@ const SettlementPage = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('unsettled');
 
-  // Kiểm tra và cập nhật filters mỗi ngày
   useEffect(() => {
     const checkDate = () => {
       const newFilters = getCurrentFilters();
@@ -39,11 +37,10 @@ const SettlementPage = () => {
       }
     };
 
-    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000); // Kiểm tra mỗi 24 giờ
-    return () => clearInterval(interval); // Dọn dẹp khi component unmount
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [filters]);
 
-  // Tải dữ liệu khi viewMode hoặc filters thay đổi
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -197,7 +194,6 @@ const SettlementPage = () => {
   );
 };
 
-// SettlementModal giữ nguyên
 const SettlementModal = ({ restaurant, onClose }) => {
   const [details, setDetails] = useState(null);
   const [note, setNote] = useState(`Đã thanh toán quý 2 cho nhà hàng ID ${restaurant.restaurantId}`);
@@ -241,10 +237,10 @@ const SettlementModal = ({ restaurant, onClose }) => {
       <p>Ngân Hàng: {details.bankName}</p>
       <p>Chủ Tài Khoản: {details.accountHolderName}</p>
       <p>Số Tài Khoản: {details.accountNumber}</p>
-      <p>Số Tiền: {details.amountToSettle.toLocaleString()} VND</p>
+      <p className="amount">Số Tiền: {details.amountToSettle.toLocaleString()} VND</p>
       <p>Tổng Đơn Hàng: {details.totalOrders}</p>
-      <p>Tổng Doanh Thu: {details.totalRevenue.toLocaleString()} VND</p>
-      <p>Phí Nền Tảng: {details.platformFee.toLocaleString()} VND</p>
+      <p className="revenue">Tổng Doanh Thu: {details.totalRevenue.toLocaleString()} VND</p>
+      <p className="platform-fee">Phí Nền Tảng: {details.platformFee.toLocaleString()} VND</p>
       <textarea value={note} onChange={(e) => setNote(e.target.value)} />
       {error && <div className="error">{error}</div>}
       <button onClick={onClose}>Hủy</button>

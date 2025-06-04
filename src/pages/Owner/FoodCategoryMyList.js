@@ -152,7 +152,6 @@ const FoodCategoryMyList = () => {
                   >
                     Sửa
                   </button>
-                  <button onClick={() => handleDelete(cat.id)}>Xóa</button>
                 </td>
               </tr>
             ))}

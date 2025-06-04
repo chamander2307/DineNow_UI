@@ -240,8 +240,6 @@ const ProfitManager = () => {
                 : "Lợi nhuận theo khoảng thời gian"}
             </h3>
             <p className="highlight-total">Tổng lợi nhuận: {currentProfits.totalProfit.toLocaleString()} VND</p>
-            <b className="highlight-total">Tổng phí nền tảng: {totalPlatformFee.toLocaleString()} VND</b>
-
             {/* Bảng dữ liệu */}
             <table className="admin-table">
               <thead>
