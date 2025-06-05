@@ -5,7 +5,7 @@ import axios from '../config/axios';
 export const register = async (userData) => {
   try {
     const res = await axios.post('/api/auth/register', userData);
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi đăng ký:", error);
     throw error;

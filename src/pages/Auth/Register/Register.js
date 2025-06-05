@@ -34,7 +34,8 @@ const Register = () => {
     }
   };
 
-  const handleRegister = async (e) => {
+  // ...existing code...
+const handleRegister = async (e) => {
   e.preventDefault();
   setError("");
 
@@ -58,19 +59,34 @@ const Register = () => {
 
   try {
     const res = await register({ fullName, email, password, phone });
-    const { status, message } = res;
-
-    if (status === 201) {
+    
+    console.log("Register response:", res);
+    
+  
+    if (res?.status === 201 || res?.status === 200 || res?.success === true) {
       alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
       navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } else {
-      setError(getErrorMessage(status, email, phone) || message);
+      // Lấy status từ response hoặc response data
+      const status = res?.status || res?.data?.status || res?.response?.status;
+      const message = res?.message || res?.data?.message || res?.response?.data?.message;
+      
+      setError(getErrorMessage(status, email, phone) || message || "Đăng ký thất bại. Vui lòng thử lại.");
     }
   } catch (err) {
     console.error("Lỗi đăng ký:", err);
-    setError("Đăng ký thất bại. Vui lòng thử lại.");
+    
+    // Xử lý error response từ axios
+    if (err.response) {
+      const status = err.response.status;
+      const message = err.response.data?.message;
+      setError(getErrorMessage(status, email, phone) || message || "Đăng ký thất bại.");
+    } else {
+      setError("Lỗi kết nối. Vui lòng thử lại.");
+    }
   }
 };
+
 
 
   return (
