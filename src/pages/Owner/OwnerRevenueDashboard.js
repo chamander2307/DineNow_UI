@@ -206,8 +206,27 @@ const OwnerRevenueDashboard = () => {
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={revenueStats}>
                   <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(item) => `${item.toLocaleString()} VND`} />
+                  <YAxis
+                    tickFormatter={(value) =>
+                      value >= 1000000
+                        ? `${(value / 1000000).toFixed(1)}M`
+                        : value >= 1000
+                          ? `${(value / 1000).toFixed(1)}K`
+                          : value.toString()
+                    }
+                    tick={{ fontSize: 12 }}
+                    width={80}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [
+                      value >= 1000000
+                        ? `${(value / 1000000).toFixed(1)}M VND`
+                        : value >= 1000
+                          ? `${(value / 1000).toFixed(1)}K VND`
+                          : `${value.toLocaleString()} VND`,
+                      "Doanh thu"
+                    ]}
+                  />
                   <Legend />
                   <Bar dataKey="totalRevenue" name="Doanh thu" fill="#0099FF" />
                 </BarChart>

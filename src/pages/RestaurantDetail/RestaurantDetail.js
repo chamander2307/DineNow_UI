@@ -306,7 +306,7 @@ const DishDetail = ({
                 <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
               </div>
             ) : (
-              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
+              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm vào giỏ</button>
             )}
           </div>
         </div>
