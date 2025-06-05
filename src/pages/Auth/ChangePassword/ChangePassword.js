@@ -28,7 +28,7 @@ const ChangePassword = () => {
     
     try {
       const response = await sendForgotOTP(email);
-      if (response?.status === 200 || response?.success) {
+      if (response?.data === true) {
         alert("Mã OTP đã được gửi đến email của bạn");
         setStep(2);
       } else {

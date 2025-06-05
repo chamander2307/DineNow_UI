@@ -26,11 +26,11 @@ const ForgotPassword = () => {
 
     try {
       const response = await sendForgotOTP(email);
-      if (response?.status === 200 || response?.success) {
+      if (response?.data === true) {
         alert("Mã OTP đã được gửi đến email của bạn.");
         setStep(2);
       } else {
-        setError(httpStatusMessages[response?.status] || "Không thể gửi mã OTP. Vui lòng thử lại.");
+        setError(httpStatusMessages[response?.data] || "Không thể gửi mã OTP. Vui lòng thử lại.");
       }
     } catch (err) {
       console.error("Gửi OTP thất bại:", err);
@@ -70,11 +70,11 @@ const ForgotPassword = () => {
 
     try {
       const response = await verifyResetOTP({ email, otp });
-      if (response?.status === 200 || response?.success) {
+      if (response?.data === true) {
         alert("Xác thực OTP thành công.");
         setStep(3);
       } else {
-        setError(httpStatusMessages[response?.status] || "Xác thực OTP thất bại. Vui lòng thử lại.");
+        setError(httpStatusMessages[response?.data] || "Xác thực OTP thất bại. Vui lòng thử lại.");
       }
     } catch (err) {
       console.error("Xác thực OTP thất bại:", err);
