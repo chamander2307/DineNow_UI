@@ -5,6 +5,7 @@ import FilterBar from "../../components/basicComponents/FilterBar";
 import LocationSearchBar from "../../components/basicComponents/LocationSearchBar";
 import "../../assets/styles/Restaurant/RestaurantList.css";
 import BookingGuide from "../../components/basicComponents/BookingGuide";
+import FoodCategoryList from "../../components/basicComponents/FoodCategoryList";
 import {
   fetchAllRestaurants,
   searchRestaurants,
@@ -55,6 +56,7 @@ const RestaurantList = () => {
     <div>
       <LocationSearchBar />
       <FilterBar />
+      <FoodCategoryList />
       <div className="rl-page">
         <h1 className="rl-title">
           {location.state?.nearbyRestaurants ? "Nhà Hàng Gần Bạn" : "Danh Sách Nhà Hàng"}

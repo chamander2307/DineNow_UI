@@ -78,15 +78,17 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, reserv
         </div>
       )}
       <div className="rc-image-container">
-        <img
-          src={thumbnailUrl || "/fallback.jpg"}
-          alt={name}
-          className="rc-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/fallback.jpg";
-          }}
-        />
+        <Link to={`/restaurant/${id}`}>
+          <img
+            src={thumbnailUrl || "/fallback.jpg"}
+            alt={name}
+            className="rc-image"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/fallback.jpg";
+            }}
+          />
+        </Link>
       </div>
       <div className="rc-details">
         <h3 className="rc-name">{name}</h3>

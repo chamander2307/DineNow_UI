@@ -101,7 +101,7 @@ const DishItem = ({
           <button className="add-btn" onClick={handleIncrease}>+</button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
+        <button className="add-to-cart" onClick={handleAdd}>Thêm vào giỏ</button>
       )}
     </div>
   );
