@@ -41,26 +41,27 @@ const SettlementPage = () => {
     return () => clearInterval(interval);
   }, [filters]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        if (viewMode === 'unsettled') {
-          const response = await fetchAllSettlements();
-          setRestaurants(Array.isArray(response) ? response : []);
-        } else {
-          const response = await fetchSettledSettlements(filters.year, filters.month, filters.periodIndex);
-          setSettledRestaurants(Array.isArray(response) ? response : []);
-        }
-      } catch (error) {
-        console.error('Lỗi tải dữ liệu:', error);
-        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
-        viewMode === 'unsettled' ? setRestaurants([]) : setSettledRestaurants([]);
-      } finally {
-        setIsLoading(false);
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      if (viewMode === 'unsettled') {
+        const response = await fetchAllSettlements();
+        setRestaurants(Array.isArray(response) ? response : []);
+      } else {
+        const response = await fetchSettledSettlements(filters.year, filters.month, filters.periodIndex);
+        setSettledRestaurants(Array.isArray(response) ? response : []);
       }
-    };
+    } catch (error) {
+      console.error('Lỗi tải dữ liệu:', error);
+      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+      viewMode === 'unsettled' ? setRestaurants([]) : setSettledRestaurants([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, [viewMode, filters]);
 
@@ -69,7 +70,12 @@ const SettlementPage = () => {
   };
 
   const handleFilterApply = () => {
-    setViewMode(viewMode);
+    loadData(); // Tải lại dữ liệu khi áp dụng bộ lọc
+  };
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode);
+    // loadData sẽ được gọi tự động bởi useEffect khi viewMode thay đổi
   };
 
   if (isLoading) return <AdminLayout><div>Đang tải...</div></AdminLayout>;
@@ -81,13 +87,13 @@ const SettlementPage = () => {
         <div className="view-toggle">
           <button
             className={viewMode === 'unsettled' ? 'active' : ''}
-            onClick={() => setViewMode('unsettled')}
+            onClick={() => handleViewModeChange('unsettled')}
           >
             Chưa tất toán
           </button>
           <button
             className={viewMode === 'settled' ? 'active' : ''}
-            onClick={() => setViewMode('settled')}
+            onClick={() => handleViewModeChange('settled')}
           >
             Đã tất toán
           </button>
@@ -187,6 +193,7 @@ const SettlementPage = () => {
           <SettlementModal
             restaurant={selectedRestaurant}
             onClose={() => setSelectedRestaurant(null)}
+            onSettleSuccess={loadData}
           />
         )}
       </div>
@@ -194,7 +201,7 @@ const SettlementPage = () => {
   );
 };
 
-const SettlementModal = ({ restaurant, onClose }) => {
+const SettlementModal = ({ restaurant, onClose, onSettleSuccess }) => {
   const [details, setDetails] = useState(null);
   const [note, setNote] = useState(`Đã thanh toán quý 2 cho nhà hàng ID ${restaurant.restaurantId}`);
   const [error, setError] = useState(null);
@@ -221,6 +228,7 @@ const SettlementModal = ({ restaurant, onClose }) => {
         amount: details.amountToSettle,
         note,
       });
+      onSettleSuccess(); // Tải lại dữ liệu sau khi quyết toán thành công
       onClose();
     } catch (error) {
       console.error('Lỗi xác nhận tất toán:', error);
