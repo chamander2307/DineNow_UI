@@ -29,7 +29,7 @@ export const logout = async () => {
   try {
     const res = await axios.post('/api/auth/logout');
     localStorage.removeItem('accessToken');
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi đăng xuất:", error);
     throw error;
@@ -39,7 +39,7 @@ export const logout = async () => {
 export const sendVerifyOTP = async ({ email }) => {
   try {
     const res = await axios.post('/api/auth/send-verification-otp', { email });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi gửi OTP xác thực:", error);
     throw error;
@@ -59,7 +59,7 @@ export const sendForgotOTP = async (email) => {
 export const verifyAccountOTP = async ({ email, otp }) => {
   try {
     const res = await axios.post('/api/auth/verify-account', { email, otp });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi xác thực OTP tài khoản:", error);
     throw error;
@@ -69,7 +69,7 @@ export const verifyAccountOTP = async ({ email, otp }) => {
 export const verifyResetOTP = async ({ email, otp }) => {
   try {
     const res = await axios.post('/api/auth/verify-reset-password-otp', { email, otp });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi xác thực OTP đổi mật khẩu:", error);
     throw error;
