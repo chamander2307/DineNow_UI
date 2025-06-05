@@ -72,7 +72,7 @@ const ChangePassword = () => {
 
     try {
       const response = await verifyResetOTP({ email, otp });
-      if (response?.status === 200 || response?.success) {
+      if (response?.data === true) {
         alert("Xác thực OTP thành công");
         setStep(3);
       } else {

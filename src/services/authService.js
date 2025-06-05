@@ -49,7 +49,7 @@ export const sendVerifyOTP = async ({ email }) => {
 export const sendForgotOTP = async (email) => {
   try {
     const res = await axios.post('/api/auth/forgot-password', { email });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi gửi OTP đổi mật khẩu:", error);
     throw error;
@@ -79,7 +79,7 @@ export const verifyResetOTP = async ({ email, otp }) => {
 export const resetPassword = async ({ email, newPassword }) => {
   try {
     const res = await axios.post('/api/auth/reset-password', { email, newPassword });
-    return res.data.data;
+    return res.data;
   } catch (error) {
     console.error("Lỗi khi đổi mật khẩu:", error);
     throw error;
