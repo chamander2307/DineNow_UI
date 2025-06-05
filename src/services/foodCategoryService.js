@@ -1,13 +1,27 @@
 import axios from '../config/axios';
+import httpStatusMessages from '../constants/httpStatusMessages';
+
+// Hàm xử lý lỗi trả về theo status
+const handleResponse = (response) => {
+  const resData = response.data;
+  const statusCode = resData.status || response.status || 500;
+
+  if (statusCode !== 200 && statusCode !== 201 && statusCode !== 204) {
+    const message = resData.message || httpStatusMessages[statusCode] || 'Lỗi không xác định';
+    const error = new Error(message);
+    error.response = { status: statusCode, data: resData };
+    throw error;
+  }
+
+  return resData.data;
+};
 
 // Lấy danh sách Food Category của nhà hàng
 export const getFoodCategoriesByRestaurant = async (restaurantId) => {
   try {
     const response = await axios.get(`/api/owner/food-categories/${restaurantId}`);
-    console.log("Response từ getFoodCategoriesByRestaurant:", response.data);
-    return response.data.data;
+    return handleResponse(response);
   } catch (error) {
-    console.error("Lỗi khi lấy danh mục món ăn:", error);
     throw error;
   }
 };
@@ -16,10 +30,8 @@ export const getFoodCategoriesByRestaurant = async (restaurantId) => {
 export const createFoodCategory = async (restaurantId, foodCategoryData) => {
   try {
     const response = await axios.post(`/api/owner/food-categories/${restaurantId}`, foodCategoryData);
-    console.log("Response từ createFoodCategory:", response.data);
-    return response.data;
+    return handleResponse(response);
   } catch (error) {
-    console.error("Lỗi khi tạo Food Category:", error);
     throw error;
   }
 };
@@ -28,9 +40,8 @@ export const createFoodCategory = async (restaurantId, foodCategoryData) => {
 export const updateFoodCategory = async (foodCategoryId, foodCategoryData) => {
   try {
     const response = await axios.put(`/api/owner/food-categories/${foodCategoryId}`, foodCategoryData);
-    return response.data;
+    return handleResponse(response);
   } catch (error) {
-    console.error("Lỗi khi cập nhật Food Category:", error);
     throw error;
   }
 };
@@ -39,9 +50,8 @@ export const updateFoodCategory = async (foodCategoryId, foodCategoryData) => {
 export const deleteFoodCategory = async (foodCategoryId) => {
   try {
     const response = await axios.delete(`/api/owner/food-categories/${foodCategoryId}`);
-    return response.data;
+    return handleResponse(response);
   } catch (error) {
-    console.error("Lỗi khi xóa Food Category:", error);
     throw error;
   }
 };

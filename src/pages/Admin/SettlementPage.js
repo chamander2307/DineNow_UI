@@ -4,7 +4,20 @@ import AdminLayout from './AdminLayout';
 import '../../assets/styles/admin/SettlementPage.css';
 
 const SettlementPage = () => {
-  const [filters, setFilters] = useState({ year: 2025, month: 5, periodIndex: 2 });
+  const getCurrentFilters = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+    const defaultPeriodIndex = currentDay <= 15 ? 1 : 2;
+    return {
+      year: currentYear,
+      month: currentMonth,
+      periodIndex: defaultPeriodIndex,
+    };
+  };
+
+  const [filters, setFilters] = useState(getCurrentFilters());
   const [restaurants, setRestaurants] = useState([]);
   const [settledRestaurants, setSettledRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -13,25 +26,42 @@ const SettlementPage = () => {
   const [viewMode, setViewMode] = useState('unsettled');
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        if (viewMode === 'unsettled') {
-          const response = await fetchAllSettlements();
-          setRestaurants(Array.isArray(response) ? response : []);
-        } else {
-          const response = await fetchSettledSettlements(filters.year, filters.month, filters.periodIndex);
-          setSettledRestaurants(Array.isArray(response) ? response : []);
-        }
-      } catch (error) {
-        console.error('Lỗi tải dữ liệu:', error);
-        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
-        viewMode === 'unsettled' ? setRestaurants([]) : setSettledRestaurants([]);
-      } finally {
-        setIsLoading(false);
+    const checkDate = () => {
+      const newFilters = getCurrentFilters();
+      if (
+        newFilters.year !== filters.year ||
+        newFilters.month !== filters.month ||
+        newFilters.periodIndex !== filters.periodIndex
+      ) {
+        setFilters(newFilters);
       }
     };
+
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [filters]);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      if (viewMode === 'unsettled') {
+        const response = await fetchAllSettlements();
+        setRestaurants(Array.isArray(response) ? response : []);
+      } else {
+        const response = await fetchSettledSettlements(filters.year, filters.month, filters.periodIndex);
+        setSettledRestaurants(Array.isArray(response) ? response : []);
+      }
+    } catch (error) {
+      console.error('Lỗi tải dữ liệu:', error);
+      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+      viewMode === 'unsettled' ? setRestaurants([]) : setSettledRestaurants([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadData();
   }, [viewMode, filters]);
 
@@ -40,7 +70,12 @@ const SettlementPage = () => {
   };
 
   const handleFilterApply = () => {
-    setViewMode(viewMode);
+    loadData(); // Tải lại dữ liệu khi áp dụng bộ lọc
+  };
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode);
+    // loadData sẽ được gọi tự động bởi useEffect khi viewMode thay đổi
   };
 
   if (isLoading) return <AdminLayout><div>Đang tải...</div></AdminLayout>;
@@ -52,18 +87,18 @@ const SettlementPage = () => {
         <div className="view-toggle">
           <button
             className={viewMode === 'unsettled' ? 'active' : ''}
-            onClick={() => setViewMode('unsettled')}
+            onClick={() => handleViewModeChange('unsettled')}
           >
             Chưa tất toán
           </button>
           <button
             className={viewMode === 'settled' ? 'active' : ''}
-            onClick={() => setViewMode('settled')}
+            onClick={() => handleViewModeChange('settled')}
           >
             Đã tất toán
           </button>
         </div>
-        {viewMode === 'settled' && ( // Chỉ hiển thị bộ lọc khi ở chế độ 'settled'
+        {viewMode === 'settled' && (
           <div className="filters">
             <select
               value={filters.year}
@@ -158,6 +193,7 @@ const SettlementPage = () => {
           <SettlementModal
             restaurant={selectedRestaurant}
             onClose={() => setSelectedRestaurant(null)}
+            onSettleSuccess={loadData}
           />
         )}
       </div>
@@ -165,8 +201,7 @@ const SettlementPage = () => {
   );
 };
 
-// SettlementModal giữ nguyên
-const SettlementModal = ({ restaurant, onClose }) => {
+const SettlementModal = ({ restaurant, onClose, onSettleSuccess }) => {
   const [details, setDetails] = useState(null);
   const [note, setNote] = useState(`Đã thanh toán quý 2 cho nhà hàng ID ${restaurant.restaurantId}`);
   const [error, setError] = useState(null);
@@ -193,6 +228,7 @@ const SettlementModal = ({ restaurant, onClose }) => {
         amount: details.amountToSettle,
         note,
       });
+      onSettleSuccess(); // Tải lại dữ liệu sau khi quyết toán thành công
       onClose();
     } catch (error) {
       console.error('Lỗi xác nhận tất toán:', error);
@@ -209,10 +245,10 @@ const SettlementModal = ({ restaurant, onClose }) => {
       <p>Ngân Hàng: {details.bankName}</p>
       <p>Chủ Tài Khoản: {details.accountHolderName}</p>
       <p>Số Tài Khoản: {details.accountNumber}</p>
-      <p>Số Tiền: {details.amountToSettle.toLocaleString()} VND</p>
+      <p className="amount">Số Tiền: {details.amountToSettle.toLocaleString()} VND</p>
       <p>Tổng Đơn Hàng: {details.totalOrders}</p>
-      <p>Tổng Doanh Thu: {details.totalRevenue.toLocaleString()} VND</p>
-      <p>Phí Nền Tảng: {details.platformFee.toLocaleString()} VND</p>
+      <p className="revenue">Tổng Doanh Thu: {details.totalRevenue.toLocaleString()} VND</p>
+      <p className="platform-fee">Phí Nền Tảng: {details.platformFee.toLocaleString()} VND</p>
       <textarea value={note} onChange={(e) => setNote(e.target.value)} />
       {error && <div className="error">{error}</div>}
       <button onClick={onClose}>Hủy</button>

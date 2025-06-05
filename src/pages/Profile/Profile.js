@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/home/Profile.css';
 import { UserContext } from '../../contexts/UserContext';
 import { updateUserProfile } from '../../services/userService';
-import { toast, ToastContainer } from 'react-toastify'; // Add ToastContainer import
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS for react-toastify
-import httpStatusMessages from '../../constants/httpStatusMessages';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import userHttpStatusMessages from '../../constants/userHttpStatusMessages';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
@@ -44,13 +44,18 @@ const Profile = () => {
     }
 
     if (!formData.fullName.trim()) {
-      toast.error(httpStatusMessages[410] || 'Tên không được để trống.');
+      toast.error(userHttpStatusMessages[410] || 'Tên không được để trống.');
       return;
     }
 
     const phoneRegex = /^[0-9]{10}$/;
+    if (!formData.phone) {
+      toast.error(userHttpStatusMessages[410] || 'Số điện thoại không được để trống.');
+      return;
+    }
+
     if (!phoneRegex.test(formData.phone)) {
-      toast.error(httpStatusMessages[410] || 'Số điện thoại không hợp lệ. Phải là 10 chữ số.');
+      toast.error(userHttpStatusMessages[410] || 'Số điện thoại không hợp lệ. Phải là 10 chữ số.');
       return;
     }
 
@@ -60,11 +65,11 @@ const Profile = () => {
         phone: formData.phone,
       });
       setUser({ ...updated, isGoogleAccount: user.isGoogleAccount });
-      toast.success(httpStatusMessages[200] || 'Cập nhật thành công!');
+      toast.success(userHttpStatusMessages[200] || 'Cập nhật thành công!');
     } catch (err) {
       console.error('Cập nhật thất bại:', err);
       const status = err.response?.status || 500;
-      toast.error(httpStatusMessages[status] || 'Cập nhật thất bại. Vui lòng thử lại.');
+      toast.error(userHttpStatusMessages[status] || 'Cập nhật thất bại. Vui lòng thử lại.');
     }
   };
 

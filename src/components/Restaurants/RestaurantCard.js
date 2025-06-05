@@ -27,12 +27,15 @@ const formatNumber = (num) => {
 };
 
 const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, reservationCount }) => {
-  const { isLogin = false } = useContext(UserContext);
+  const { isLogin = false, user } = useContext(UserContext);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // Kiểm tra xem người dùng có phải là ADMIN hoặc OWNER hay không
+  const isAdminOrOwner = isLogin && (user?.role === "ADMIN" || user?.role === "OWNER");
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
-      if (isLogin) {
+      if (isLogin && !isAdminOrOwner) {
         try {
           const favorites = await getFavoriteRestaurants();
           setIsFavorite(favorites.some(fav => fav.id === parseInt(id)));
@@ -42,7 +45,7 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, reserv
       }
     };
     fetchFavoriteStatus();
-  }, [id, isLogin]);
+  }, [id, isLogin, isAdminOrOwner]);
 
   const handleFavoriteClick = async () => {
     if (!isLogin) {
@@ -68,19 +71,24 @@ const RestaurantCard = ({ id, thumbnailUrl, name, averageRating, address, reserv
 
   return (
     <div className="rc-item">
-      <div className={`rc-favorite-icon ${isFavorite ? 'active' : ''}`} onClick={handleFavoriteClick}>
-        {isFavorite ? <FaHeart /> : <FaRegHeart />}
-      </div>
+      {/* Chỉ hiển thị nút yêu thích nếu không phải ADMIN hoặc OWNER */}
+      {!isAdminOrOwner && (
+        <div className={`rc-favorite-icon ${isFavorite ? 'active' : ''}`} onClick={handleFavoriteClick}>
+          {isFavorite ? <FaHeart /> : <FaRegHeart />}
+        </div>
+      )}
       <div className="rc-image-container">
-        <img
-          src={thumbnailUrl || "/fallback.jpg"}
-          alt={name}
-          className="rc-image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/fallback.jpg";
-          }}
-        />
+        <Link to={`/restaurant/${id}`}>
+          <img
+            src={thumbnailUrl || "/fallback.jpg"}
+            alt={name}
+            className="rc-image"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/fallback.jpg";
+            }}
+          />
+        </Link>
       </div>
       <div className="rc-details">
         <h3 className="rc-name">{name}</h3>

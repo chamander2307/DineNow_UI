@@ -1,10 +1,11 @@
-// FoodCategoryFormModal.js
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { createFoodCategory, updateFoodCategory } from "../../services/foodCategoryService";
+import httpStatusMessages from "../../constants/httpStatusMessages";
 import "../../assets/styles/owner/ModalForm.css";
+
 Modal.setAppElement("#root");
 
 const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mainCategories, onSuccess }) => {
@@ -38,20 +39,24 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name) {
-      toast.error("Vui lòng nhập tên danh mục.");
-      return;
+
+    // Tạo payload chỉ chứa các trường có giá trị
+    const payload = {};
+    if (formData.name.trim()) {
+      payload.name = formData.name.trim();
     }
-    if (!formData.mainCategoryId) {
-      toast.error("Vui lòng chọn danh mục chính.");
-      return;
+    if (formData.description) {
+      payload.description = formData.description;
+    }
+    if (formData.mainCategoryId) {
+      payload.mainCategoryId = formData.mainCategoryId.toString();
     }
 
-    const payload = {
-      name: formData.name,
-      description: formData.description || "",
-      mainCategoryId: formData.mainCategoryId.toString(),
-    };
+    // Kiểm tra nếu không có trường nào được điền
+    if (Object.keys(payload).length === 0) {
+      toast.error("Vui lòng điền ít nhất một trường để lưu danh mục.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -59,12 +64,18 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
         await updateFoodCategory(initialData.id, payload);
         toast.success("Cập nhật danh mục thành công!");
       } else {
+        // Khi tạo mới, yêu cầu ít nhất name và mainCategoryId theo API
+        if (!payload.name || !payload.mainCategoryId) {
+          toast.error("Tạo danh mục mới yêu cầu tên và danh mục chính.");
+          return;
+        }
         await createFoodCategory(restaurantId, payload);
         toast.success("Tạo danh mục thành công!");
       }
       onSuccess();
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || "Lỗi không xác định";
+      const statusCode = err.response?.status || 500;
+      const errorMessage = err.response?.data?.message || httpStatusMessages[statusCode] || "Lỗi không xác định từ server";
       toast.error(`Lỗi khi lưu danh mục: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -92,7 +103,6 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
             placeholder="Nhập tên danh mục"
             value={formData.name}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -104,14 +114,13 @@ const FoodCategoryFormModal = ({ isOpen, onClose, restaurantId, initialData, mai
             value={mainCategories.find((cat) => cat.value === formData.mainCategoryId) || null}
             options={mainCategories}
             onChange={handleSelectChange}
-            required
           />
         </div>
 
-        <div className="form-group full-width ">
+        <div className="form-group full-width">
           <label>Mô tả</label>
           <textarea
-            className="form-input "
+            className="form-input"
             name="description"
             placeholder="Nhập mô tả"
             value={formData.description}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { filterMenuItems } from "../../services/menuItemService";
+import { fetchMenuItems, filterMenuItems } from "../../services/menuItemService";
 import DishCard from "../../components/Dish/DishCard";
 import FilterBar from "../../components/basicComponents/FilterBar";
 import "../../assets/styles/Dish/AllDishes.css";
@@ -28,13 +28,49 @@ const AllDishes = () => {
           maxPrice: params.get("maxPrice") ? Number(params.get("maxPrice")) : undefined,
         };
 
-        const response = await filterMenuItems(filterData, currentPage, itemsPerPage);
-        const dishesData = Array.isArray(response.data) ? response.data : [];
+        // Kiểm tra có bộ lọc nào không
+        const hasFilters = Object.values(filterData).some(
+          (value) => value !== "" && value !== undefined
+        );
+
+        let response;
+        if (hasFilters) {
+          response = await filterMenuItems({
+            ...filterData,
+            page: currentPage,
+            size: itemsPerPage,
+          });
+        } else {
+          response = await fetchMenuItems(currentPage, itemsPerPage);
+        }
+
+        // Log để debug
+        console.log("API response:", response);
+
+        // Xử lý phản hồi
+        let dishesData, totalItems;
+        if (hasFilters) {
+          // filterMenuItems trả về { data: [] } hoặc { data: { content: [], totalElements: number } }
+          if (Array.isArray(response.data)) {
+            dishesData = response.data;
+            totalItems = dishesData.length; // Tạm thời, cần backend thêm totalElements
+          } else {
+            dishesData = Array.isArray(response.data?.content) ? response.data.content : [];
+            totalItems = response.data?.totalElements || dishesData.length;
+          }
+        } else {
+          // fetchMenuItems trả về { data: { content: [], totalElements: number } }
+          dishesData = Array.isArray(response.data?.content) ? response.data.content : [];
+          totalItems = response.data?.totalElements || dishesData.length;
+        }
+
+        console.log("Dishes data:", dishesData);
         setDishes(dishesData);
-        setTotalItems(response.totalItems || dishesData.length);
-        console.log("Dishes data in AllDishes:", dishesData);
+        setTotalItems(totalItems);
+
       } catch (error) {
         console.error("Lỗi khi tải danh sách món ăn:", error);
+        console.error("Error response:", error.response?.data);
         setError("Không tìm thấy món ăn phù hợp.");
       } finally {
         setLoading(false);
@@ -48,14 +84,35 @@ const AllDishes = () => {
   const handlePageChange = (page) => {
     if (page >= 0 && page < totalPages) {
       setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
+  const renderPaginationButtons = () => {
+    const maxButtons = 5; // 2 trang trước + trang hiện tại + 2 trang sau
+    const half = Math.floor(maxButtons / 2);
+    let start = Math.max(0, currentPage - half);
+    let end = Math.min(totalPages, start + maxButtons);
+
+    if (end - start < maxButtons) {
+      start = Math.max(0, end - maxButtons);
+    }
+
+    return Array.from({ length: end - start }, (_, index) => start + index).map((page) => (
+      <button
+        key={page}
+        className={`page-number ${currentPage === page ? "active" : ""}`}
+        onClick={() => handlePageChange(page)}
+      >
+        {page + 1}
+      </button>
+    ));
+  };
+
   return (
-    <div>
+    <div className="all-dishes-container">
       <FilterBar />
       <div className="ad-page">
-        <div className="ad-section-header center"></div>
         {error && <div className="ad-error-message">{error}</div>}
         {loading ? (
           <p className="ad-loading">Đang tải...</p>
@@ -72,29 +129,21 @@ const AllDishes = () => {
                 />
               ))}
             </div>
-            <div className="rl-pagination">
-              <button
-                disabled={currentPage === 0}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Trang trước
-              </button>
-              {Array.from({ length: totalPages }, (_, index) => (
+            {totalPages > 1 && (
+              <div className="rl-pagination">
                 <button
-                  key={index}
-                  className={currentPage === index ? "active" : ""}
-                  onClick={() => handlePageChange(index)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-              <button
-                disabled={currentPage === totalPages - 1}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Trang sau
-              </button>
-            </div>
+                  className="prev"
+                  disabled={currentPage === 0}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                ></button>
+                {renderPaginationButtons()}
+                <button
+                  className="next"
+                  disabled={currentPage === totalPages - 1}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                ></button>
+              </div>
+            )}
           </>
         )}
       </div>

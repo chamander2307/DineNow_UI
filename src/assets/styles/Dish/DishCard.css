@@ -12,8 +12,8 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease;
-  width: 330px !important; /* Kích thước cố định */
-  height: 370px !important; /* Tăng từ 330px lên 370px để đồng bộ */
+  width: 330px !important;
+  height: 370px !important;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -24,17 +24,17 @@
 }
 
 .dc-image-container {
-  width: 330px !important; /* Kích thước cố định */
-  height: 200px !important; /* Kích thước cố định */
+  width: 330px !important;
+  height: 200px !important;
   overflow: hidden;
-  position: relative; /* Để chứa favorite-button */
+  position: relative;
 }
 
 .dc-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Phóng to/thu nhỏ ảnh để vừa khung */
-  object-position: center; /* Căn giữa ảnh */
+  object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -85,6 +85,28 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
+}
+
+.dc-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Khoảng cách giữa số và ngôi sao */
+  font-size: 13px; /* Đồng bộ với dc-description, dc-type */
+  color: #555; /* Màu chữ đồng bộ */
+}
+
+.dc-star {
+  color: #ddd; /* Ngôi sao rỗng */
+  font-size: 14px; /* Kích thước nhỏ hơn một chút để cân đối */
+}
+
+.dc-star.filled {
+  color: #f1c40f; /* Ngôi sao đầy, màu vàng */
+}
+
+.dc-star.half-filled {
+  color: #f1c40f;
+  background: linear-gradient(90deg, #f1c40f 50%, #ddd 50%); /* Nửa vàng, nửa xám */
 }
 
 .dc-favorite-button {

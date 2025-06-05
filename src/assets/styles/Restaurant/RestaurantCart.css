@@ -1,40 +1,50 @@
 .restaurant-cart {
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 2px solid #f7796b; /* Đổi màu viền sang tông chính */
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #f7f7f7;
+  border-radius: 24px;
+  font-family: 'Roboto', sans-serif;
 }
 
 .restaurant-section {
-  margin-bottom: 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.restaurant-section:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .restaurant-header {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 16px;
+  background: #e0f2fe;
+  border-radius: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 .restaurant-header:hover {
-  /* Bỏ background-color khi hover */
+  background: #bae6fd;
 }
 
 .restaurant-images {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
   object-fit: cover;
-  margin-right: 15px;
+  margin-right: 20px;
+  border: 1px solid #dbeafe;
 }
 
 .restaurant-infos {
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .restaurant-name-wrappers {
@@ -44,119 +54,138 @@
 }
 
 .restaurant-names {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e40af;
   margin: 0;
 }
 
 .restaurant-addresss {
-  font-size: 14px;
-  color: #777;
-  margin-top: 5px;
+  font-size: 15px;
+  color: #4b5563;
+  margin-top: 8px;
 }
 
 .chevron-icon {
-  font-size: 16px;
-  color: #555;
+  font-size: 18px;
+  color: #1e40af;
 }
 
 .dish-lists {
   list-style: none;
   padding: 0;
-  margin: 10px 0;
+  margin: 20px 0;
 }
 
 .dish-items {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  padding: 16px;
+  border-bottom: 1px solid #eff6ff;
+  gap: 20px;
+}
+
+.dish-image-custom {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.dish-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .dish-names {
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 5px;
-  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  color: #1f2937;
 }
 
 .dish-price-quantity {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
 }
 
 .dish-price {
-  font-size: 12px;
-  color: #333;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
+  color: #dc2626;
 }
 
 .quantity-controls {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
+  background: #f1f5f9;
+  border-radius: 20px;
+  padding: 6px;
 }
 
 .decrease-btn,
 .increase-btn {
-  width: 24px;
-  height: 24px;
-  font-size: 16px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  border-radius: 10px;
   cursor: pointer;
-  color: white;
   border: none;
+  background: #e5e7eb;
+  color: #374151;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s ease;
-}
-
-.decrease-btn {
-  color: #ccc; /* Đổi từ background sang color */
+  transition: background 0.2s ease;
 }
 
 .decrease-btn:hover {
-  color: #999;
+  background: #d1d5db;
 }
 
 .increase-btn {
-  color: #f7796b; /* Đổi từ background sang color */
+  background: #1e40af;
+  color: #ffffff;
 }
 
 .increase-btn:hover {
-  color: #d95e51; /* Tông đậm hơn của #f7796b khi hover */
+  background: #1e3a8a;
 }
 
 .quantity {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+  min-width: 28px;
+  text-align: center;
 }
 
 .checkout-btn {
   display: block;
   width: 100%;
-  padding: 10px;
-  color: #f7796b; /* Đổi từ background sang color */
-  border: 2px solid #f7796b; /* Thêm viền để nút rõ ràng */
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 16px;
+  background: #1e40af;
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  transition: color 0.3s ease, border-color 0.3s ease;
-  margin-top: 10px;
+  margin-top: 20px;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .checkout-btn:hover {
-  color: #d95e51; /* Tông đậm hơn khi hover */
-  border-color: #d95e51;
+  background: #1e3a8a;
+  transform: translateY(-2px);
+}
+
+.checkout-btn:active {
+  background: #1e3a8a;
+  transform: translateY(0);
 }

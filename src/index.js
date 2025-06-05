@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { UserProvider } from "./contexts/UserContext";
-import Modal from 'react-modal'; // Thêm import cho react-modal
+import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 

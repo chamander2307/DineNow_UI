@@ -203,7 +203,6 @@ const MenuItemMyList = () => {
                   >
                     Sửa
                   </button>
-                  <button onClick={() => handleDelete(item.id)}>Xóa</button>
                   <button onClick={() => handleToggleAvailable(item)}>
                     {item.available ? "Ngưng phục vụ" : "Mở lại"}
                   </button>

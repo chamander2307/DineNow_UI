@@ -1,21 +1,51 @@
-// src/pages/Admin/RevenueDashboard.js
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import AdminLayout from "./AdminLayout";
-import "../../assets/styles/owner/OwnerRevenueDashboard.css";
+import "../../assets/styles/admin/RevenueDashboard.css";
 import { fetchAdminMonthlyRevenue, fetchAdminTotalRevenue, fetchAdminRevenueInRange } from "../../services/revenueService";
 import MonthPicker from "../../components/admin/MonthPicker";
 
+const MAX_RESTAURANTS = 5;
+
 const RevenueDashboard = () => {
+  // Hàm lấy thời gian hiện tại
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    return {
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth() + 1,
+    };
+  };
+
+  // Các state
   const [revenueStats, setRevenueStats] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [viewType, setViewType] = useState("monthly");
-  const [selectedMonth, setSelectedMonth] = useState({ year: 2025, month: 5 }); // Mặc định 05/2025
-  const [startDate, setStartDate] = useState({ year: 2023, month: 1 });
-  const [endDate, setEndDate] = useState({ year: 2025, month: 12 });
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentDate());
+  const [startDate, setStartDate] = useState({ year: 2025, month: 4 });
+  const [endDate, setEndDate] = useState(getCurrentDate());
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // Kiểm tra và cập nhật thời gian mỗi ngày
+  useEffect(() => {
+    const checkDate = () => {
+      const newDate = getCurrentDate();
+      if (newDate.year !== selectedMonth.year || newDate.month !== selectedMonth.month) {
+        setSelectedMonth(newDate);
+      }
+      if (newDate.year !== endDate.year || newDate.month !== endDate.month) {
+        setEndDate(newDate);
+      }
+    };
+
+    const interval = setInterval(checkDate, 24 * 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [selectedMonth, endDate]);
+
+  // Tải dữ liệu khi viewType, selectedMonth, startDate, endDate thay đổi
   useEffect(() => {
     handleViewData();
   }, [viewType, selectedMonth, startDate, endDate]);
@@ -72,6 +102,18 @@ const RevenueDashboard = () => {
     }
   };
 
+  // Lọc dữ liệu dựa trên searchTerm
+  const filteredStats = revenueStats.filter((item) =>
+    item.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Tính toán phân trang
+  const totalPages = Math.ceil(filteredStats.length / MAX_RESTAURANTS);
+  const paginatedStats = filteredStats.slice(
+    (currentPage - 1) * MAX_RESTAURANTS,
+    currentPage * MAX_RESTAURANTS
+  );
+
   return (
     <AdminLayout>
       <div className="dashboard-container">
@@ -81,7 +123,12 @@ const RevenueDashboard = () => {
         <div className="top-actions">
           <div className="control-item">
             <label>Loại xem:</label>
-            <select value={viewType} onChange={(e) => setViewType(e.target.value)} disabled={loading} className="form-input">
+            <select
+              value={viewType}
+              onChange={(e) => setViewType(e.target.value)}
+              disabled={loading}
+              className="form-input"
+            >
               <option value="monthly">Theo tháng</option>
               <option value="yearly">Tổng từ trước đến nay</option>
               <option value="range">Theo khoảng thời gian</option>
@@ -90,29 +137,54 @@ const RevenueDashboard = () => {
           {viewType === "monthly" && (
             <div className="control-item">
               <label>Tháng/Năm:</label>
-              <MonthPicker value={selectedMonth} onChange={setSelectedMonth} disabled={loading} />
+              <MonthPicker
+                value={selectedMonth}
+                onChange={setSelectedMonth}
+                disabled={loading}
+              />
             </div>
           )}
           {viewType === "range" && (
             <>
               <div className="control-item">
                 <label>Tháng/Năm bắt đầu:</label>
-                <MonthPicker value={startDate} onChange={setStartDate} disabled={loading} />
+                <MonthPicker
+                  value={startDate}
+                  onChange={setStartDate}
+                  disabled={loading}
+                />
               </div>
               <div className="control-item">
                 <label>Tháng/Năm kết thúc:</label>
-                <MonthPicker value={endDate} onChange={setEndDate} disabled={loading} />
+                <MonthPicker
+                  value={endDate}
+                  onChange={setEndDate}
+                  disabled={loading}
+                />
               </div>
             </>
           )}
+          <div className="control-item">
+            <label>Tìm kiếm nhà hàng:</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Nhập tên nhà hàng..."
+              className="search-input"
+              disabled={loading}
+            />
+          </div>
         </div>
         {error && <p className="error-message">{error}</p>}
         {loading ? (
           <div className="loading-spinner">
             <span>Đang tải...</span>
           </div>
-        ) : revenueStats.length === 0 ? (
-          <p style={{ textAlign: "center", padding: "20px" }}>Không có dữ liệu để hiển thị.</p>
+        ) : filteredStats.length === 0 ? (
+          <p style={{ textAlign: "center", padding: "20px" }}>
+            Không có dữ liệu để hiển thị.
+          </p>
         ) : (
           <>
             <div className="overview">
@@ -120,23 +192,64 @@ const RevenueDashboard = () => {
             </div>
             <div className="chart-section">
               <h3>Biểu đồ doanh thu</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={revenueStats}>
-                  <XAxis dataKey="restaurantName" />
-                  <YAxis />
-                  <Tooltip formatter={(value, name) => [
-                    `${value.toLocaleString()} ${name === "totalRevenue" ? "VNĐ" : "đơn"}`,
-                    name === "totalRevenue" ? "Doanh thu" : "Số đơn hàng",
-                  ]} />
-                  <Legend />
-                  <Bar dataKey="totalRevenue" name="Doanh thu" fill="#0099FF" />
-                  <Bar dataKey="totalOrders" name="Số đơn hàng" fill="#FF6B6B" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="chart-wrapper">
+                <ResponsiveContainer width="100%" height={450}>
+                  <BarChart
+                    data={paginatedStats}
+                    margin={{ top: 20, right: 30, left: 50, bottom: 20 }}
+                  >
+                    <XAxis
+                      dataKey="restaurantName"
+                      tick={{ fontSize: 12 }}
+                      interval={0}
+                      angle={-15}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis
+                      tickFormatter={(value) =>
+                        value >= 1000000
+                          ? `${(value / 1000000).toFixed(1)}M`
+                          : value >= 1000
+                            ? `${(value / 1000).toFixed(1)}K`
+                            : value
+                      }
+                      tick={{ fontSize: 12 }}
+                      width={80}
+                    />
+                    <Tooltip
+                      formatter={(value, name) => [
+                        `${value.toLocaleString()} ${name === "totalRevenue" ? "VNĐ" : "đơn"
+                        }`,
+                        name === "totalRevenue" ? "Doanh thu" : "Số đơn hàng",
+                      ]}
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #f0e6e2",
+                        borderRadius: "6px",
+                        fontSize: "14px",
+                      }}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: "10px" }} />
+                    <Bar
+                      dataKey="totalRevenue"
+                      name="Doanh thu"
+                      fill="#0099FF"
+                      barSize={40}
+                    />
+                    <Bar
+                      dataKey="totalOrders"
+                      name="Số đơn hàng"
+                      fill="#FF6B6B"
+                      barSize={40}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
             <div className="order-table">
               <h3>Chi tiết doanh thu</h3>
-              <table className="admin-table">
+              <table className="revenue-table">
                 <thead>
                   <tr>
                     <th>Nhà hàng</th>
@@ -146,23 +259,61 @@ const RevenueDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {revenueStats.map((item, index) => (
+                  {paginatedStats.map((item, index) => (
                     <tr key={index}>
                       <td>{item.restaurantName}</td>
                       <td>{item.totalOrders}</td>
                       <td>{item.totalRevenue.toLocaleString()}</td>
-                      <td>{totalRevenue ? ((item.totalRevenue / totalRevenue) * 100).toFixed(2) : "0.00"}</td>
+                      <td>
+                        {totalRevenue
+                          ? ((item.totalRevenue / totalRevenue) * 100).toFixed(2)
+                          : "0.00"}
+                      </td>
                     </tr>
                   ))}
                   <tr>
-                    <td><strong>Tổng</strong></td>
-                    <td>{revenueStats.reduce((sum, item) => sum + item.totalOrders, 0)}</td>
-                    <td>{totalRevenue.toLocaleString()}</td>
+                    <td>
+                      <strong>Tổng</strong>
+                    </td>
+                    <td>
+                      {filteredStats.reduce(
+                        (sum, item) => sum + item.totalOrders,
+                        0
+                      )}
+                    </td>
+                    <td>
+                      {filteredStats
+                        .reduce((sum, item) => sum + item.totalRevenue, 0)
+                        .toLocaleString()}
+                    </td>
                     <td>100.00</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            {filteredStats.length > MAX_RESTAURANTS && (
+              <div className="pagination-container">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="pagination-button"
+                >
+                  Trang trước
+                </button>
+                <span className="pagination-span">
+                  Trang {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="pagination-button"
+                >
+                  Trang sau
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

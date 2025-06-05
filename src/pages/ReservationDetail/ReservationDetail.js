@@ -74,8 +74,9 @@ const ReservationDetail = () => {
         note: order.note || '',
       };
 
+      console.log('Mapped Reservation:', mappedReservation);
+      console.log('Reservation Status:', mappedReservation.status); // Kiểm tra trạng thái
       setReservation(mappedReservation);
-      console.log('Reservation Data:', mappedReservation);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -129,6 +130,12 @@ const ReservationDetail = () => {
     navigate(`/restaurant/${reservation.restaurant.id}`, {
       state: { selectedDishId: dishId },
     });
+  };
+
+  const handlePayment = () => {
+    if (reservation && reservation.status.toUpperCase() === 'CONFIRMED') {
+      navigate(`/payment/${reservation.id}`);
+    }
   };
 
   if (loading) {
@@ -261,6 +268,14 @@ const ReservationDetail = () => {
         <Link to="/reservation-history" className="back-btn111">
           Quay lại
         </Link>
+        {reservation.status.toUpperCase() === 'CONFIRMED' && (
+          <button
+            onClick={handlePayment}
+            className="payment-btn123"
+          >
+            Thanh toán
+          </button>
+        )}
         {reservation.status === 'COMPLETED' && (
           <Link
             to={`/restaurant/${reservation.restaurant.id}`}

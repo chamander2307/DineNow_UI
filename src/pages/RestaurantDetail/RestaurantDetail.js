@@ -45,20 +45,33 @@ const DishItem = ({
   increaseQuantity,
   decreaseQuantity,
   setSelectedDish,
+  isUserRestricted,
 }) => {
   const handleClick = useCallback(() => setSelectedDish(dish), [dish, setSelectedDish]);
   const handleAdd = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     addToCart(dish.id);
-  }, [dish.id, addToCart]);
+  }, [dish.id, addToCart, isUserRestricted]);
   const handleIncrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     increaseQuantity(dish.id);
-  }, [dish.id, increaseQuantity]);
+  }, [dish.id, increaseQuantity, isUserRestricted]);
   const handleDecrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
     decreaseQuantity(dish.id);
-  }, [dish.id, decreaseQuantity]);
+  }, [dish.id, decreaseQuantity, isUserRestricted]);
 
   return (
     <div className="dish-item" onClick={handleClick} id={`dish-${dish.id}`}>
@@ -66,9 +79,7 @@ const DishItem = ({
         src={dish.imageUrl}
         alt={dish.name}
         className="dish-image"
-        onError={(e) => {
-          e.target.src = '/assets/images/fallback-image.jpg';
-        }}
+        onError={(e) => { e.target.src = '/assets/images/fallback-image.jpg'; }}
       />
       <div className="dish-details">
         <h3>{dish.name}</h3>
@@ -90,34 +101,175 @@ const DishItem = ({
           <button className="add-btn" onClick={handleIncrease}>+</button>
         </div>
       ) : (
-        <button className="add-to-cart" onClick={handleAdd}>Thêm</button>
+        <button className="add-to-cart" onClick={handleAdd}>Thêm vào giỏ</button>
       )}
     </div>
   );
 };
 
 // Component chi tiết món ăn
-const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity, onBack }) => {
+const DishDetail = ({ 
+  dish, 
+  cart, 
+  addToCart, 
+  increaseQuantity, 
+  decreaseQuantity, 
+  onBack, 
+  menuItems, 
+  searchTerm, 
+  setSearchTerm, 
+  selectedCategory, 
+  setSelectedCategory, 
+  selectedPrice, 
+  setSelectedPrice, 
+  setSelectedDish,
+  setToastMessage,
+  setShowToast,
+  isUserRestricted,
+}) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const handleAdd = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     addToCart(dish.id);
-  }, [dish.id, addToCart]);
+  }, [dish.id, addToCart, isUserRestricted]);
+
   const handleIncrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     increaseQuantity(dish.id);
-  }, [dish.id, increaseQuantity]);
+    const newQuantity = (cart[dish.id] || 0) + 1;
+    setToastMessage(`Đã tăng số lượng "${dish.name}" lên ${newQuantity}!`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  }, [dish.id, dish.name, cart, increaseQuantity, setToastMessage, setShowToast, isUserRestricted]);
+
   const handleDecrease = useCallback((e) => {
     e.preventDefault();
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
+    const currentQuantity = cart[dish.id] || 0;
     decreaseQuantity(dish.id);
-  }, [dish.id, decreaseQuantity]);
+    const newQuantity = currentQuantity - 1;
+    if (newQuantity <= 0) {
+      setToastMessage(`Đã xóa "${dish.name}" khỏi giỏ hàng!`);
+    } else {
+      setToastMessage(`Đã giảm số lượng "${dish.name}" xuống ${newQuantity}!`);
+    }
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  }, [dish.id, dish.name, cart, decreaseQuantity, setToastMessage, setShowToast, isUserRestricted]);
+
   const handleBack = useCallback((e) => {
     e.preventDefault();
     onBack();
     navigate(`/restaurant/${id}`, { state: {} });
   }, [onBack, navigate, id]);
+
+  const MenuSection = useMemo(() => {
+    const categories = [
+      "Tất cả",
+      ...new Set(
+        menuItems
+          .filter(item => item.id !== dish.id)
+          .map((item) => item.typeName || "Không xác định")
+          .filter(Boolean)
+      ),
+    ];
+    const filteredMenu = menuItems
+      .filter(item => item.id !== dish.id)
+      .filter((item) => {
+        const matchSearch = item.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchCategory =
+          selectedCategory === "Tất cả" || item.typeName === selectedCategory;
+        const price = parseFloat(item.price);
+        const matchPrice =
+          selectedPrice === "" ||
+          (selectedPrice === "under50" && price < 50000) ||
+          (selectedPrice === "50to100" && price >= 50000 && price <= 100000) ||
+          (selectedPrice === "over100" && price > 100000);
+        return matchSearch && matchCategory && matchPrice;
+      });
+
+    return (
+      <div className="menu-section-full">
+        <h2>Thực đơn</h2>
+        <ul className="categories-list-horizontal">
+          {categories.map((cat, i) => (
+            <li
+              key={i}
+              className={`category-item ${selectedCategory === cat ? "active" : ""}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </li>
+          ))}
+        </ul>
+        <div className="price-filter">
+          <select
+            value={selectedPrice}
+            onChange={(e) => setSelectedPrice(e.target.value)}
+          >
+            {[
+              { label: "Tất cả", value: "" },
+              { label: "Dưới 50K", value: "under50" },
+              { label: "50K - 100K", value: "50to100" },
+              { label: "Trên 100K", value: "over100" },
+            ].map((range, idx) => (
+              <option key={idx} value={range.value}>
+                {range.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Tìm món..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="horizontal-dishes">
+          {filteredMenu.map((dish) => (
+            <DishItem
+              key={dish.id}
+              dish={dish}
+              cart={cart}
+              addToCart={addToCart}
+              increaseQuantity={increaseQuantity}
+              decreaseQuantity={decreaseQuantity}
+              setSelectedDish={setSelectedDish}
+              isUserRestricted={isUserRestricted}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }, [
+    dish.id,
+    menuItems,
+    searchTerm,
+    selectedCategory,
+    selectedPrice,
+    cart,
+    addToCart,
+    increaseQuantity,
+    decreaseQuantity,
+    isUserRestricted,
+  ]);
 
   return (
     <div className="dish-detail-section">
@@ -126,9 +278,7 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
           <img
             src={dish.imageUrl}
             alt={dish.name}
-            onError={(e) => {
-              e.target.src = '/assets/images/fallback-image.jpg';
-            }}
+            onError={(e) => { e.target.src = '/assets/images/fallback-image.jpg'; }}
           />
         </div>
         <div className="dish-details">
@@ -156,11 +306,12 @@ const DishDetail = ({ dish, cart, addToCart, increaseQuantity, decreaseQuantity,
                 <button className="add-btn-Detail" onClick={handleIncrease}>+</button>
               </div>
             ) : (
-              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm</button>
+              <button className="add-to-cart-Detail" onClick={handleAdd}>Thêm vào giỏ</button>
             )}
           </div>
         </div>
       </div>
+      {MenuSection}
       <div className="dish-reviews-section">
         <DishReviews menuItemId={dish.id} />
       </div>
@@ -174,7 +325,7 @@ const RestaurantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { isLogin } = useContext(UserContext);
+  const { isLogin, user } = useContext(UserContext);
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -190,6 +341,13 @@ const RestaurantDetail = () => {
     return savedCart[id] || {};
   });
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Kiểm tra nếu người dùng là Owner hoặc Admin
+  const isUserRestricted = useMemo(() => {
+    return isLogin && user?.role && ['OWNER', 'ADMIN'].includes(user.role.toUpperCase());
+  }, [isLogin, user]);
 
   // Kiểm tra trạng thái yêu thích
   useEffect(() => {
@@ -221,19 +379,17 @@ const RestaurantDetail = () => {
         const menuItemsArray = Array.isArray(menuData?.data?.content)
           ? menuData.data.content
           : Array.isArray(menuData?.data)
-            ? menuData.data
-            : [];
+          ? menuData.data
+          : [];
         setMenuItems(menuItemsArray);
 
         if (state?.selectedDishId) {
           const dishId = parseInt(state.selectedDishId, 10);
-          const selectedDish = menuItemsArray.find(
-            (item) => item.id === dishId
-          );
+          const selectedDish = menuItemsArray.find(item => item.id === dishId);
           if (selectedDish) {
             setSelectedDish(selectedDish);
           } else {
-            console.warn("Không tìm thấy món ăn với ID:", dishId, "trong danh sách:", menuItemsArray);
+            console.warn(`Không tìm thấy món ăn với ID: ${dishId} trong danh sách:`, menuItemsArray);
             setError("Món ăn được chọn không tồn tại.");
           }
         }
@@ -260,6 +416,10 @@ const RestaurantDetail = () => {
 
   // Hàm xử lý giỏ hàng
   const addToCart = useCallback(async (dishId) => {
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể thêm món vào giỏ hàng.');
+      return;
+    }
     try {
       let newQuantity;
       setCart(prev => {
@@ -274,20 +434,31 @@ const RestaurantDetail = () => {
         orderItems: [{ menuItemId: dishId, quantity: newQuantity }],
       };
       await createOrder(id, orderData);
+      setToastMessage(`Đã thêm "${menuItems.find(item => item.id === dishId)?.name || 'món ăn'} vào giỏ hàng!"`);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
     } catch (err) {
       setError('Lỗi khi thêm vào giỏ hàng');
       console.error('Lỗi khi thêm vào giỏ:', err);
     }
-  }, [id]);
+  }, [id, menuItems, isUserRestricted]);
 
   const increaseQuantity = useCallback((dishId) => {
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể tăng số lượng món.');
+      return;
+    }
     setCart(prev => ({
       ...prev,
       [dishId]: prev[dishId] + 1,
     }));
-  }, []);
+  }, [isUserRestricted]);
 
   const decreaseQuantity = useCallback((dishId) => {
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể giảm số lượng món.');
+      return;
+    }
     setCart(prev => {
       const newQuantity = prev[dishId] - 1;
       if (newQuantity <= 0) {
@@ -296,7 +467,7 @@ const RestaurantDetail = () => {
       }
       return { ...prev, [dishId]: newQuantity };
     });
-  }, []);
+  }, [isUserRestricted]);
 
   const toggleLike = useCallback(async () => {
     if (!isLogin) {
@@ -325,30 +496,41 @@ const RestaurantDetail = () => {
   }, [isDragging]);
 
   const handleBookTable = useCallback(() => {
+    if (isUserRestricted) {
+      alert('Chỉ khách hàng mới có thể đặt bàn.');
+      return;
+    }
+
     const selectedItems = Object.keys(cart)
       .map((dishId) => {
-        const dish = menuItems.find((item) => item.id === dishId);
+        const dish = menuItems.find((item) => item.id === parseInt(dishId, 10));
         if (!dish) return null;
         return {
           id: dish.id,
           name: dish.name,
-          price: parseFloat(dish.price),
+          price: parseFloat(dish.price) || 0,
           quantity: cart[dishId],
         };
       })
       .filter(Boolean);
 
+    if (selectedItems.length === 0) {
+      alert('Giỏ hàng trống! Vui lòng chọn ít nhất một món trước khi đặt bàn.');
+      return;
+    }
+
     navigate("/order", {
       state: {
+        selectedItems,
         restaurant: {
+          id: restaurant?.id,
           name: restaurant?.name,
           address: restaurant?.address,
-          image: restaurant?.imageUrls?.[0],
+          image: restaurant?.imageUrls?.[0] || restaurant?.thumbnailUrl || 'https://via.placeholder.com/150?text=No+Image',
         },
-        selectedItems: selectedItems.length > 0 ? selectedItems : [],
       },
     });
-  }, [cart, menuItems, navigate, restaurant]);
+  }, [cart, menuItems, navigate, restaurant, isUserRestricted]);
 
   const getRestaurantSliderSettings = (imageCount) => ({
     dots: imageCount > 1,
@@ -362,13 +544,6 @@ const RestaurantDetail = () => {
     swipeToSlide: imageCount > 1,
     touchThreshold: 10,
   });
-
-  const priceRanges = [
-    { label: "Tất cả", value: "" },
-    { label: "Dưới 50K", value: "under50" },
-    { label: "50K - 100K", value: "50to100" },
-    { label: "Trên 100K", value: "over100" },
-  ];
 
   const MenuSection = useMemo(() => {
     const categories = [
@@ -413,7 +588,12 @@ const RestaurantDetail = () => {
             value={selectedPrice}
             onChange={(e) => setSelectedPrice(e.target.value)}
           >
-            {priceRanges.map((range, idx) => (
+            {[
+              { label: "Tất cả", value: "" },
+              { label: "Dưới 50K", value: "under50" },
+              { label: "50K - 100K", value: "50to100" },
+              { label: "Trên 100K", value: "over100" },
+            ].map((range, idx) => (
               <option key={idx} value={range.value}>
                 {range.label}
               </option>
@@ -438,6 +618,7 @@ const RestaurantDetail = () => {
               increaseQuantity={increaseQuantity}
               decreaseQuantity={decreaseQuantity}
               setSelectedDish={setSelectedDish}
+              isUserRestricted={isUserRestricted}
             />
           ))}
         </div>
@@ -452,6 +633,7 @@ const RestaurantDetail = () => {
     addToCart,
     increaseQuantity,
     decreaseQuantity,
+    isUserRestricted,
   ]);
 
   if (loading) return <p>Đang tải...</p>;
@@ -469,9 +651,7 @@ const RestaurantDetail = () => {
                 src={img}
                 alt={`slide-${i}`}
                 className="slider-image"
-                onError={(e) => {
-                  e.target.src = '/assets/images/fallback-image.jpg';
-                }}
+                onError={(e) => { e.target.src = '/assets/images/fallback-image.jpg'; }}
               />
             ))}
           </Slider>
@@ -491,7 +671,6 @@ const RestaurantDetail = () => {
                   ({restaurant.averageRating})
                 </span>
               ) : null}
-
             </div>
             <div className="rd-visits">
               {(restaurant.reservationCount || 0).toLocaleString()} lượt đến
@@ -536,6 +715,17 @@ const RestaurantDetail = () => {
           increaseQuantity={increaseQuantity}
           decreaseQuantity={decreaseQuantity}
           onBack={() => setSelectedDish(null)}
+          menuItems={menuItems}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          setSelectedDish={setSelectedDish}
+          setToastMessage={setToastMessage}
+          setShowToast={setShowToast}
+          isUserRestricted={isUserRestricted}
         />
       ) : (
         <>
@@ -571,9 +761,7 @@ const RestaurantDetail = () => {
                         src={item.imageUrl}
                         alt={item.name}
                         className="highlight-image"
-                        onError={(e) => {
-                          e.target.src = '/assets/images/fallback-image.jpg';
-                        }}
+                        onError={(e) => { e.target.src = '/assets/images/fallback-image.jpg'; }}
                       />
                       <div className="highlight-info">
                         <h3
@@ -606,6 +794,12 @@ const RestaurantDetail = () => {
             <RestaurantReviewForm restaurantId={id} />
           </div>
         </>
+      )}
+
+      {showToast && (
+        <div className="toast-notification">
+          {toastMessage}
+        </div>
       )}
     </div>
   );

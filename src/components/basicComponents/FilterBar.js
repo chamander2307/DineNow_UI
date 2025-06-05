@@ -89,7 +89,7 @@ const FilterBar = () => {
       if (price) {
         const [minPrice, maxPrice] = price.split("-").map(Number);
         queryParams.append("minPrice", minPrice || 0);
-        queryParams.append("maxPrice", maxPrice || undefined);
+        if (maxPrice) queryParams.append("maxPrice", maxPrice);
       }
 
       console.log("Dữ liệu lọc:", filterData);
@@ -152,6 +152,7 @@ const FilterBar = () => {
         <option value="0-100000">Dưới 100k</option>
         <option value="100000-200000">100k - 200k</option>
         <option value="200000-500000">200k - 500k</option>
+        <option value="500000-">Trên 500k</option>
       </select>
       <button
         className="filter-button"

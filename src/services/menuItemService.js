@@ -122,7 +122,7 @@ export const fetchMenuItems = async (page = 0, size = 20) => {
       params: { page, size },
     });
     console.log("Fetch menu items response:", response.data);
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách món ăn:", error);
     console.error("Error response:", error.response?.data);

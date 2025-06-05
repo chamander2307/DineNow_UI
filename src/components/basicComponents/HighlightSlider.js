@@ -4,11 +4,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../assets/styles/home/FeaturedSection.css";
 
-import haisan from "../../assets/img/haisan.png";
-import lau from "../../assets/img/lau.png";
-import buffet from "../../assets/img/buffet.png";
-import han from "../../assets/img/han.png";
-import nhat from "../../assets/img/nhat.png";
+import haisan from "../../assets/img/cac-mon-nuong-1649930235.jpg";
+import lau from "../../assets/img/lau-hai-san-da-nang-a9a.jpg";
+import buffet from "../../assets/img/studio-chup-anh-thuc-an-dep.jpg";
+import han from "../../assets/img/4_Find_Home_Away.jpg";
+import nhat from "../../assets/img/hinh-anh-cac-mon-an-ngon-nhan-lam-theo-yeu-cau-rieng.jpg";
 
 const highlightImages = [
   { id: 1, image: haisan, alt: "Hải sản tươi ngon" },

@@ -44,3 +44,99 @@
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.dashboard-container {
+  padding: 20px;
+  min-height: 100vh;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif;
+  background: #fffaf7;
+}
+
+.revenue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  background: #fffaf7;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+}
+
+.revenue-table th,
+.revenue-table td {
+  border: 1px solid #f0e6e2;
+  padding: 12px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #3c2f2f;
+}
+
+.revenue-table th {
+  background-color: #f2f2f2;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.revenue-table tr:hover {
+  background-color: #fef5f1;
+}
+
+.chart-wrapper {
+  margin-top: 16px;
+  padding: 12px;
+  overflow: visible;
+  background: #fffaf7;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  color: #3c2f2f;
+  background: #fff;
+  width: 200px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #0099FF;
+}
+
+.search-input::placeholder {
+  color: #a69f9f;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.control-item label {
+  font-size: 0.95rem;
+  color: #3c2f2f;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #f0e6e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  color: #3c2f2f;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: #0099FF;
+}
