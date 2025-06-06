@@ -223,3 +223,21 @@
 .back-btn111:hover {
   background-color: #2980b9;
 }
+
+.payment-btn123 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2ecc71;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  order: 3; /* Đặt nút Thanh toán bên phải nút Quay lại */
+}
+
+.payment-btn123:hover {
+  background-color: #27ae60;
+}
