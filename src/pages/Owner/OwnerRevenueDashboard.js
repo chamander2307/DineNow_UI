@@ -217,7 +217,7 @@ const OwnerRevenueDashboard = () => {
                     tick={{ fontSize: 12 }}
                     width={80}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value) => [
                       value >= 1000000
                         ? `${(value / 1000000).toFixed(1)}M VND`
@@ -234,7 +234,7 @@ const OwnerRevenueDashboard = () => {
             </div>
             <div className="order-table">
               <h3>Chi tiết doanh thu</h3>
-              <table>
+              <table className="admin-table">
                 <thead>
                   <tr>
                     <th>Tháng/Năm</th>
@@ -247,7 +247,7 @@ const OwnerRevenueDashboard = () => {
                     <tr key={index}>
                       <td>{item.month}</td>
                       <td>{item.totalOrders}</td>
-                      <td>{item.totalRevenue ? item.totalRevenue.toLocaleString() : "0"}</td>
+                      <td>{item.totalRevenue || 0}</td>
                     </tr>
                   ))}
                 </tbody>
